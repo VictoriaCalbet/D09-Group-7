@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- 
+ * tiles_es.xml
+ *
+ * Copyright (C) 2017 Universidad de Sevilla
+ * 
+ * The use of this project is hereby constrained to the conditions of the 
+ * TDG Licence, a copy of which you may download from 
+ * http://www.tdg-seville.info/License.html
+ -->
+
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+      
+<tiles-definitions>
+
+        <definition name="trip/list" extends="master.page">        
+                <put-attribute name="title" value="Lista de viajes" />
+                <put-attribute name="body" value="/views/trip/list.jsp" />
+        </definition>
+        
+        
+        <definition name="trip/manager/list" extends="master.page">        
+                <put-attribute name="title" value="Lista de viajes" />
+                <put-attribute name="body" value="/views/trip/list.jsp" />
+        </definition>
+        
+        <definition name="trip/manager/create" extends="master.page">        
+                <put-attribute name="title" value="Crear un viaje" />
+                <put-attribute name="body" value="/views/trip/create.jsp" />
+        </definition>
+	
+	    <definition name="trip/manager/edit" extends="master.page">        
+                <put-attribute name="title" value="Editar un viaje" />
+                <put-attribute name="body" value="/views/trip/create.jsp" />
+        </definition>
+	
+	    <definition name="trip/manager/cancel" extends="master.page">        
+                <put-attribute name="title" value="Cancelar un viaje" />
+                <put-attribute name="body" value="/views/trip/cancel.jsp" />
+        </definition>
+	
+		<definition name="trip/info" extends="master.page">        
+                <put-attribute name="title" value="Información de un viaje" />
+                <put-attribute name="body" value="/views/trip/display.jsp" />
+        </definition>
+	
+</tiles-definitions>

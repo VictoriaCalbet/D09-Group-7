@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+ * converters.xml
+ *
+ * Copyright (C) 2017 Universidad de Sevilla
+ * 
+ * The use of this project is hereby constrained to the conditions of the 
+ * TDG Licence, a copy of which you may download from 
+ * http://www.tdg-seville.info/License.html
+ -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd		
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd		
+	">
+
+	<util:list id="converters">
+		<!-- 
+			Add your own converters using entries of the following form: 
+			<bean class="converters.Class1ToClass2" /> 
+		-->
+		
+		<bean class="converters.ActorToStringConverter"/>
+		<bean class="converters.StringToActorConverter"/>
+		
+		<bean class="converters.AdministratorToStringConverter"/>
+		<bean class="converters.StringToAdministratorConverter"/>
+		
+		<bean class="converters.ApplicationToStringConverter"/>
+		<bean class="converters.StringToApplicationConverter"/>
+		
+		<bean class="converters.AuditorToStringConverter"/>
+		<bean class="converters.StringToAuditorConverter"/>
+		
+		<bean class="converters.AuditToStringConverter"/>
+		<bean class="converters.StringToAuditConverter"/>
+		
+		<bean class="converters.AuthorityToStringConverter"/>
+		<bean class="converters.StringToAuthorityConverter"/>
+		
+		<bean class="converters.CategoryToStringConverter"/>
+		<bean class="converters.StringToCategoryConverter"/>
+		
+		<bean class="converters.ContactEmergencyToStringConverter"/>
+		<bean class="converters.StringToContactEmergencyConverter"/>
+		
+		<bean class="converters.CreditCardToStringConverter"/>
+		<bean class="converters.StringToCreditCardConverter"/>
+		
+		<bean class="converters.CurriculumToStringConverter"/>
+		<bean class="converters.StringToCurriculumConverter"/>
+		
+		<bean class="converters.EducationRecordToStringConverter"/>
+		<bean class="converters.StringToEducationRecordConverter"/>
+		
+		<bean class="converters.EndorserRecordToStringConverter"/>
+		<bean class="converters.StringToEndorserRecordConverter"/>
+		
+		<bean class="converters.ExplorerToStringConverter"/>
+		<bean class="converters.StringToExplorerConverter"/>
+		
+		<bean class="converters.FinderToStringConverter"/>
+		<bean class="converters.StringToFinderConverter"/>
+		
+		<bean class="converters.FolderToStringConverter"/>
+		<bean class="converters.StringToFolderConverter"/>
+		
+		<bean class="converters.GPSPointToStringConverter"/>
+		<bean class="converters.StringToGPSPointConverter"/>
+		
+		<bean class="converters.LegalTextToStringConverter"/>
+		<bean class="converters.StringToLegalTextConverter"/>
+		
+		<bean class="converters.LocationToStringConverter"/>
+		<bean class="converters.StringToLocationConverter"/>
+		
+		<bean class="converters.ManagerToStringConverter"/>
+		<bean class="converters.StringToManagerConverter"/>
+		
+		<bean class="converters.MessageToStringConverter"/>
+		<bean class="converters.StringToMessageConverter"/>
+		
+		<bean class="converters.MiscellaneousRecordToStringConverter"/>
+		<bean class="converters.StringToMiscellaneousRecordConverter"/>
+		
+		<bean class="converters.NoteToStringConverter"/>
+		<bean class="converters.StringToNoteConverter"/>
+		
+		<bean class="converters.PersonalRecordToStringConverter"/>
+		<bean class="converters.StringToPersonalRecordConverter"/>
+		
+		<bean class="converters.ProfessionalRecordToStringConverter"/>
+		<bean class="converters.StringToProfessionalRecordConverter"/>
+		
+		<bean class="converters.RangerToStringConverter"/>
+		<bean class="converters.StringToRangerConverter"/>
+		
+		<bean class="converters.SocialIdentityToStringConverter"/>
+		<bean class="converters.StringToSocialIdentityConverter"/>
+		
+		<bean class="converters.SponsorToStringConverter"/>
+		<bean class="converters.StringToSponsorConverter"/>
+		
+		<bean class="converters.SponsorshipToStringConverter"/>
+		<bean class="converters.StringToSponsorshipConverter"/>
+		
+		<bean class="converters.StageToStringConverter"/>
+		<bean class="converters.StringToStageConverter"/>
+		
+		<bean class="converters.StoryToStringConverter"/>
+		<bean class="converters.StringToStoryConverter"/>
+		
+		<bean class="converters.SurvivalClassToStringConverter"/>
+		<bean class="converters.StringToSurvivalClassConverter"/>
+		
+		<bean class="converters.SystemConfigurationToStringConverter"/>
+		<bean class="converters.StringToSystemConfigurationConverter"/>
+		
+		<bean class="converters.TagToStringConverter"/>
+		<bean class="converters.StringToTagConverter"/>
+		
+		<bean class="converters.TagValueToStringConverter"/>
+		<bean class="converters.StringToTagValueConverter"/>
+		
+		<bean class="converters.TripToStringConverter"/>
+		<bean class="converters.StringToTripConverter"/>
+		
+	</util:list>
+	
+</beans>
