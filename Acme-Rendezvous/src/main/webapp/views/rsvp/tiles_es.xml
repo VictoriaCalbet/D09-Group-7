@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- 
+ * tiles.xml
+ *
+ * Copyright (C) 2017 Universidad de Sevilla
+ * 
+ * The use of this project is hereby constrained to the conditions of the 
+ * TDG Licence, a copy of which you may download from 
+ * http://www.tdg-seville.info/License.html
+ -->
+
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+       
+<tiles-definitions>
+	<definition name="rsvp/list" extends="master.page">        
+		<put-attribute name="title" value="Listado de reservas" />
+		<put-attribute name="body" value="/views/rsvp/list.jsp" />
+	</definition>
+             
+     <definition name="RSVP/user/listRSVPs" extends="master.page">        
+		<put-attribute name="title" value="Listado de reservas" />
+		<put-attribute name="body" value="/views/rsvp/listRSVPs.jsp" />
+	</definition> 
+	
+	<definition name="rsvp/edit" extends="master.page">        
+		<put-attribute name="title" value="Editar reserva" />
+		<put-attribute name="body" value="/views/rsvp/edit.jsp" />
+	</definition>
+	
+	<definition name="RSVP/user/list" extends="master.page">        
+		<put-attribute name="title" value="Listado de citas a las que asistiré" />
+		<put-attribute name="body" value="/views/rendezvous/list.jsp" />
+	</definition>
+	
+	<definition name="RSVP/user/RSVP" extends="master.page">        
+		<put-attribute name="title" value="Gracias por responder las pregunstas." />
+		<put-attribute name="body" value="/views/rsvp/RSVP.jsp" />
+	</definition>
+</tiles-definitions>
