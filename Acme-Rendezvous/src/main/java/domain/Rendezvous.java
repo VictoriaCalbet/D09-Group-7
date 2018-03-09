@@ -126,6 +126,7 @@ public class Rendezvous extends DomainEntity {
 	private Collection<Comment>			comments;
 	private Collection<Announcement>	announcements;
 	private Collection<Rendezvous>		isLinkedTo;
+	private Collection<Request>			requests;
 
 
 	@Valid
@@ -192,5 +193,16 @@ public class Rendezvous extends DomainEntity {
 
 	public void setIsLinkedTo(final Collection<Rendezvous> isLinkedTo) {
 		this.isLinkedTo = isLinkedTo;
+	}
+
+	@Valid
+	@NotNull
+	@OneToMany(mappedBy = "rendezvous", cascade = CascadeType.REMOVE)
+	public Collection<Request> getRequests() {
+		return this.requests;
+	}
+
+	public void setRequests(final Collection<Request> requests) {
+		this.requests = requests;
 	}
 }
