@@ -55,7 +55,7 @@ public class Question extends DomainEntity {
 
 	@Valid
 	@NotNull
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = false)
 	public Rendezvous getRendezvous() {
 		return this.rendezvous;
 	}
