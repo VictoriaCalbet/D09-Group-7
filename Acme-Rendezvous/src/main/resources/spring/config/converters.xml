@@ -31,8 +31,14 @@
 		<bean class="converters.AnswerToStringConverter" />
 		<bean class="converters.StringToAnswerConverter" />
 		
+		<bean class="converters.CategoryToStringConverter" />
+		<bean class="converters.StringToCategoryConverter" />
+		
 		<bean class="converters.CommentToStringConverter" />
 		<bean class="converters.StringToCommentConverter" />
+		
+		<bean class="converters.ManagerToStringConverter" />
+		<bean class="converters.StringToManagerConverter" />
 		
 		<bean class="converters.QuestionToStringConverter" />
 		<bean class="converters.StringToQuestionConverter" />
@@ -40,15 +46,29 @@
 		<bean class="converters.RendezvousToStringConverter" />
 		<bean class="converters.StringToRendezvousConverter" />
 		
+		<bean class="converters.RequestToStringConverter" />
+		<bean class="converters.StringToRequestConverter" />
+		
 		<bean class="converters.RSVPToStringConverter" />
 		<bean class="converters.StringToRSVPConverter" />
+		
+		<bean class="converters.ServiceToStringConverter" />
+		<bean class="converters.StringToServiceConverter" />
+		
+		<bean class="converters.SystemConfigurationToStringConverter" />
+		<bean class="converters.StringToSystemConfigurationConverter" />
 		
 		<bean class="converters.UserToStringConverter" />
 		<bean class="converters.StringToUserConverter" />
 		
 		<!-- Datatypes -->
+		
+		<bean class="converters.CreditCardToStringConverter" />
+		<bean class="converters.StringToCreditCardConverter" />
+		
 		<bean class="converters.GPSPointToStringConverter" />
 		<bean class="converters.StringToGPSPointConverter" />
+		
 	</util:list>
 	
 </beans>
