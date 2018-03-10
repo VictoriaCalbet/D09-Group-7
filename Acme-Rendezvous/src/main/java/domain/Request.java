@@ -38,10 +38,10 @@ public class Request extends DomainEntity {
 		this.comment = comment;
 	}
 
-	public boolean isCancelled() {
+	public boolean getIsCancelled() {
 		return this.isCancelled;
 	}
-	public void setCancelled(final boolean isCancelled) {
+	public void setIsCancelled(final boolean isCancelled) {
 		this.isCancelled = isCancelled;
 	}
 

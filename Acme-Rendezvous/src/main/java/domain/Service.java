@@ -56,10 +56,10 @@ public class Service extends DomainEntity {
 		this.pictureURL = pictureURL;
 	}
 
-	public boolean isInappropriate() {
+	public boolean getIsInappropriate() {
 		return this.isInappropriate;
 	}
-	public void setInappropriate(final boolean isInappropriate) {
+	public void setIsInappropriate(final boolean isInappropriate) {
 		this.isInappropriate = isInappropriate;
 	}
 
