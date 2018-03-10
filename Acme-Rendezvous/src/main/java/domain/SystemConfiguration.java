@@ -16,7 +16,7 @@ public class SystemConfiguration extends DomainEntity {
 
 	// Attributes -------------------------------------------------------------
 
-	private String	bussinessName;
+	private String	businessName;
 	private String	bannerURL;
 	private String	englishWelcomeMessage;
 	private String	spanishWelcomeMessage;
@@ -24,11 +24,11 @@ public class SystemConfiguration extends DomainEntity {
 
 	@NotBlank
 	@SafeHtml(whitelistType = WhiteListType.NONE)
-	public String getBussinessName() {
-		return this.bussinessName;
+	public String getBusinessName() {
+		return this.businessName;
 	}
-	public void setBussinessName(final String bussinessName) {
-		this.bussinessName = bussinessName;
+	public void setBusinessName(final String businessName) {
+		this.businessName = businessName;
 	}
 
 	@URL

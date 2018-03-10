@@ -963,4 +963,18 @@
 		<property name="user" ref="user3"/>
 		<property name="question" ref="question2"/>
 	</bean>
+	
+	<!-- SystemConfiguration #SystemConfiguration -->
+	
+	<bean id="systemConfiguration" class="domain.SystemConfiguration">
+		<property name="businessName" value="Adventure meetups" /> 
+		<property name="bannerURL"
+			value="https://tinyurl.com/adventure-meetup" />
+		<property name="englishWelcomeMessage"
+			value="Your place to organise your adventure meetups!" />
+		<property name="spanishWelcomeMessage"
+			value="Tu sitio para organizar quedadas de aventura." />
+		
+	</bean>
+	
 </beans>
