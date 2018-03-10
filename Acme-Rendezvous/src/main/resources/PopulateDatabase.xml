@@ -161,8 +161,8 @@
 		<property name="userAccount" ref="userAccount3" />
 		<property name="rsvps">
 			<list>
-				<ref bean="rsvp2"/>
 				<ref bean="rsvp1"/>
+				<ref bean="rsvp2"/>
 				<ref bean="rsvp9"/>
 			</list>
 		</property>
@@ -507,7 +507,7 @@
 	<bean id="rendezvous4" class="domain.Rendezvous">
 		<property name="name" value="This is rendezvous4" />
 		<property name="description" value="Description of the rendezvous4" />
-		<property name="meetingMoment" value="2017/12/01 00:00" />
+		<property name="meetingMoment" value="2018/12/01 00:00" />
 		<property name="picture"><null/></property> 
 		<property name="gpsPoint"><null/></property>
 		<property name="isDraft" value="false"/>
@@ -550,7 +550,7 @@
 	<bean id="rendezvous5" class="domain.Rendezvous">
 		<property name="name" value="This is rendezvous5" />
 		<property name="description" value="Description of the rendezvous4" />
-		<property name="meetingMoment" value="2017/12/01 00:00" />
+		<property name="meetingMoment" value="2018/12/01 00:00" />
 		<property name="picture"><null/></property> 
 		<property name="gpsPoint"><null/></property>
 		<property name="isDraft" value="false"/>
@@ -593,7 +593,7 @@
 	<bean id="rendezvous6" class="domain.Rendezvous">
 		<property name="name" value="This is rendezvous6" />
 		<property name="description" value="Description of the rendezvous6" />
-		<property name="meetingMoment" value="2017/12/01 00:00" />
+		<property name="meetingMoment" value="2018/12/01 00:00" />
 		<property name="picture"><null/></property> 
 		<property name="gpsPoint"><null/></property>
 		<property name="isDraft" value="false"/>
@@ -671,7 +671,7 @@
 		<property name="brandName" value="Visa"/>
 		<property name="number" value="4349335198180582"/>
 		<property name="expirationMonth" value="03"/>
-		<property name="expirationYear" value="2013"/>
+		<property name="expirationYear" value="2023"/>
 		<property name="cvv" value="592"/>
 	</bean>
 	

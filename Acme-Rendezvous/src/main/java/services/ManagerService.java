@@ -2,6 +2,8 @@
 package services;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,11 +43,19 @@ public class ManagerService {
 	// Simple CRUD methods ----------------------------------------------------
 
 	public Manager create() {
-		return null;
+		Manager result;
+		UserAccount userAccount;
+
+		result = new Manager();
+		userAccount = this.userAccountService.create("MANAGER");
+		result.setServices(new HashSet<domain.Service>());
+		result.setUserAccount(userAccount);
+
+		return result;
 	}
 
 	public Manager save(final Manager manager) {
-		Assert.notNull(manager);
+		Assert.notNull(manager, "message.error.manager.null");
 		Manager result;
 
 		result = this.managerRepository.save(manager);
@@ -55,11 +65,62 @@ public class ManagerService {
 	}
 
 	public Manager saveFromCreate(final Manager manager) {
-		return null;
+		Assert.notNull(manager, "message.error.manager.null");
+		Assert.notNull(manager.getUserAccount().getUsername(), "message.error.manager.username.null");
+		Assert.notNull(manager.getUserAccount().getPassword(), "message.error.manager.password.null");
+
+		if (manager.getBirthDate() != null)
+			Assert.isTrue(manager.getBirthDate().before(new Date()), "message.error.manager.birthDate.past");
+
+		final Manager result;
+
+		// Check unlogged user
+		Assert.isTrue(!this.actorService.checkLogin(), "message.error.manager.login");
+
+		// Check authority
+		final boolean isManager;
+		isManager = this.actorService.checkAuthority(manager, "MANAGER");
+		Assert.isTrue(isManager, "message.error.manager.authority.wrong");
+
+		// Check repeated username
+		UserAccount possibleRepeated = null;
+		possibleRepeated = this.userAccountService.findByUsername(manager.getUserAccount().getUsername());
+		Assert.isNull(possibleRepeated, "message.error.manager.username.repeated");
+
+		result = this.save(manager);
+
+		return result;
 	}
 
 	public Manager saveFromEdit(final Manager manager) {
-		return null;
+		Assert.notNull(manager, "message.error.manager.null");
+		Assert.notNull(manager.getUserAccount().getUsername(), "message.error.manager.username.null");
+		Assert.notNull(manager.getUserAccount().getPassword(), "message.error.manager.password.null");
+
+		if (manager.getBirthDate() != null)
+			Assert.isTrue(manager.getBirthDate().before(new Date()), "message.error.manager.birthDate.past");
+
+		final Manager result;
+		Manager principal;
+
+		// Check user as principal
+		principal = this.findByPrincipal();
+		Assert.isTrue(principal.getId() == manager.getId(), "message.error.manager.edit.self");
+
+		// Check authority
+		final boolean isManager;
+		isManager = this.actorService.checkAuthority(manager, "MANAGER");
+		Assert.isTrue(isManager, "message.error.manager.authority.wrong");
+
+		// Encoding password
+		UserAccount userAccount;
+		userAccount = manager.getUserAccount();
+		userAccount = this.userAccountService.modifyPassword(userAccount);
+		manager.setUserAccount(userAccount);
+
+		result = this.save(manager);
+
+		return result;
 	}
 
 	// Other business methods -------------------------------------------------
