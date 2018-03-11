@@ -18,9 +18,19 @@
 
 	<definition name="service/list" extends="master.page">        
 		<put-attribute name="title" value="List of services" />
-		<put-attribute name="body" value="/views/service/list.jsp" />
+		<put-attribute name="body" value="/views/service/list.jsp"/>
 	</definition>
-             
+
+	<definition name="service/display" extends="master.page">        
+		<put-attribute name="title" value="Show a service"/>
+		<put-attribute name="body" value="/views/service/display.jsp"/>
+	</definition>
+	
+    <definition name="service/create" extends="master.page">        
+		<put-attribute name="title" value="Create a service" />
+		<put-attribute name="body" value="/views/service/edit.jsp"/>
+	</definition>
+	
 	<definition name="service/edit" extends="master.page">        
 		<put-attribute name="title" value="Edit a service" />
 		<put-attribute name="body" value="/views/service/edit.jsp" />
