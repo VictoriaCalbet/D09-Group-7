@@ -3,7 +3,6 @@ package services.form;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 import javax.transaction.Transactional;
 
@@ -72,10 +71,6 @@ public class RendezvousFormService {
 
 	public Rendezvous saveFromCreate(final RendezvousForm rendezvousForm) {
 
-		Assert.isTrue(rendezvousForm.getMeetingMoment().after(new Date()), "message.error.rendezvous.meetingMoment.future");
-		Assert.isTrue(!((rendezvousForm.getGpsPoint().getLongitude() == null && rendezvousForm.getGpsPoint().getLatitude() != null) || (rendezvousForm.getGpsPoint().getLongitude() != null && rendezvousForm.getGpsPoint().getLatitude() == null)),
-			"message.error.rendezvous.GPSPoint");
-
 		final Rendezvous r = this.rendezvousService.create();
 
 		r.setDescription(rendezvousForm.getDescription());
@@ -103,16 +98,7 @@ public class RendezvousFormService {
 
 	public Rendezvous saveFromEdit(final RendezvousForm rendezvousForm) {
 
-		Assert.isTrue(rendezvousForm.getMeetingMoment().after(new Date()), "message.error.rendezvous.meetingMoment.future");
-		Assert.isTrue(!((rendezvousForm.getGpsPoint().getLongitude() == null && rendezvousForm.getGpsPoint().getLatitude() != null) || (rendezvousForm.getGpsPoint().getLongitude() != null && rendezvousForm.getGpsPoint().getLatitude() == null)),
-			"message.error.rendezvous.GPSPoint");
-
 		final Rendezvous r = this.rendezvousService.findOne(rendezvousForm.getId());
-		final User u = this.userService.findByPrincipal();
-		Assert.notNull(r, "message.error.rendezvous.null");
-		Assert.isTrue(r.getCreator().equals(u), "message.error.rendezvous.user");
-		Assert.isTrue(r.getIsDraft(), "message.error.rendezvous.isDraft");
-		Assert.isTrue(!r.getIsDeleted(), "message.error.rendezvous.isDeleted");
 
 		r.setDescription(rendezvousForm.getDescription());
 		r.setName(rendezvousForm.getName());
@@ -122,7 +108,7 @@ public class RendezvousFormService {
 		r.setMeetingMoment(rendezvousForm.getMeetingMoment());
 		r.setPicture(rendezvousForm.getPicture());
 
-		final Rendezvous rdv = this.rendezvousService.save(r);
+		final Rendezvous rdv = this.rendezvousService.update(r);
 
 		return rdv;
 	}

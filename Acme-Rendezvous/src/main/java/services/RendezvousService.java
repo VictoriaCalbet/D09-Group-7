@@ -4,6 +4,7 @@ package services;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import domain.Comment;
 import domain.Question;
 import domain.RSVP;
 import domain.Rendezvous;
+import domain.Request;
 import domain.User;
 
 @Service
@@ -59,6 +61,7 @@ public class RendezvousService {
 		final Collection<Comment> comments = new ArrayList<Comment>();
 		final Collection<Announcement> announcements = new ArrayList<Announcement>();
 		final Collection<Rendezvous> isLinkedTo = new ArrayList<Rendezvous>();
+		final Collection<Request> requests = new ArrayList<Request>();
 
 		result.setIsDeleted(false);
 		result.setCreator(u);
@@ -67,8 +70,13 @@ public class RendezvousService {
 		result.setComments(comments);
 		result.setAnnouncements(announcements);
 		result.setIsLinkedTo(isLinkedTo);
+		result.setRequests(requests);
 
 		return result;
+	}
+
+	public void flush() {
+		this.rendezvousRepository.flush();
 	}
 
 	public Collection<Rendezvous> findRendezvousByCategories(final int categoryId) {
@@ -144,11 +152,52 @@ public class RendezvousService {
 
 	public Rendezvous save(final Rendezvous rendezvous) {
 		Assert.notNull(rendezvous, "message.error.rendezvous.null");
+		Assert.isTrue(rendezvous.getMeetingMoment().after(new Date()), "message.error.rendezvous.meetingMoment.future");
+		Assert.isTrue(!((rendezvous.getGpsPoint().getLongitude() == null && rendezvous.getGpsPoint().getLatitude() != null) || (rendezvous.getGpsPoint().getLongitude() != null && rendezvous.getGpsPoint().getLatitude() == null)),
+			"message.error.rendezvous.GPSPoint");
+
+		final Calendar birthDate = new GregorianCalendar();
+		int age = 0;
+		if (rendezvous.getCreator().getBirthDate() != null) {
+			birthDate.setTime(rendezvous.getCreator().getBirthDate());
+			age = this.calculateAge(birthDate);
+		}
+		if (age < 18)
+			Assert.isTrue(rendezvous.getIsAdultOnly() == false);
+
 		Rendezvous result;
 		result = this.rendezvousRepository.save(rendezvous);
 
 		return result;
 	}
+
+	public Rendezvous update(final Rendezvous rendezvous) {
+
+		Assert.notNull(rendezvous, "message.error.rendezvous.null");
+		final User u = this.userService.findByPrincipal();
+		Assert.isTrue(rendezvous.getCreator().equals(u), "message.error.rendezvous.user");
+		Assert.isTrue(rendezvous.getIsDraft(), "message.error.rendezvous.isDraft");
+		Assert.isTrue(!rendezvous.getIsDeleted(), "message.error.rendezvous.isDeleted");
+
+		Assert.isTrue(rendezvous.getMeetingMoment().after(new Date()), "message.error.rendezvous.meetingMoment.future");
+		Assert.isTrue(!((rendezvous.getGpsPoint().getLongitude() == null && rendezvous.getGpsPoint().getLatitude() != null) || (rendezvous.getGpsPoint().getLongitude() != null && rendezvous.getGpsPoint().getLatitude() == null)),
+			"message.error.rendezvous.GPSPoint");
+
+		final Calendar birthDate = new GregorianCalendar();
+		int age = 0;
+		if (rendezvous.getCreator().getBirthDate() != null) {
+			birthDate.setTime(rendezvous.getCreator().getBirthDate());
+			age = this.calculateAge(birthDate);
+		}
+		if (age < 18)
+			Assert.isTrue(rendezvous.getIsAdultOnly() == false);
+
+		Rendezvous result;
+		result = this.rendezvousRepository.save(rendezvous);
+
+		return result;
+	}
+
 	public void delete(final int rendezvousId) {
 		final Rendezvous r = this.rendezvousRepository.findOne(rendezvousId);
 		final User u = this.userService.findByPrincipal();
@@ -184,6 +233,20 @@ public class RendezvousService {
 
 		this.rendezvousRepository.delete(r);
 
+	}
+
+	public void linked(final Rendezvous r1, final Rendezvous r2) {
+
+		final User u = this.userService.findByPrincipal();
+		Assert.notNull(r1, "message.error.rendezvous.null");
+		Assert.notNull(r2, "message.error.rendezvous.null");
+		Assert.isTrue(r1.getCreator().equals(u), "message.error.rendezvous.user");
+		Assert.isTrue(r2.getCreator().equals(u), "message.error.rendezvous.user");
+
+		r1.getIsLinkedTo().add(r2);
+		r2.getIsLinkedTo().add(r1);
+		this.rendezvousRepository.save(r1);
+		this.rendezvousRepository.save(r2);
 	}
 
 	// Other business methods -------------------------------------------------

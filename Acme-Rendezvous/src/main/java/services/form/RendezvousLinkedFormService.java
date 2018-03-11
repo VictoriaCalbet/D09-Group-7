@@ -48,21 +48,12 @@ public class RendezvousLinkedFormService {
 
 	public void linkedTo(final RendezvousLinkedForm r) {
 
-		final User u = this.userService.findByPrincipal();
 		Assert.notNull(r, "message.error.rendezvous.null");
 
 		final Rendezvous r1 = this.rendezvousService.findOne(r.getRendezvousId());
 		final Rendezvous r2 = this.rendezvousService.findOne(r.getRendezvousLinkedId());
-		Assert.notNull(r1, "message.error.rendezvous.null");
-		Assert.notNull(r2, "message.error.rendezvous.null");
-		Assert.isTrue(r1.getCreator().equals(u), "message.error.rendezvous.user");
-		Assert.isTrue(r2.getCreator().equals(u), "message.error.rendezvous.user");
 
-		r1.getIsLinkedTo().add(r2);
-		r2.getIsLinkedTo().add(r1);
-		this.rendezvousService.save(r1);
-		this.rendezvousService.save(r2);
-
+		this.rendezvousService.linked(r1, r2);
 	}
 
 }

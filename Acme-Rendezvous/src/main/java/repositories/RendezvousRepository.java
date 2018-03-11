@@ -21,10 +21,10 @@ public interface RendezvousRepository extends JpaRepository<Rendezvous, Integer>
 	@Query("select r from Rendezvous r join r.creator u where u.id = ?1 AND r.isDeleted = false")
 	Collection<Rendezvous> findRendezvousSimilarNotDeleted(int creatorId);
 
-	@Query("select r from Rendezvous r join r.isLinkedTo lks where r.id = ?1 AND lks.isDeleted = false AND lks.isDraft = false AND lks.isAdultOnly = false")
+	@Query("select lks from Rendezvous r join r.isLinkedTo lks where r.id = ?1 AND lks.isDeleted = false AND lks.isDraft = false AND lks.isAdultOnly = false")
 	Collection<Rendezvous> findRendezvousSimilarNotLogged(int rendezvousId);
 
-	@Query("select lks from Rendezvous r join r.isLinkedTo lks where r.id = ?1")
+	@Query("select lks from Rendezvous r join r.isLinkedTo lks where r.id = ?1 AND lks.isDeleted = false AND lks.isDraft = false")
 	Collection<Rendezvous> findRendezvousSimilarLogged(int rendezvousId);
 
 	@Query("select r from Rendezvous r where r.isDeleted = false AND r.isDraft = false AND r.meetingMoment > CURRENT_TIMESTAMP")

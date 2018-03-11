@@ -1,7 +1,7 @@
 
 package services;
 
-import java.util.Collection;
+import java.util.Date;
 
 import javax.transaction.Transactional;
 
@@ -11,15 +11,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
+import domain.GPSPoint;
 import domain.Rendezvous;
-import domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-	"classpath:spring/datasource.xml", "classpath:spring/config/packages.xml"
+	"classpath:spring/junit.xml"
 })
 @Transactional
 public class RendezvousServiceTest extends AbstractTest {
@@ -32,107 +31,215 @@ public class RendezvousServiceTest extends AbstractTest {
 
 	// Tests ------------------------------------------------------------------
 
-	@Test
-	public void testCreate() {
-		//login
-		this.authenticate("user2");
-
-		Rendezvous r;
-		r = this.rendezvousService.create();
-
-		Assert.isTrue(r.getCreator().getUserAccount().getUsername().equals("user2"));
-
-		r.setName("Dolar");
-		r.setDescription("descripcion1");
-		r.setMeetingMoment(new DateTime().plusDays(10).toDate());
-		r.setPicture("http://jsequeiros.com/comprimir-fotografias-e-imagenes-con-microsoft-office-picture-manager.html");
-		r.setGpsPoint(null);
-		r.setIsAdultOnly(false);
-		r.setIsDeleted(false);
-		r.setIsDraft(false);
-
-		this.rendezvousService.save(r);
-
-		this.unauthenticate();
-
-	}
-
-	@Test
-	public void testSaveFromCreate() {
-		this.authenticate("user2");
-
-		Rendezvous r;
-		r = this.rendezvousService.create();
-
-		r.setName("Rendezvous34");
-		r.setIsAdultOnly(true);
-
-		this.rendezvousService.save(r);
-
-		this.unauthenticate();
-
-	}
-
-	@Test
-	/**
-	 * Test: list a rendezvouses of user.
+	/***
+	 * Create rendezvous
+	 * 1º Good test -> expected: rendezvous created
+	 * 2º Bad test -> cannot create rendezvous with past date
+	 * 3º Bad test -> an user not adult cannot create rendezvous with isAdult = true
 	 */
-	public void testListRendezvous() {
-		//login
-		this.authenticate("user2");
+	@Test
+	public void testCreateRendezvous() {
+		final Object[][] testingData = {
+			// principal, name, description, meetingMoment, picture,latitude, longitude, isAdult, isDraft, expected exception
+			{
+				"user1", "rendezvous1", "description of rendezvous1", new DateTime().plusHours(1).toDate(), "https://goo.gl/UscuZg", 85.8, 102.3, false, false, null
+			}, {
+				"user1", "rendezvous1", "description of rendezvous1", new DateTime().plusDays(-10).toDate(), "https://goo.gl/UscuZg", 85.8, 102.3, false, false, IllegalArgumentException.class
+			}, {
+				"user3", "rendezvous1", "description of rendezvous1", new DateTime().plusDays(2).toDate(), "https://goo.gl/UscuZg", 85.8, 100.1, true, false, IllegalArgumentException.class
+			}
+		};
 
-		final User u = this.userService.findByPrincipal();
-
-		final Collection<Rendezvous> r = u.getRendezvoussesCreated();
-		Assert.isTrue(r.size() >= 0);
-
-		this.unauthenticate();
-
+		for (int i = 0; i < testingData.length; i++)
+			this.createRendezvousTemplated((String) testingData[i][0], (String) testingData[i][1], (String) testingData[i][2], (Date) testingData[i][3], (String) testingData[i][4], (double) testingData[i][5], (double) testingData[i][6],
+				(boolean) testingData[i][7], (boolean) testingData[i][8], (Class<?>) testingData[i][9]);
 	}
 
-	@Test
-	/**
-	 * Test: list all  rendezvouses.
+	protected void createRendezvousTemplated(final String principal, final String name, final String description, final Date meetingMoment, final String picture, final double latitude, final double longitude, final boolean isAdult, final boolean isDraft,
+		final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(principal);
+			final Rendezvous r = this.rendezvousService.create();
+			r.setName(name);
+			r.setDescription(description);
+			r.setMeetingMoment(meetingMoment);
+			r.setPicture(picture);
+			final GPSPoint g = new GPSPoint();
+			g.setLatitude(latitude);
+			g.setLongitude(longitude);
+			r.setGpsPoint(g);
+			r.setIsAdultOnly(isAdult);
+			r.setIsDraft(isDraft);
+			this.rendezvousService.save(r);
+			this.unauthenticate();
+			this.rendezvousService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
+		this.checkExceptions(expectedException, caught);
+	}
+	/***
+	 * Edit rendezvous
+	 * 1º Good test -> expected: rendezvous edited
+	 * 2º Bad test -> cannot edit a rendezvous with past date
+	 * 3º Bad test -> cannot edit a deleted rendezvous
+	 * 4º Bad test -> cannot edit a rendezvous in mode final
+	 * 5º Bad test -> an user cannot edit rendezvous if this rendezvous isn't own.
 	 */
-	public void testListAllRendezvous() {
+	@Test
+	public void testEditRendezvous() {
+		final Object[][] testingData = {
+			// principal, name, description, meetingMoment, picture,latitude, longitude, isAdult, isDraft, expected exception
+			{
+				"user1", "rendezvous1", new DateTime().plusHours(1).toDate(), false, 82, null
+			}, {
+				"user1", "rendezvous1", new DateTime().plusDays(-10).toDate(), false, 82, IllegalArgumentException.class
+			}, {
+				"user1", "rendezvous1", new DateTime().plusDays(10).toDate(), false, 81, IllegalArgumentException.class
+			}, {
+				"user1", "rendezvous1", new DateTime().plusDays(10).toDate(), false, 83, IllegalArgumentException.class
+			}, {
+				"user3", "rendezvous1", new DateTime().plusDays(2).toDate(), false, 82, IllegalArgumentException.class
+			}
+		};
 
-		final Collection<Rendezvous> r = this.rendezvousService.findAll();
-		Assert.notEmpty(r);
-
+		for (int i = 0; i < testingData.length; i++)
+			this.editRendezvousTemplated((String) testingData[i][0], (String) testingData[i][1], (Date) testingData[i][2], (boolean) testingData[i][3], (int) testingData[i][4], (Class<?>) testingData[i][5]);
 	}
 
-	@Test
-	/**
-	 * Test: delete a rendezvous.
+	protected void editRendezvousTemplated(final String principal, final String name, final Date meetingMoment, final boolean isAdult, final int rendezvousId, final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(principal);
+			final Rendezvous r = this.rendezvousService.findOne(rendezvousId);
+			r.setName(name);
+			r.setIsAdultOnly(isAdult);
+			r.setMeetingMoment(meetingMoment);
+			r.setGpsPoint(new GPSPoint());
+
+			this.rendezvousService.update(r);
+			this.unauthenticate();
+			this.rendezvousService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
+		this.checkExceptions(expectedException, caught);
+	}
+
+	/***
+	 * Delete rendezvous
+	 * 1º Good test -> expected: rendezvous deleted
+	 * 2º Bad test -> cannot delete a rendezvous with mode final
+	 * 3º Bad test -> cannot delete a rendezvous deleted
+	 * 4º Bad test -> an manager cannot delete a rendezvous
+	 * 5º Bad test -> an user cannot delete rendezvous if this rendezvous isn't own.
 	 */
+	@Test
 	public void testDeleteRendezvous() {
-		//login
-		this.authenticate("user3");
+		final Object[][] testingData = {
+			//actor, rendezvousId, expected exception
+			{
+				"user1", 82, null
+			}, {
+				"user1", 80, IllegalArgumentException.class
+			}, {
+				"user1", 81, IllegalArgumentException.class
+			}, {
+				"manager1", 82, IllegalArgumentException.class
+			}, {
+				"user3", 82, IllegalArgumentException.class
+			}
+		};
 
-		Rendezvous r;
-		r = this.rendezvousService.create();
+		for (int i = 0; i < testingData.length; i++)
+			this.deleteRendezvousTemplated((String) testingData[i][0], (int) testingData[i][1], (Class<?>) testingData[i][2]);
+	}
 
-		Assert.isTrue(r.getCreator().getUserAccount().getUsername().equals("user3"));
+	protected void deleteRendezvousTemplated(final String principal, final int rendezvousId, final Class<?> expectedException) {
+		Class<?> caught = null;
 
-		r.setName("Dolar");
-		r.setDescription("descripcion1");
-		r.setMeetingMoment(new DateTime().plusDays(10).toDate());
-		r.setPicture("http://jsequeiros.com/comprimir-fotografias-e-imagenes-con-microsoft-office-picture-manager.html");
-		r.setGpsPoint(null);
-		r.setIsAdultOnly(false);
-		r.setIsDeleted(false);
-		r.setIsDraft(true);
+		try {
+			this.authenticate(principal);
+			this.rendezvousService.delete(rendezvousId);
+			this.unauthenticate();
+			this.rendezvousService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
+		this.checkExceptions(expectedException, caught);
+	}
 
-		final Rendezvous r1 = this.rendezvousService.save(r);
+	/***
+	 * Delete rendezvousAdmin
+	 * 1º Good test -> expected: rendezvous deleted from database
+	 * 2º Bad test -> an user cannot delete a rendezvous from database
+	 */
+	@Test
+	public void testDeleteRendezvousAdmin() {
+		final Object[][] testingData = {
+			//actor, rendezvousId, expected exception
+			{
+				"admin", 80, null
+			}, {
+				"user1", 80, IllegalArgumentException.class
+			}
+		};
 
-		final User u = this.userService.findByPrincipal();
-		Assert.isTrue(r1.getCreator().equals(u));
-		Assert.isTrue(r.getIsDraft());
-		Assert.isTrue(!r.getIsDeleted());
-		r.setIsDeleted(true);
+		for (int i = 0; i < testingData.length; i++)
+			this.deleteRendezvousAdminTemplated((String) testingData[i][0], (int) testingData[i][1], (Class<?>) testingData[i][2]);
+	}
 
-		this.rendezvousService.delete(r1.getId());
-		this.unauthenticate();
+	protected void deleteRendezvousAdminTemplated(final String principal, final int rendezvousId, final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(principal);
+			this.rendezvousService.deleteAdmin(rendezvousId);
+			this.unauthenticate();
+			this.rendezvousService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
+		this.checkExceptions(expectedException, caught);
+	}
+
+	/***
+	 * Link rendezvous
+	 * 1º Good test -> expected: rendezvous linked
+	 * 2º Bad test -> cannot linked the rendezvous because it's already linked
+	 */
+	@Test
+	public void testLinkRendezvous() {
+		final Object[][] testingData = {
+			//actor, rendezvousId, rendezvousId, expected exception
+			{
+				"user1", 80, 82, null
+			}, {
+				"user1", 80, 84, IllegalArgumentException.class
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.linkRendezvousTemplated((String) testingData[i][0], (int) testingData[i][1], (int) testingData[i][2], (Class<?>) testingData[i][3]);
+	}
+
+	protected void linkRendezvousTemplated(final String principal, final int rendezvousId, final int rendezvousLinkedToId, final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(principal);
+			final Rendezvous r1 = this.rendezvousService.findOne(rendezvousId);
+			final Rendezvous r2 = this.rendezvousService.findOne(rendezvousLinkedToId);
+			this.rendezvousService.linked(r1, r2);
+			this.unauthenticate();
+			this.rendezvousService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
+		this.checkExceptions(expectedException, caught);
 	}
 
 }
