@@ -17,10 +17,22 @@
 <%@taglib prefix="display" uri="http://displaytag.sf.net"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
+<%@ taglib prefix="acme" tagdir="/WEB-INF/tags"%>
 
 
 <security:authentication property="principal" var="loggedactor"/>
+
+<security:authorize access="isAnonymous()">
+
+	<form:form action="rendezvous/listCategory.do" modelAttribute="categoryForm">
+		<acme:select items="${categories}" itemLabel="name" code="rendezvous.category" path="categoryId"/>	
+			<!-- Action buttons -->
+		<acme:submit name="save" code="rendezvous.search" />
+		<br>
+		<br>	
+
+	</form:form>
+</security:authorize>
 
 <display:table name="rendezvouses" id="row" requestURI="${requestURI}" pagesize="5">
 
@@ -84,6 +96,7 @@
 		<display:column property="isDraft" title="${isDraftHeader}" style="${style}"/>
 		
 	</security:authorize>
+
 	
 	<spring:message code="rendezvous.creator" var="creatorHeader" />	
 	<display:column title="${creatorHeader}">	

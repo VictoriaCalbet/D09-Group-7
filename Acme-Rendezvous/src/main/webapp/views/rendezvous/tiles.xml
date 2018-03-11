@@ -37,7 +37,6 @@
 		<put-attribute name="title" value="Link a similar rendezvous" />
 		<put-attribute name="body" value="/views/rendezvous/link.jsp" />
 	</definition>
-
 	
 	
 </tiles-definitions>

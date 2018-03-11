@@ -38,6 +38,8 @@ public class RendezvousService {
 	private ActorService			actorService;
 	@Autowired
 	private RSVPService				rsvpService;
+	@Autowired
+	private CategoryService			categoryService;
 
 
 	// Constructors -----------------------------------------------------------
@@ -67,6 +69,10 @@ public class RendezvousService {
 		result.setIsLinkedTo(isLinkedTo);
 
 		return result;
+	}
+
+	public Collection<Rendezvous> findRendezvousByCategories(final int categoryId) {
+		return this.rendezvousRepository.findRendezvousByCategories(categoryId);
 	}
 
 	public Collection<Rendezvous> findRendezvousSimilarNotDeleted() {
