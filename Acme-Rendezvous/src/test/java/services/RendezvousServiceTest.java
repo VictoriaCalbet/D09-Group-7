@@ -324,4 +324,42 @@ public class RendezvousServiceTest extends AbstractTest {
 		this.checkExceptions(expectedException, caught);
 	}
 
+	/***
+	 * List rendezvous by category
+	 * Testing cases:
+	 * 1º Good test -> expected: results shown
+	 */
+
+	@Test
+	public void listCategoryRendezvous() {
+
+		final Object testingData[][] = {
+			//principal expected exception
+			{
+				"user1", 90, null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.listCategoryRendezvous((String) testingData[i][0], (int) testingData[i][1], (Class<?>) testingData[i][2]);
+	}
+
+	protected void listCategoryRendezvous(final String principal, final int categoryId, final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(principal);
+
+			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousByCategories(categoryId);
+
+			Assert.notNull(rendezvouses);
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
+
+		this.checkExceptions(expectedException, caught);
+	}
 }
