@@ -76,6 +76,7 @@
 		
 		<security:authorize access="isAnonymous()">
 			<li><a class="fNiv" href="user/create.do"><spring:message code="user.create" /></a></li>
+			<li><a class="fNiv" href="manager/create.do"><spring:message code="manager.create" /></a></li>
 			<li><a class="fNiv" href="security/login.do"><spring:message code="master.page.login" /></a></li>
 		</security:authorize>
 		
@@ -89,6 +90,9 @@
 					<li class="arrow"></li>
 					<security:authorize access="hasAnyRole('ADMIN', 'USER')">
 						<li><a href="actor/actor/profile.do"><spring:message code="user.profile" /> </a></li>
+					</security:authorize>
+					<security:authorize access="hasRole('MANAGER')">
+						<li><a href="manager/manager/profile.do"><spring:message code="manager.profile" /> </a></li>
 					</security:authorize>
 					<li><a href="j_spring_security_logout"> <spring:message code="master.page.logout" /> </a></li>
 				</ul>
