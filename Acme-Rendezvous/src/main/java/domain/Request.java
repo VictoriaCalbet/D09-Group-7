@@ -19,7 +19,6 @@ public class Request extends DomainEntity {
 
 	private CreditCard	creditCard;
 	private String		comment;
-	private boolean		isCancelled;
 
 
 	@Valid
@@ -36,13 +35,6 @@ public class Request extends DomainEntity {
 	}
 	public void setComment(final String comment) {
 		this.comment = comment;
-	}
-
-	public boolean getIsCancelled() {
-		return this.isCancelled;
-	}
-	public void setIsCancelled(final boolean isCancelled) {
-		this.isCancelled = isCancelled;
 	}
 
 

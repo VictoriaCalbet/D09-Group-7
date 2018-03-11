@@ -632,32 +632,28 @@
 	<!-- Requests #Requests -->
 	
 	<bean id="request1" class="domain.Request">
-		<property name="isCancelled" value="false"/>
-		<property name="comment" value="Blah"/>
+		<property name="comment" value="Comment of the request1"/>
 		<property name="creditCard" ref="creditCard1"/>
 		<property name="service" ref="service1"/>
 		<property name="rendezvous" ref="rendezvous1"/>
 	</bean>
 	
 	<bean id="request2" class="domain.Request">
-		<property name="isCancelled" value="false"/>
-		<property name="comment" value="Blah"/>
+		<property name="comment" value="Comment of the request2"/>
 		<property name="creditCard" ref="creditCard1"/>
 		<property name="service" ref="service2"/>
 		<property name="rendezvous" ref="rendezvous1"/>
 	</bean>
 	
 	<bean id="request3" class="domain.Request">
-		<property name="isCancelled" value="false"/>
-		<property name="comment" value="Blah"/>
+		<property name="comment" value="Comment of the request3"/>
 		<property name="creditCard" ref="creditCard1"/>
 		<property name="service" ref="service4"/>
 		<property name="rendezvous" ref="rendezvous4"/>
 	</bean>
 	
 	<bean id="request4" class="domain.Request">
-		<property name="isCancelled" value="false"/>
-		<property name="comment" value="Blah"/>
+		<property name="comment" value="Comment of the request4"/>
 		<property name="creditCard" ref="creditCard3"/>
 		<property name="service" ref="service5"/>
 		<property name="rendezvous" ref="rendezvous6"/>
