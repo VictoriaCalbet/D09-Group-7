@@ -1,6 +1,7 @@
 
 package services;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.transaction.Transactional;
@@ -11,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
 import domain.GPSPoint;
@@ -27,6 +29,8 @@ public class RendezvousServiceTest extends AbstractTest {
 	private RendezvousService	rendezvousService;
 	@Autowired
 	private UserService			userService;
+	@Autowired
+	private ActorService		actorService;
 
 
 	// Tests ------------------------------------------------------------------
@@ -239,6 +243,84 @@ public class RendezvousServiceTest extends AbstractTest {
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 		}
+		this.checkExceptions(expectedException, caught);
+	}
+
+	/***
+	 * List rendezvous
+	 * Testing cases:
+	 * 1º Good test -> expected: results shown
+	 */
+
+	@Test
+	public void listRendezvous() {
+
+		final Object testingData[][] = {
+			//principal expected exception
+			{
+				"user1", null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.listRendezvous((String) testingData[i][0], (Class<?>) testingData[i][1]);
+	}
+
+	protected void listRendezvous(final String principal, final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(principal);
+
+			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousesLogged(this.actorService.findByPrincipal());
+
+			Assert.notNull(rendezvouses);
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
+
+		this.checkExceptions(expectedException, caught);
+	}
+
+	/***
+	 * List linked rendezvous
+	 * Testing cases:
+	 * 1º Good test -> expected: results shown
+	 */
+
+	@Test
+	public void listLinkedRendezvous() {
+
+		final Object testingData[][] = {
+			//principal expected exception
+			{
+				"user1", 80, null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.listLinkedRendezvous((String) testingData[i][0], (int) testingData[i][1], (Class<?>) testingData[i][2]);
+	}
+
+	protected void listLinkedRendezvous(final String principal, final int rendezvousId, final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(principal);
+
+			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousSimilarLogged(rendezvousId);
+
+			Assert.notNull(rendezvouses);
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
+
 		this.checkExceptions(expectedException, caught);
 	}
 
