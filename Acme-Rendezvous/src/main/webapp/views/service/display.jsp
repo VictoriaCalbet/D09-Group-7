@@ -16,26 +16,67 @@
 <%@taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
 <%@taglib prefix="display" uri="http://displaytag.sf.net"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="acme" tagdir="/WEB-INF/tags"%>
 
 <security:authentication property="principal" var="loggedactor"/>
 
-<h3>
-	<spring:message code="service.name" var="serviceNameHeader"/>
-	<b><jstl:out value="${serviceNameHeader}"/> :&nbsp;</b> <jstl:out value="${service.name}"/>
-</h3>
-
-<spring:message code="service.description" var="serviceDescriptionHeader"/>
-<b><jstl:out value="${serviceDescriptionHeader}"/> :&nbsp;</b> <jstl:out value="${service.description}"/>
-<br/>
-
-<spring:message code="service.picture" var="servicePictureHeader" />
-<b><jstl:out value="${servicePictureHeader}"/> :&nbsp;</b> <jstl:out value="${service.picture}"/>
-<br/>
-
-<spring:message code="service.isInapropiated" var="serviceIsInapropiatedHeader" />
-<b><jstl:out value="${serviceIsInapropiatedHeader}"/> :&nbsp;</b> <jstl:out value="${service.isInapropiated}"/>
-<br/>
+<fieldset>
+	<legend>
+		<spring:message code="service.name" var="serviceNameLabel"/>
+		<h2><b><jstl:out value="${serviceNameLabel}"/>:&nbsp;</b> <jstl:out value="${service.name}"/></h2>
+	</legend>
+	<table>
+		<tr>
+			<td>
+				<spring:message code="service.description" var="serviceDescriptionLabel"/>
+				<b><jstl:out value="${serviceDescriptionLabel}"/>:&nbsp;</b> <jstl:out value="${service.description}"/>
+			</td>
+			<td>
+				<spring:message code="service.creator" var="serviceCreatorLabel"/>
+				<b><jstl:out value="${serviceCreatorLabel}"/>:&nbsp;</b><jstl:out value="${service.manager.name}"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<spring:message code="service.requests" var="serviceRequestsLabel" />
+				<b><jstl:out value="${serviceRequestsLabel}"/>:&nbsp;</b> <jstl:out value="${fn:length(service.requests)}"/>
+			</td>
+			<td>
+				<spring:message code="service.categories" var="serviceCategoriesLabel"/>
+				<b><jstl:out value="${serviceCategoriesLabel}"/>:&nbsp;</b> 
+				<jstl:forEach items="${service.categories}" var="srv">
+					<jstl:out value="${srv.name}"/>
+				</jstl:forEach>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<spring:message code="service.isInappropiate" var="serviceIsInappropiateLabel" />
+				<b><jstl:out value="${serviceIsInappropiateLabel}"/>:&nbsp;</b> 
+				<jstl:choose>
+					<jstl:when test="${service.isInappropriate eq true }">
+						<spring:message code="service.isInappropiate.yes" var="serviceIsInappropiateYes" />
+						<jstl:out value="${serviceIsInappropiateYes}"/>
+					</jstl:when>
+					<jstl:otherwise>
+						<spring:message code="service.isInappropiate.no" var="serviceIsInappropiateNo"/>
+						<jstl:out value="${serviceIsInappropiateNo}"/>
+					</jstl:otherwise>
+				</jstl:choose>
+				
+			</td>
+			
+		</tr>
+		<tr>
+			<td>
+				<spring:message code="service.pictureURL" var="servicepictureURLLabel" />
+				<b><jstl:out value="${servicepictureURLLabel}"/>:&nbsp;</b> 
+				<acme:image imageURL="${service.pictureURL}" imageNotFoundLocation="images/fotoNotFound.png" codeError="service.unspecifiedURL" height="100" width="100"/>
+			</td>
+		</tr>
+	</table>
+</fieldset> 
 
 <security:authorize access="hasRole('MANAGER')">
 	<jstl:if test="${service.manager.userAccount.id eq loggedactor.id}">

@@ -36,9 +36,20 @@
 			<li><a class="fNiv" href="rendezvous/administrator/list.do"><spring:message code="master.page.administrator.rendezvous.list" /></a></li>
 		</security:authorize>
 		
-		
 		<security:authorize access="hasRole('ADMIN')">
 			<li><a class="fNiv" href="administrator/dashboard.do"><spring:message code="master.page.administrator.dashboard" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="service/administrator/list.do"><spring:message code="master.page.administrator.service.list" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('MANAGER')">
+			<li><a class="fNiv" href="service/manager/list.do"><spring:message code="master.page.manager.service.list" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('USER')">
+			<li><a class="fNiv" href="service/user/list.do"><spring:message code="master.page.user.service.list" /></a></li>
 		</security:authorize>
 		
 		<security:authorize access="hasRole('USER')">
