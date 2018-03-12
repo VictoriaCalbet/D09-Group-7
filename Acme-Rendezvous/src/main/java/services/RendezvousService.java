@@ -88,6 +88,9 @@ public class RendezvousService {
 		return this.rendezvousRepository.findRendezvousSimilarNotDeleted(u.getId());
 
 	}
+	public Rendezvous findRendezvousByService(final int serviceId) {
+		return this.rendezvousRepository.findRendezvousByService(serviceId);
+	}
 
 	public Collection<Rendezvous> findRendezvousSimilar(final int rendezvousId) {
 		return this.rendezvousRepository.findRendezvousSimilar(rendezvousId);
