@@ -63,7 +63,7 @@ public class ServiceAdministratorController extends AbstractController {
 
 		service = this.serviceService.findOne(serviceId);
 
-		result = new ModelAndView();
+		result = new ModelAndView("service/display");
 		result.addObject("service", service);
 		result.addObject("cancelURI", "/service/administrator/list.do");
 
@@ -74,19 +74,19 @@ public class ServiceAdministratorController extends AbstractController {
 
 	// Other actions --------------------------------------------------------
 
-	@RequestMapping(value = "/markAsInapropiate", method = RequestMethod.GET)
-	public ModelAndView markAsInapropiate(@RequestParam final int serviceId) {
+	@RequestMapping(value = "/markAsInappropriate", method = RequestMethod.GET)
+	public ModelAndView markAsInappropriate(@RequestParam final int serviceId) {
 		ModelAndView result = null;
 		Service service = null;
 
 		try {
 			service = this.serviceService.findOne(serviceId);
 
-			this.serviceService.markAsInapropiate(service);
+			this.serviceService.markAsInappropriate(service);
 			result = new ModelAndView("redirect:/service/administrator/list.do");
-			result.addObject("message", "service.markAsInapropiate.success");
+			result.addObject("message", "service.markAsInappropriate.success");
 		} catch (final Throwable oops) {
-			String messageError = "service.markAsInapropiate.error";
+			String messageError = "service.markAsInappropriate.error";
 
 			if (oops.getMessage().contains("message.error"))
 				messageError = oops.getMessage();

@@ -1,5 +1,5 @@
 <%--
- * textarea.tag
+ * checkbox.tag
  *
  * Copyright (C) 2017 Universidad de Sevilla
  * 

@@ -1,5 +1,5 @@
 <%--
- * textarea.tag
+ * display.tag
  *
  * Copyright (C) 2017 Universidad de Sevilla
  * 

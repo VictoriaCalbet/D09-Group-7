@@ -74,9 +74,11 @@
 		<security:intercept-url pattern="/question/user/*" access="hasRole('USER')" />
 		<security:intercept-url pattern="/answer/user/*" access="hasRole('USER')" />
 		<security:intercept-url pattern="/RSVP/user/**" access="hasRole('USER')" />
+		<security:intercept-url pattern="/service/user/**" access="hasRole('USER')" />
 		
 		<!-- MANAGER -->
 		<security:intercept-url pattern="/manager/manager/*" access="hasRole('MANAGER')" />
+		<security:intercept-url pattern="/service/manager/**" access="hasRole('MANAGER')" />
 		
 		<!-- ADMIN -->
 		<security:intercept-url pattern="/administrator/dashboard.do" access="hasRole('ADMIN')" />
@@ -88,6 +90,9 @@
 		<security:intercept-url pattern="/rendezvous/administrator/delete.do" access="hasRole('ADMIN')" />
 		<security:intercept-url pattern="/rendezvous/administrator/list.do" access="hasRole('ADMIN')" />
 		<security:intercept-url pattern="/announcement/administrator/**" access="hasRole('ADMIN')" />
+		<security:intercept-url pattern="/category/administrator/**" access="hasRole('ADMIN')" />
+		<security:intercept-url pattern="/service/administrator/**" access="hasRole('ADMIN')" />
+		
 		
 		<security:intercept-url pattern="/**" access="hasRole('NONE')" />
 

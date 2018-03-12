@@ -89,7 +89,7 @@ public class ServiceManagerController extends AbstractController {
 
 		service = this.serviceService.findOne(serviceId);
 
-		result = new ModelAndView();
+		result = new ModelAndView("service/display");
 		result.addObject("service", service);
 		result.addObject("cancelURI", "/service/manager/list.do");
 
@@ -127,13 +127,37 @@ public class ServiceManagerController extends AbstractController {
 				else
 					this.serviceService.saveFromEdit(service);
 
-				result = new ModelAndView("redirect:/service/administrator/list.do");
+				result = new ModelAndView("redirect:/service/manager/list.do");
 			} catch (final Throwable oops) {
 				String messageError = "service.commit.error";
 				if (oops.getMessage().contains("message.error"))
 					messageError = oops.getMessage();
 				result = this.createEditModelAndView(service, messageError);
 			}
+
+		return result;
+	}
+
+	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "delete")
+	public ModelAndView delete(@RequestParam final int serviceId) {
+		ModelAndView result = null;
+		Service service = null;
+
+		try {
+			service = this.serviceService.findOne(serviceId);
+
+			this.serviceService.delete(service);
+			result = new ModelAndView("redirect:/service/manager/list.do");
+			result.addObject("message", "service.delete.success");
+		} catch (final Throwable oops) {
+			String messageError = "service.delete.error";
+
+			if (oops.getMessage().contains("message.error"))
+				messageError = oops.getMessage();
+
+			result = new ModelAndView("redirect:/service/manager/list.do");
+			result.addObject("message", messageError);
+		}
 
 		return result;
 	}
@@ -152,12 +176,10 @@ public class ServiceManagerController extends AbstractController {
 
 	protected ModelAndView createEditModelAndView(final Service service, final String message) {
 		ModelAndView result = null;
-		//User user = null;
 		String actionURI = null;
 		Collection<Category> categories = null;
 
-		//user = this.userService.findByPrincipal();
-		actionURI = "/service/user/edit.do";
+		actionURI = "/service/manager/edit.do";
 		categories = this.categoryService.findAll();
 
 		if (service.getId() == 0)
