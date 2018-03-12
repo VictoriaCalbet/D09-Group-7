@@ -121,6 +121,7 @@ public class ServiceService {
 
 		Assert.notNull(service, "message.error.service.null");
 		Assert.notNull(manager, "message.error.service.principal.null");
+		Assert.isTrue(service.getRequests().isEmpty(), "message.error.service.requests.notEmpty");
 		Assert.notNull(service.getManager().equals(manager), "message.error.service.userNotPrincipal");
 
 		// Paso 1: actualizamos el resto de relaciones con la entidad Announcement
@@ -136,16 +137,17 @@ public class ServiceService {
 
 	// Other business methods -------------------------------------------------
 
-	public Service markAsInapropiate(final Service service) {
+	public Service markAsInappropriate(final Service service) {
 		Service result = null;
 		Administrator administrator = null;
-		Boolean isInapropiate = null;
+		Boolean isInappropriate = null;
 
 		administrator = this.administratorService.findByPrincipal();
-		Assert.notNull(administrator);
+		Assert.notNull(service, "message.error.service.null");
+		Assert.notNull(administrator, "message.error.service.principal.null");
 
-		isInapropiate = true;
-		service.setIsInappropriate(isInapropiate);
+		isInappropriate = true;
+		service.setIsInappropriate(isInappropriate);
 
 		result = this.serviceRepository.save(service);
 
