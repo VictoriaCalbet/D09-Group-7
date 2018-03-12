@@ -16,8 +16,7 @@
 	uri="http://www.springframework.org/security/tags"%>
 
 <div>
-	<a href=""><img src="images/logo.png"
-		alt="Acme Co., Inc." /></a>
+	<img src="${bannerURL}" alt="${businessName}" height="150"/>
 </div>
 
 <div>
@@ -34,6 +33,10 @@
 		
 		<security:authorize access="hasRole('ADMIN')">
 			<li><a class="fNiv" href="rendezvous/administrator/list.do"><spring:message code="master.page.administrator.rendezvous.list" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="systemConfiguration/administrator/info.do"><spring:message code="systemConfiguration.header" /></a></li>
 		</security:authorize>
 		
 		<security:authorize access="hasRole('ADMIN')">

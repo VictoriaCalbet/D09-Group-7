@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import repositories.SystemConfigurationRepository;
+import domain.Administrator;
 import domain.SystemConfiguration;
 
 @Service
@@ -20,8 +21,10 @@ public class SystemConfigurationService {
 	@Autowired
 	private SystemConfigurationRepository	systemConfigurationRepository;
 
-
 	// Supporting services ----------------------------------------------------
+	@Autowired
+	private AdministratorService			administratorService;
+
 
 	// Constructors -----------------------------------------------------------
 
@@ -32,11 +35,15 @@ public class SystemConfigurationService {
 	// Simple CRUD methods ----------------------------------------------------
 
 	public SystemConfiguration create() {
-		return null;
+		SystemConfiguration result;
+
+		result = new SystemConfiguration();
+
+		return result;
 	}
 
 	public SystemConfiguration save(final SystemConfiguration systemConfiguration) {
-		Assert.notNull(systemConfiguration);
+		Assert.notNull(systemConfiguration, "message.error.systemConfiguration.null");
 		SystemConfiguration result;
 
 		result = this.systemConfigurationRepository.save(systemConfiguration);
@@ -46,11 +53,28 @@ public class SystemConfigurationService {
 	}
 
 	public SystemConfiguration saveFromCreate(final SystemConfiguration systemConfiguration) {
-		return null;
-	}
+		Assert.notNull(systemConfiguration, "message.error.systemConfiguration.null");
 
+		final Administrator administrator = this.administratorService.findByPrincipal();
+		Assert.notNull(administrator, "message.error.systemConfiguration.authority");
+
+		SystemConfiguration result;
+
+		result = this.save(systemConfiguration);
+
+		return result;
+	}
 	public SystemConfiguration saveFromEdit(final SystemConfiguration systemConfiguration) {
-		return null;
+		Assert.notNull(systemConfiguration, "message.error.systemConfiguration.null");
+
+		final Administrator administrator = this.administratorService.findByPrincipal();
+		Assert.notNull(administrator, "message.error.systemConfiguration.authority");
+
+		SystemConfiguration result;
+
+		result = this.save(systemConfiguration);
+
+		return result;
 	}
 
 	// Other business methods -------------------------------------------------
@@ -64,6 +88,14 @@ public class SystemConfigurationService {
 	public SystemConfiguration findOne(final int systemConfigurationId) {
 		SystemConfiguration result = null;
 		result = this.systemConfigurationRepository.findOne(systemConfigurationId);
+		return result;
+	}
+
+	public SystemConfiguration findMain() {
+		SystemConfiguration result;
+
+		result = this.findAll().iterator().next();
+
 		return result;
 	}
 }

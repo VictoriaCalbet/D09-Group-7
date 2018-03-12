@@ -16,9 +16,9 @@
        
 <tiles-definitions>
 
-	<definition name="systemConfiguration/list" extends="master.page">        
-		<put-attribute name="title" value="List of systemConfigurations" />
-		<put-attribute name="body" value="/views/systemConfiguration/list.jsp" />
+	<definition name="systemConfiguration/info" extends="master.page">        
+		<put-attribute name="title" value= "System Configuration" />
+		<put-attribute name="body" value="/views/systemConfiguration/info.jsp" />
 	</definition>
              
 	<definition name="systemConfiguration/edit" extends="master.page">        
