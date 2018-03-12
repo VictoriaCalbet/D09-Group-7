@@ -69,7 +69,7 @@
 	<display:column title="${requestHeader}">
 			
 			<a href="request/user/RequestService.do?serviceId=${row.id}"> <spring:message code="service.request" /></a>	
-
+	</display:column>
 	<spring:message code="service.pictureURL" var="servicepictureURLHeader"/>
 	<display:column title="${servicepictureURLHeader}">
 		<acme:image imageURL="${row.pictureURL}" imageNotFoundLocation="images/fotoNotFound.png" codeError="service.unspecifiedURL" height="60" width="60"/>
