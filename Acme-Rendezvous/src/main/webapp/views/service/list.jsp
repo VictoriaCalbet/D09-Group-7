@@ -33,7 +33,7 @@
 			</jstl:if>
 		</display:column>
 	</security:authorize>
-	-
+
 	<security:authorize access="hasAnyRole('USER', 'MANAGER', 'ADMIN')">
 		<display:column>
 			<a href="${displayURI}${row.id}">
@@ -57,23 +57,16 @@
 	
 	<spring:message code="service.description" var="serviceDescriptionHeader"/>
 	<display:column property="description" title="${serviceDescriptionHeader}" />
-
-	<spring:message code="service.pictureURL" var="servicePictureHeader"/>
-	<display:column property="pictureURL" title="${servicePictureHeader}"/>
-	
-	<spring:message code="service.isInappropiate" var="serviceIsInapropiateHeader"/>
-	<display:column property="isInappropriate" title="${serviceIsInapropiateHeader}"/>
-	
 	
 	<spring:message code="service.request" var="requestHeader" />
 	<display:column title="${requestHeader}">
-			
-			<a href="request/user/RequestService.do?serviceId=${row.id}"> <spring:message code="service.request" /></a>	
+		<a href="request/user/RequestService.do?serviceId=${row.id}"> <spring:message code="service.request" /></a>	
 	</display:column>
+	
 	<spring:message code="service.pictureURL" var="servicepictureURLHeader"/>
 	<display:column title="${servicepictureURLHeader}">
-		<acme:image imageURL="${row.pictureURL}" imageNotFoundLocation="images/fotoNotFound.png" codeError="service.unspecifiedURL" height="60" width="60"/>
-
+		<acme:image imageURL="${row.pictureURL}" imageNotFoundLocation="images/fotoNotFound.png" 
+					codeError="service.unspecifiedURL" height="60" width="60"/>
 	</display:column>
 </display:table>
 

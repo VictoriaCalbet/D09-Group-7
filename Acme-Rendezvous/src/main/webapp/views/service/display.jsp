@@ -52,16 +52,16 @@
 		</tr>
 		<tr>
 			<td>
-				<spring:message code="service.isInappropiate" var="serviceIsInappropiateLabel" />
-				<b><jstl:out value="${serviceIsInappropiateLabel}"/>:&nbsp;</b> 
+				<spring:message code="service.isInappropriate" var="serviceIsInappropriateLabel" />
+				<b><jstl:out value="${serviceIsInappropriateLabel}"/>:&nbsp;</b> 
 				<jstl:choose>
 					<jstl:when test="${service.isInappropriate eq true }">
-						<spring:message code="service.isInappropiate.yes" var="serviceIsInappropiateYes" />
-						<jstl:out value="${serviceIsInappropiateYes}"/>
+						<spring:message code="service.isInappropriate.yes" var="serviceIsInappropriateYes" />
+						<jstl:out value="${serviceIsInappropriateYes}"/>
 					</jstl:when>
 					<jstl:otherwise>
-						<spring:message code="service.isInappropiate.no" var="serviceIsInappropiateNo"/>
-						<jstl:out value="${serviceIsInappropiateNo}"/>
+						<spring:message code="service.isInappropriate.no" var="serviceIsInappropriateNo"/>
+						<jstl:out value="${serviceIsInappropriateNo}"/>
 					</jstl:otherwise>
 				</jstl:choose>
 				

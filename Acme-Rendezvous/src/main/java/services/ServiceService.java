@@ -137,17 +137,16 @@ public class ServiceService {
 
 	// Other business methods -------------------------------------------------
 
-	public Service markAsInappropriate(final Service service) {
+	public Service markingServiceAsAppropriateOrNot(final Service service, final boolean changeTo) {
 		Service result = null;
 		Administrator administrator = null;
-		Boolean isInappropriate = null;
 
 		administrator = this.administratorService.findByPrincipal();
 		Assert.notNull(service, "message.error.service.null");
 		Assert.notNull(administrator, "message.error.service.principal.null");
+		Assert.isTrue(!service.getIsInappropriate() == changeTo, "message.error.markEquals");
 
-		isInappropriate = true;
-		service.setIsInappropriate(isInappropriate);
+		service.setIsInappropriate(changeTo);
 
 		result = this.serviceRepository.save(service);
 

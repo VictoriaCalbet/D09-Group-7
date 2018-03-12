@@ -82,11 +82,50 @@ public class ServiceAdministratorController extends AbstractController {
 		try {
 			service = this.serviceService.findOne(serviceId);
 
-			this.serviceService.markAsInappropriate(service);
-			result = new ModelAndView("redirect:/service/administrator/list.do");
-			result.addObject("message", "service.markAsInappropriate.success");
+			if (service.equals(null)) {
+				result = new ModelAndView("redirect:/service/administrator/list.do");
+				result.addObject("message", "message.error.service.null");
+			} else if (service.getIsInappropriate() != true) {
+				this.serviceService.markingServiceAsAppropriateOrNot(service, true);
+				result = new ModelAndView("redirect:/service/administrator/list.do");
+				result.addObject("message", "service.markAsInappropriate.success");
+			} else {
+				result = new ModelAndView("redirect:/service/administrator/list.do");
+				result.addObject("message", "service.markAsInappropriate.itsAlreadyMarked");
+			}
 		} catch (final Throwable oops) {
 			String messageError = "service.markAsInappropriate.error";
+
+			if (oops.getMessage().contains("message.error"))
+				messageError = oops.getMessage();
+
+			result = new ModelAndView("redirect:/service/administrator/list.do");
+			result.addObject("message", messageError);
+		}
+
+		return result;
+	}
+	@RequestMapping(value = "/unmarkAsInappropriate", method = RequestMethod.GET)
+	public ModelAndView unmarkAsInappropriate(@RequestParam final int serviceId) {
+		ModelAndView result = null;
+		Service service = null;
+
+		try {
+			service = this.serviceService.findOne(serviceId);
+
+			if (service == null) {
+				result = new ModelAndView("redirect:/service/administrator/list.do");
+				result.addObject("message", "message.error.service.null");
+			} else if (service.getIsInappropriate() != false) {
+				this.serviceService.markingServiceAsAppropriateOrNot(service, false);
+				result = new ModelAndView("redirect:/service/administrator/list.do");
+				result.addObject("message", "service.unmarkAsInappropriate.success");
+			} else {
+				result = new ModelAndView("redirect:/service/administrator/list.do");
+				result.addObject("message", "service.unmarkAsInappropriate.itsAlreadyMarked");
+			}
+		} catch (final Throwable oops) {
+			String messageError = "service.unmarkAsInappropriate.error";
 
 			if (oops.getMessage().contains("message.error"))
 				messageError = oops.getMessage();
