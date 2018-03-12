@@ -58,11 +58,11 @@
 	<spring:message code="service.description" var="serviceDescriptionHeader"/>
 	<display:column property="description" title="${serviceDescriptionHeader}" />
 
-	<spring:message code="service.picture" var="servicePictureHeader"/>
-	<display:column property="picture" title="${servicePictureHeader}"/>
+	<spring:message code="service.pictureURL" var="servicePictureHeader"/>
+	<display:column property="pictureURL" title="${servicePictureHeader}"/>
 	
-	<spring:message code="service.isInapropiate" var="serviceIsInapropiateHeader"/>
-	<display:column property="isInapropiate" title="${serviceIsInapropiateHeader}"/>
+	<spring:message code="service.isInappropiate" var="serviceIsInapropiateHeader"/>
+	<display:column property="isInappropriate" title="${serviceIsInapropiateHeader}"/>
 	
 	
 	<spring:message code="service.request" var="requestHeader" />
