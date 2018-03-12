@@ -82,7 +82,7 @@ public class ServiceAdministratorController extends AbstractController {
 		try {
 			service = this.serviceService.findOne(serviceId);
 
-			if (service.equals(null)) {
+			if (service == null) {
 				result = new ModelAndView("redirect:/service/administrator/list.do");
 				result.addObject("message", "message.error.service.null");
 			} else if (service.getIsInappropriate() != true) {
