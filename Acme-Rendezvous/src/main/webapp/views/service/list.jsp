@@ -28,16 +28,15 @@
 		<display:column>
 			<jstl:if test="${row.manager.userAccount.id eq loggedactor.id and empty row.requests}">
 				<spring:message var="serviceEditLink" code="service.edit"/>
-				<a href="service/manager/edit.do?serviceId=${service.id}"><jstl:out value="${serviceEditLink}"/></a>
+				<a href="service/manager/edit.do?serviceId=${row.id}"><jstl:out value="${serviceEditLink}"/></a>
 			</jstl:if>
 		</display:column>
 	</security:authorize>
 
 	<security:authorize access="hasAnyRole('USER', 'MANAGER', 'ADMIN')">
 		<display:column>
-			<a href="${displayURI}${row.id}">
-				<spring:message code="service.display"/>
-			</a>
+			<spring:message var="serviceDisplayLink" code="service.display"/>
+			<a href="${displayURI}${row.id}"><jstl:out value="${serviceDisplayLink}"/></a>
 		</display:column>
 	</security:authorize>
 	
@@ -65,7 +64,6 @@
 	
 	
 	<spring:message code="service.requests" var="serviceRequestsHeader" />
-	
 	<security:authorize access="hasRole('USER')">
 		<display:column title="${serviceRequestsHeader}">
 			<jstl:if test="${row.isInappropriate eq false}">
