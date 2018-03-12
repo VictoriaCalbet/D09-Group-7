@@ -62,7 +62,7 @@ public class ServiceUserController extends AbstractController {
 
 		service = this.serviceService.findOne(serviceId);
 
-		result = new ModelAndView();
+		result = new ModelAndView("service/display");
 		result.addObject("service", service);
 		result.addObject("cancelURI", "/service/user/list.do");
 
