@@ -73,6 +73,13 @@
 	
 	<spring:message code="service.isInapropiate" var="serviceIsInapropiateHeader"/>
 	<display:column property="isInapropiate" title="${serviceIsInapropiateHeader}"/>
+	
+	
+	<spring:message code="service.request" var="requestHeader" />
+	<display:column title="${requestHeader}">
+			
+			<a href="request/user/RequestService.do?serviceId=${row.id}"> <spring:message code="service.request" /></a>	
+	</display:column>
 </display:table>
 
 <security:authorize access="hasRole('MANAGER')">

@@ -67,4 +67,7 @@ public interface RendezvousRepository extends JpaRepository<Rendezvous, Integer>
 
 	@Query("select distinct r from Rendezvous r join r.requests rq join rq.service s join s.categories c where c.id = ?1 AND r.isDeleted = false AND r.isDraft = false AND r.isAdultOnly = false AND r.meetingMoment > CURRENT_TIMESTAMP")
 	public Collection<Rendezvous> findRendezvousByCategories(int categoryId);
+
+	@Query("select r from Rendezvous r join r.requests rq join rq.service s where s.id = ?1")
+	public Rendezvous findRendezvousByService(int serviceId);
 }
