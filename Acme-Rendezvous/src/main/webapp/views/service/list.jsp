@@ -27,9 +27,8 @@
 	<security:authorize access="hasRole('MANAGER')">
 		<display:column>
 			<jstl:if test="${row.manager.userAccount.id eq loggedactor.id and empty row.requests}">
-				<a href="service/manager/edit.do?serviceId=${row.id}">
-					<spring:message code="service.edit"/>
-				</a>
+				<spring:message var="serviceEditLink" code="service.edit"/>
+				<a href="service/manager/edit.do?serviceId=${service.id}"><jstl:out value="${serviceEditLink}"/></a>
 			</jstl:if>
 		</display:column>
 	</security:authorize>
@@ -45,10 +44,16 @@
 	
 	<security:authorize access="hasRole('ADMIN')">
 		<display:column>
-			<jstl:if test="${row.isInappropriate eq false}">
-				<spring:message code="service.markAsInappropriate" var="serviceMarkAsInappropriateLink"/>
-				<a href="service/administrator/markAsInappropriate.do?serviceId=${row.id}"> <jstl:out value="${serviceMarkAsInappropriateLink}"/> </a>
-			</jstl:if>				
+			<jstl:choose>
+				<jstl:when test="${row.isInappropriate eq false}">
+					<spring:message code="service.markAsInappropriate" var="serviceMarkAsInappropriateLink"/>
+					<a href="service/administrator/markAsInappropriate.do?serviceId=${row.id}"><jstl:out value="${serviceMarkAsInappropriateLink}"/></a>
+				</jstl:when>
+				<jstl:when test="${row.isInappropriate eq true}">
+					<spring:message code="service.unmarkAsInappropriate" var="serviceUnmarkAsInappropriateLink"/>
+					<a href="service/administrator/unmarkAsInappropriate.do?serviceId=${row.id}"><jstl:out value="${serviceUnmarkAsInappropriateLink}"/></a>
+				</jstl:when>
+			</jstl:choose>
 		</display:column>
 	</security:authorize>
 	
@@ -58,10 +63,17 @@
 	<spring:message code="service.description" var="serviceDescriptionHeader"/>
 	<display:column property="description" title="${serviceDescriptionHeader}" />
 	
-	<spring:message code="service.request" var="requestHeader" />
-	<display:column title="${requestHeader}">
-		<a href="request/user/RequestService.do?serviceId=${row.id}"> <spring:message code="service.request" /></a>	
-	</display:column>
+	
+	<spring:message code="service.requests" var="serviceRequestsHeader" />
+	
+	<security:authorize access="hasRole('USER')">
+		<display:column title="${serviceRequestsHeader}">
+			<jstl:if test="${row.isInappropriate eq false}">
+				<spring:message code="service.requestThisService" var="serviceRequestThisServiceLink"/>
+				<a href="request/user/RequestService.do?serviceId=${row.id}"><jstl:out value="${serviceRequestThisServiceLink}"/></a>
+			</jstl:if>	
+		</display:column>
+	</security:authorize>
 	
 	<spring:message code="service.pictureURL" var="servicepictureURLHeader"/>
 	<display:column title="${servicepictureURLHeader}">
@@ -76,4 +88,6 @@
 	<br/> 
 </security:authorize>
 <br/>
+
 <acme:cancel url="welcome/index.do" code="service.cancel"/>
+<br/>

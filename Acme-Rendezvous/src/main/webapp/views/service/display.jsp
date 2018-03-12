@@ -39,8 +39,8 @@
 		</tr>
 		<tr>
 			<td>
-				<spring:message code="service.requests" var="serviceRequestsLabel" />
-				<b><jstl:out value="${serviceRequestsLabel}"/>:&nbsp;</b> <jstl:out value="${fn:length(service.requests)}"/>
+				<spring:message code="service.NoRequests" var="serviceNoRequestsLabel" />
+				<b><jstl:out value="${serviceNoRequestsLabel}"/>:&nbsp;</b> <jstl:out value="${fn:length(service.requests)}"/>
 			</td>
 			<td>
 				<spring:message code="service.categories" var="serviceCategoriesLabel"/>
@@ -76,13 +76,13 @@
 			</td>
 		</tr>
 	</table>
+	<security:authorize access="hasRole('MANAGER')">
+		<jstl:if test="${service.manager.userAccount.id eq loggedactor.id and empty service.requests}">
+			<spring:message var="serviceEditLink" code="service.edit"/>
+			<a href="service/manager/edit.do?serviceId=${service.id}"><jstl:out value="${serviceEditLink}"/></a>
+		</jstl:if>
+	</security:authorize>
 </fieldset> 
 
-<security:authorize access="hasRole('MANAGER')">
-	<jstl:if test="${service.manager.userAccount.id eq loggedactor.id}">
-		<spring:message var="serviceEditLink" code="service.edit"/>
-		<a href="service/manager/edit.do?serviceId=${service.id}"><jstl:out value="${serviceEditLink}"/></a>
-	</jstl:if>
-</security:authorize>
-
+<br/>
 <acme:cancel url="${cancelURI}" code="service.cancel"/>
