@@ -46,6 +46,7 @@ public class ServiceService {
 
 		result = new Service();
 
+		result.setManager(this.managerService.findByPrincipal());
 		result.setCategories(new ArrayList<Category>());
 		result.setRequests(new ArrayList<Request>());
 		result.setIsInappropriate(false);
@@ -82,7 +83,9 @@ public class ServiceService {
 
 		Assert.notNull(service, "message.error.service.null");
 		Assert.notNull(manager, "message.error.service.principal.null");
-		Assert.notNull(service.getManager().equals(manager), "message.error.service.userNotPrincipal");
+		Assert.isTrue(service.getManager().equals(manager), "message.error.service.userNotPrincipal");
+		Assert.isTrue(service.getIsInappropriate() == false, "message.error.service.cancelled.true");
+		Assert.isTrue(service.getRequests().isEmpty(), "message.error.service.requests.notEmpty");
 
 		// Paso 1: realizo la entidad del servicio Service
 
@@ -104,8 +107,9 @@ public class ServiceService {
 
 		Assert.notNull(service, "message.error.service.null");
 		Assert.notNull(manager, "message.error.service.principal.null");
-		Assert.notNull(service.getManager().equals(manager), "message.error.service.userNotPrincipal");
-		Assert.isTrue(service.getIsInappropriate(), "message.error.service.cancelled.true");
+		Assert.isTrue(service.getManager().equals(manager), "message.error.service.userNotPrincipal");
+		Assert.isTrue(service.getIsInappropriate() == false, "message.error.service.cancelled.true");
+		Assert.isTrue(service.getRequests().isEmpty(), "message.error.service.requests.notEmpty");
 
 		// Persisto la entidad del servicio service
 
