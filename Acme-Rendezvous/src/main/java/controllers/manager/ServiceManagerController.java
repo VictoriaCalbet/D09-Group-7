@@ -89,6 +89,8 @@ public class ServiceManagerController extends AbstractController {
 
 		service = this.serviceService.findOne(serviceId);
 
+		Assert.notNull(service);
+
 		result = new ModelAndView("service/display");
 		result.addObject("service", service);
 		result.addObject("cancelURI", "/service/manager/list.do");
@@ -139,7 +141,7 @@ public class ServiceManagerController extends AbstractController {
 	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "delete")
-	public ModelAndView delete(@RequestParam final int serviceId) {
+	public ModelAndView delete(final int serviceId, final BindingResult bindingResult) {
 		ModelAndView result = null;
 		Service service = null;
 
@@ -179,7 +181,7 @@ public class ServiceManagerController extends AbstractController {
 		String actionURI = null;
 		Collection<Category> categories = null;
 
-		actionURI = "/service/manager/edit.do";
+		actionURI = "service/manager/edit.do";
 		categories = this.categoryService.findAll();
 
 		if (service.getId() == 0)
