@@ -141,13 +141,10 @@ public class ServiceManagerController extends AbstractController {
 	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "delete")
-	public ModelAndView delete(final int serviceId, final BindingResult bindingResult) {
+	public ModelAndView delete(final Service service, final BindingResult bindingResult) {
 		ModelAndView result = null;
-		Service service = null;
 
 		try {
-			service = this.serviceService.findOne(serviceId);
-
 			this.serviceService.delete(service);
 			result = new ModelAndView("redirect:/service/manager/list.do");
 			result.addObject("message", "service.delete.success");
