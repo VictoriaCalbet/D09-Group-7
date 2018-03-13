@@ -64,6 +64,10 @@ public class ManagerService {
 
 	}
 
+	public void flush() {
+		this.managerRepository.flush();
+	}
+
 	public Manager saveFromCreate(final Manager manager) {
 		Assert.notNull(manager, "message.error.manager.null");
 		Assert.notNull(manager.getUserAccount().getUsername(), "message.error.manager.username.null");
