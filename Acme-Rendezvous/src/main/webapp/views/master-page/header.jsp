@@ -16,7 +16,7 @@
 	uri="http://www.springframework.org/security/tags"%>
 
 <div>
-	<img src="${bannerURL}" alt="${businessName}" height="150"/>
+	<a href=""><img src="${bannerURL}" alt="${businessName}" height="150"/></a>
 </div>
 
 <div>
