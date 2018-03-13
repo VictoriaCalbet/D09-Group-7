@@ -174,6 +174,16 @@ public class RendezvousService {
 		return result;
 	}
 
+	public Rendezvous saveWithoutConstraints(final Rendezvous rendezvous) {
+		Assert.notNull(rendezvous, "message.error.rendezvous.null");
+
+		Rendezvous result;
+
+		result = this.rendezvousRepository.save(rendezvous);
+
+		return result;
+	}
+
 	public Rendezvous update(final Rendezvous rendezvous) {
 
 		Assert.notNull(rendezvous, "message.error.rendezvous.null");

@@ -101,7 +101,7 @@ public class AnnouncementService {
 
 		rendezvous = result.getRendezvous();
 		rendezvous.getAnnouncements().add(result);
-		this.rendezvousService.save(rendezvous);
+		this.rendezvousService.saveWithoutConstraints(rendezvous);
 
 		//result.getRendezvous().getAnnouncements().add(result);
 
@@ -146,7 +146,7 @@ public class AnnouncementService {
 
 		rendezvous = announcement.getRendezvous();
 		rendezvous.getAnnouncements().remove(announcement);
-		this.rendezvousService.save(rendezvous);
+		this.rendezvousService.saveWithoutConstraints(rendezvous);
 
 		// Paso 2: borramos el objeto
 
