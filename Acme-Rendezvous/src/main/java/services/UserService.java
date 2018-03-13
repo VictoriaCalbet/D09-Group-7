@@ -70,6 +70,10 @@ public class UserService {
 		return result;
 	}
 
+	public void flush() {
+		this.userRepository.flush();
+	}
+
 	public User saveFromCreate(final User user) {
 		Assert.notNull(user, "message.error.user.null");
 		Assert.notNull(user.getUserAccount().getUsername(), "message.error.user.username.null");

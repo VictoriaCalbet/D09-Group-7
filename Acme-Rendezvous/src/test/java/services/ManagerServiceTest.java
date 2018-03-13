@@ -43,9 +43,9 @@ public class ManagerServiceTest extends AbstractTest {
 		// Manager: Name, surname, email, address, phone, birthDate, VAT, username, password, expectedException
 		final Object[][] testingData = {
 			{
-				"testManagerName1", "testManagerSurname1", "testManager1@testManager1.com", "testManagerAddress1", "619619619", null, "TEST-VAT-1", "testManager1", "testManager1", null
+				"testManagerName1", "testManagerSurname1", "testManager1@testManager1.com", "testManagerAddress1", "619619619", new DateTime().plusYears(-20).toDate(), "TEST-VAT-1", "testManager1", "testManager1", null
 			}, {
-				"testManagerName2", "testManagerSurname2", "testManager2@testManager2.com", "testManagerAddress2", "619619619", null, "WRONG&TEST&VAT", "testManager2", "testManager2", ConstraintViolationException.class
+				"testManagerName2", "testManagerSurname2", "testManager2@testManager2.com", "testManagerAddress2", "619619619", new DateTime().plusYears(-20).toDate(), "WRONG&TEST&VAT", "testManager2", "testManager2", ConstraintViolationException.class
 			}, {
 				"testManagerName3", "testManagerSurname3", "testManager3@testManager3.com", "testManagerAddress3", "619619619", new DateTime().plusDays(10).toDate(), "TEST-VAT-3", "testManager3", "testManager3", IllegalArgumentException.class
 			}
@@ -56,6 +56,7 @@ public class ManagerServiceTest extends AbstractTest {
 				(String) testingData[i][7], (String) testingData[i][8], (Class<?>) testingData[i][9]);
 
 	}
+
 	protected void testSaveFromCreateManagerTemplate(final String name, final String surname, final String email, final String address, final String phone, final Date birthDate, final String VAT, final String username, final String password,
 		final Class<?> expectedException) {
 

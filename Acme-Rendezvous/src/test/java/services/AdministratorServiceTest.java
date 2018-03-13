@@ -10,14 +10,16 @@
 
 package services;
 
+import java.util.Date;
+
 import javax.transaction.Transactional;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.Assert;
 
 import security.UserAccount;
 import utilities.AbstractTest;
@@ -34,99 +36,69 @@ public class AdministratorServiceTest extends AbstractTest {
 	@Autowired
 	private AdministratorService	administratorService;
 
-	@Autowired
-	private ActorService			actorService;
-
 
 	// Tests ------------------------------------------------------------------
 
+	/**
+	 * Create and save a new administrator
+	 * Test 1: Positive case.
+	 * Test 2: Negative case. Future birth date.
+	 */
 	@Test
-	public void testCreate1() {
-		this.authenticate("admin");
+	public void testSaveFromCreateAdmin() {
+		// Manager: Name, surname, email, address, phone, birthDate, username, password, expectedException
+		final Object[][] testingData = {
+			{
+				"testAdminName1", "testAdminSurname1", "testAdmin1@testAdmin1.com", "testAdminAddress1", "619619619", new DateTime().plusYears(-20).toDate(), "testAdmin1", "testAdmin1", null
+			}, {
+				"testAdminName2", "testAdminSurname2", "testAdmin2@testAdmin2.com", "testAdminAddress2", "619619619", new DateTime().plusYears(20).toDate(), "testAdmin2", "testAdmin2", IllegalArgumentException.class
+			}
+		};
 
-		final Administrator createdAdministrator = this.administratorService.create();
-
-		Assert.isNull(createdAdministrator.getName());
-		Assert.isNull(createdAdministrator.getSurname());
-		Assert.isNull(createdAdministrator.getAddress());
-		Assert.isNull(createdAdministrator.getBirthDate());
-		Assert.isNull(createdAdministrator.getEmail());
-		Assert.isNull(createdAdministrator.getPhone());
-		Assert.isNull(createdAdministrator.getUserAccount().getUsername());
-		Assert.isNull(createdAdministrator.getUserAccount().getPassword());
-
-		Assert.isTrue(this.actorService.checkAuthority(createdAdministrator, "ADMIN"));
-
-		this.unauthenticate();
-	}
-
-	@Test
-	public void testSaveFromCreate1() {
-		this.authenticate("admin");
-
-		final Administrator createdAdministrator = this.administratorService.create();
-		Administrator savedAdministrator;
-		UserAccount savedUserAccount;
-
-		createdAdministrator.setName("Example name");
-		createdAdministrator.setSurname("Example surname");
-		createdAdministrator.setEmail("example@example.com");
-
-		savedUserAccount = createdAdministrator.getUserAccount();
-		savedUserAccount.setUsername("Example");
-		savedUserAccount.setPassword("Example");
-
-		createdAdministrator.setUserAccount(savedUserAccount);
-
-		savedAdministrator = this.administratorService.saveFromCreate(createdAdministrator);
-
-		Assert.isTrue(savedAdministrator.getName().equals(createdAdministrator.getName()));
-		Assert.isTrue(savedAdministrator.getSurname().equals(createdAdministrator.getSurname()));
-		Assert.isTrue(savedAdministrator.getEmail().equals(createdAdministrator.getEmail()));
-
-		this.unauthenticate();
+		for (int i = 0; i < testingData.length; i++)
+			this.testSaveFromCreateAdminTemplate((String) testingData[i][0], (String) testingData[i][1], (String) testingData[i][2], (String) testingData[i][3], (String) testingData[i][4], (Date) testingData[i][5], (String) testingData[i][6],
+				(String) testingData[i][7], (Class<?>) testingData[i][8]);
 
 	}
 
-	@Test
-	public void testSaveFromEdit1() {
-		this.authenticate("admin");
+	protected void testSaveFromCreateAdminTemplate(final String name, final String surname, final String email, final String address, final String phone, final Date birthDate, final String username, final String password, final Class<?> expectedException) {
 
-		final Administrator createdAdministrator = this.administratorService.create();
-		Administrator savedAdministrator;
-		UserAccount savedUserAccount;
+		Class<?> caught;
+		String messageError;
 
-		createdAdministrator.setName("Example name");
-		createdAdministrator.setSurname("Example surname");
-		createdAdministrator.setEmail("example@example.com");
+		caught = null;
+		messageError = null;
 
-		savedUserAccount = createdAdministrator.getUserAccount();
-		savedUserAccount.setUsername("Example");
-		savedUserAccount.setPassword("Example");
+		try {
+			this.authenticate("admin");
+			Administrator result;
+			UserAccount userAccount;
 
-		createdAdministrator.setUserAccount(savedUserAccount);
+			result = this.administratorService.create();
 
-		savedAdministrator = this.administratorService.saveFromCreate(createdAdministrator);
+			result.setName(name);
+			result.setSurname(surname);
+			result.setEmail(email);
+			result.setAddress(address);
+			result.setPhone(phone);
+			result.setBirthDate(birthDate);
 
-		this.unauthenticate();
+			userAccount = result.getUserAccount();
+			userAccount.setUsername(username);
+			userAccount.setPassword(password);
+			result.setUserAccount(userAccount);
 
-		this.authenticate("example");
+			this.administratorService.saveFromCreate(result);
+			this.administratorService.flush();
 
-		Administrator editedAdministrator;
-		UserAccount editedUserAccount;
+			this.unauthenticate();
 
-		savedAdministrator.setName("Edited Example");
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		}
 
-		editedUserAccount = savedAdministrator.getUserAccount();
-		editedUserAccount.setPassword("Example");
-
-		savedAdministrator.setUserAccount(editedUserAccount);
-
-		editedAdministrator = this.administratorService.save(savedAdministrator);
-
-		Assert.isTrue(editedAdministrator.getName().equals(editedAdministrator.getName()));
-
-		this.unauthenticate();
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
 
 	}
 }
