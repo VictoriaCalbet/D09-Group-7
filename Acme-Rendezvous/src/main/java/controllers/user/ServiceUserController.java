@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import services.ServiceService;
-import services.form.ServiceFormService;
 import controllers.AbstractController;
 import domain.Service;
 
@@ -22,10 +21,7 @@ public class ServiceUserController extends AbstractController {
 	// Services -------------------------------------------------------------
 
 	@Autowired
-	private ServiceService		serviceService;
-
-	@Autowired
-	private ServiceFormService	serviceFormService;
+	private ServiceService	serviceService;
 
 
 	// Constructors ---------------------------------------------------------
