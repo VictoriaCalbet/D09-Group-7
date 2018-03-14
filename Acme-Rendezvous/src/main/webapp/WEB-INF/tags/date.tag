@@ -34,9 +34,7 @@
 <%-- Definition --%>
 
 <div>
-	<form:label path="${path}">
-		<spring:message code="${code}" />
-	</form:label>	
-	<form:input path="${path}" readonly="${readonly}" /> (dd/MM/yyyy HH:mm)		
-	<form:errors path="${path}" cssClass="error" />	
+    <b><form:label path="${path}"><spring:message code="${code}"/></form:label>:</b>	
+    <form:input path="${path}" readonly="${readonly}"/> (dd/MM/yyyy HH:mm)		
+    <form:errors path="${path}" cssClass="error" />
 </div>	

@@ -26,7 +26,7 @@
 	<!-- Links to edit or display a service -->
 	<security:authorize access="hasRole('MANAGER')">
 		<display:column>
-			<jstl:if test="${row.manager.userAccount.id eq loggedactor.id and empty row.requests}">
+			<jstl:if test="${row.manager.userAccount.id eq loggedactor.id and empty row.requests and row.isInappropriate eq false}">
 				<spring:message var="serviceEditLink" code="service.edit"/>
 				<a href="service/manager/edit.do?serviceId=${row.id}"><jstl:out value="${serviceEditLink}"/></a>
 			</jstl:if>

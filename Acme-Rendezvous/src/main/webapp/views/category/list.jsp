@@ -31,11 +31,17 @@
 <display:column property="description" title="${categoryDescription}"><jstl:out value="${row.description}"></jstl:out></display:column>
 
 <spring:message code="category.services" var="categoryServices" />
-<display:column property="services" title="${categoryServices}"></display:column>
+<display:column title="${categoryServices}">
+
+<jstl:forEach var="service" items="${row.services}">
+		<jstl:out value="${service.name}"></jstl:out>
+</jstl:forEach>
+
+</display:column>
 
 <spring:message code="category.children" var="listCategories"/>
 <display:column title="${listCategories}">
-			<a href="category/list.do?categoryId=${row.id}">
+			<a href="category/administrator/list.do?categoryId=${row.id}">
 		<spring:message code="category.viewChildren"/></a>
 </display:column>
 

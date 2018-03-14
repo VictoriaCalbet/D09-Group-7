@@ -16,7 +16,7 @@
 	uri="http://www.springframework.org/security/tags"%>
 
 <div>
-	<img src="${bannerURL}" alt="${businessName}" height="150"/>
+	<a href=""><img src="${bannerURL}" alt="${businessName}" height="150"/></a>
 </div>
 
 <div>
@@ -45,6 +45,10 @@
 		
 		<security:authorize access="hasRole('ADMIN')">
 			<li><a class="fNiv" href="service/administrator/list.do"><spring:message code="master.page.administrator.service.list" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="category/administrator/list.do"><spring:message code="master.page.administrator.category.list" /></a></li>
 		</security:authorize>
 		
 		<security:authorize access="hasRole('MANAGER')">

@@ -36,11 +36,10 @@
 
 <%-- Definition --%>
 
-<div>
-	<form:label path="${path}">
-		<spring:message code="${code}" />
-	</form:label>	
-	<form:select id="${id}" path="${path}" items="${items}" itemLabel="${itemLabel}" itemValue="id" multiple="multiple">
-	</form:select>
-	<form:errors path="${path}" cssClass="error" />
+<div>	
+	<b><form:label path="${path}"><spring:message code="${code}"/></form:label>:</b>	
+    <form:select id="${id}" path="${path}" onchange="${onchange}" multiple="multiple">
+        <form:options items="${items}" itemValue="id" itemLabel="${itemLabel}" />
+    </form:select>
+    <form:errors path="${path}" cssClass="error" />
 </div>

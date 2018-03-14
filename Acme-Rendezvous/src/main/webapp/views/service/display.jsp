@@ -64,9 +64,7 @@
 						<jstl:out value="${serviceIsInappropriateNo}"/>
 					</jstl:otherwise>
 				</jstl:choose>
-				
 			</td>
-			
 		</tr>
 		<tr>
 			<td>
@@ -77,7 +75,7 @@
 		</tr>
 	</table>
 	<security:authorize access="hasRole('MANAGER')">
-		<jstl:if test="${service.manager.userAccount.id eq loggedactor.id and empty service.requests}">
+		<jstl:if test="${service.manager.userAccount.id eq loggedactor.id and empty service.requests and service.isInappropriate eq false}">
 			<spring:message var="serviceEditLink" code="service.edit"/>
 			<a href="service/manager/edit.do?serviceId=${service.id}"><jstl:out value="${serviceEditLink}"/></a>
 		</jstl:if>
