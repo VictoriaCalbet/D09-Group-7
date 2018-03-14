@@ -116,6 +116,11 @@ public class ServiceService {
 
 		return result;
 	}
+
+	public void flush() {
+		this.serviceRepository.flush();
+	}
+
 	public void delete(final Service service) {
 		Manager manager = null;
 
