@@ -26,4 +26,8 @@
 		<put-attribute name="body" value="/views/request/edit.jsp" />
 	</definition>
 	
+	<definition name="request/user/edit" extends="master.page">        
+		<put-attribute name="title" value="Solicitar un servicio" />
+		<put-attribute name="body" value="/views/request/edit.jsp" />
+	</definition>
 </tiles-definitions>

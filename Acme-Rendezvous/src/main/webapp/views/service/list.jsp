@@ -66,10 +66,20 @@
 	<spring:message code="service.requests" var="serviceRequestsHeader" />
 	<security:authorize access="hasRole('USER')">
 		<display:column title="${serviceRequestsHeader}">
-			<jstl:if test="${row.isInappropriate eq false}">
+			
+			<jstl:if test="${row.isInappropriate eq false }">
+			
 				<spring:message code="service.requestThisService" var="serviceRequestThisServiceLink"/>
-				<a href="request/user/RequestService.do?serviceId=${row.id}"><jstl:out value="${serviceRequestThisServiceLink}"/></a>
+				<jstl:choose>
+				<jstl:when test="${!fn:contains(servicesPrincipal,row)}">
+				<a href="request/user/create.do?serviceId=${row.id}"><jstl:out value="${serviceRequestThisServiceLink}"/></a>
+				</jstl:when>
+				<jstl:otherwise>
+					<spring:message code= "service.requested"/>
+				</jstl:otherwise>
+				</jstl:choose>
 			</jstl:if>	
+			
 		</display:column>
 	</security:authorize>
 	

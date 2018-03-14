@@ -179,4 +179,8 @@ public class ServiceService {
 		for (final Request request : requests)
 			request.setService(null);
 	}
+
+	public Collection<Service> findServicesByUserId(final int userId) {
+		return this.serviceRepository.findServicesByUserId(userId);
+	}
 }
