@@ -28,7 +28,7 @@
 <%-- Definition --%>
 
 <tr>
-	<th><spring:message code="${code}" /> :</th>
+	<th><spring:message code="${code}" />:</th>
 	<td><jstl:out value="${value}" /></td>
 </tr>
 	

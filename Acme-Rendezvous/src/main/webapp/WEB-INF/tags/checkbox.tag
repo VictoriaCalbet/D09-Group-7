@@ -29,9 +29,7 @@
 <%-- Definition --%>
 
 <div class="form-group">
-	<form:label path="${path}">
-		<spring:message code="${code}" />
-	</form:label>
-	<form:checkbox path="${path}"/>
-	<form:errors path="${path}" cssClass="error" />
+    <b><form:label path="${path}"><spring:message code="${code}"/></form:label>:</b>
+    <form:checkbox path="${path}"/>
+    <form:errors path="${path}" cssClass="error" />
 </div>
