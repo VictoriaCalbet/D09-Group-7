@@ -1,6 +1,10 @@
 
 package domain.form;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.SafeHtml.WhiteListType;
+
 import domain.Category;
 
 public class CategoryForm {
@@ -19,6 +23,8 @@ public class CategoryForm {
 		this.categoryId = categoryId;
 	}
 	
+	@NotBlank
+	@SafeHtml(whitelistType = WhiteListType.NONE)
 	public String getName() {
 		return this.name;
 	}
@@ -27,6 +33,8 @@ public class CategoryForm {
 		this.name = name;
 	}
 	
+	@NotBlank
+	@SafeHtml(whitelistType = WhiteListType.NONE)
 	public String getDescription() {
 		return this.description;
 	}
