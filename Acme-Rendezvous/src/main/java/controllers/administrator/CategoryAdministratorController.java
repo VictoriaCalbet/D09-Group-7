@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +53,7 @@ public class CategoryAdministratorController extends AbstractController{
 			ModelAndView result;
 			Collection<Category> categories = new ArrayList<Category>();
 			
+			
 			try {
 				
 				if(categoryId==null){
@@ -59,6 +61,8 @@ public class CategoryAdministratorController extends AbstractController{
 					categories = this.categoryService.getRootCategories();
 					
 				}else{
+					
+					Assert.notNull(this.categoryService.findOne(categoryId),"message.error.category.null");
 					
 					categories = this.categoryService.getCategoriesByParent(categoryId);
 				}
@@ -71,8 +75,9 @@ public class CategoryAdministratorController extends AbstractController{
 				String messageError = "category.commit.error";
 				if (oops.getMessage().contains("message.error"))
 					messageError = oops.getMessage();
-				result = new ModelAndView("redirect:/category/administrator/list.do");
-				
+				result = new ModelAndView("category/administrator/list");
+				categories = this.categoryService.getRootCategories();
+				result.addObject("categories",categories);
 				result.addObject("message", messageError);
 			}
 			return result;
