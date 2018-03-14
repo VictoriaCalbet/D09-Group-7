@@ -80,6 +80,8 @@ public class ServiceFormService {
 		service.setDescription(serviceForm.getDescription());
 		service.setPictureURL(serviceForm.getPictureURL());
 
+		// Añadido: al enviar una colección vacía en la vista, no envía una 
+		// lista vacía, sino null. Por ello, hacemos esta comprobación. 
 		if (serviceForm.getCategories() == null)
 			service.setCategories(new ArrayList<Category>());
 		else
@@ -89,6 +91,7 @@ public class ServiceFormService {
 
 		return result;
 	}
+
 	public Service saveFromEdit(final ServiceForm serviceForm) {
 		Service service = null;
 		Service result = null;
@@ -101,6 +104,8 @@ public class ServiceFormService {
 		service.setDescription(serviceForm.getDescription());
 		service.setPictureURL(serviceForm.getPictureURL());
 
+		// Añadido: al enviar una colección vacía en la vista, no envía una 
+		// lista vacía, sino null. Por ello, hacemos esta comprobación. 
 		if (serviceForm.getCategories() == null) {
 			final Service serviceInDB = this.serviceService.findOne(service.getId());
 			final Collection<Category> categories = serviceInDB.getCategories();
