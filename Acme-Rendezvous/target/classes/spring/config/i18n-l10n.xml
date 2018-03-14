@@ -40,6 +40,7 @@
 		<value>/views/service/messages</value>
 		<value>/views/systemConfiguration/messages</value>
 		<value>/views/user/messages</value>
+		<value>/views/questionsAnswersForm/messages</value>
 	</util:list>
 
 </beans>
