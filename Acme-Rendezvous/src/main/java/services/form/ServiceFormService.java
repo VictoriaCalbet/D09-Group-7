@@ -52,6 +52,8 @@ public class ServiceFormService {
 		result.setDescription(service.getDescription());
 		result.setPictureURL(service.getPictureURL());
 		result.setCategories(service.getCategories());
+		result.setIsInappropriate(service.getIsInappropriate());
+		result.setNoRequests(service.getRequests().size());
 
 		return result;
 	}
@@ -75,7 +77,6 @@ public class ServiceFormService {
 
 		return result;
 	}
-
 	public Service saveFromEdit(final ServiceForm serviceForm) {
 		Service service = null;
 		Service result = null;

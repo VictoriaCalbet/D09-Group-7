@@ -3,7 +3,6 @@ package domain.form;
 
 import java.util.Collection;
 
-import javax.persistence.ManyToMany;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -18,9 +17,11 @@ public class ServiceForm {
 
 	// Form attributes --------------------------------------------------------
 	private int						id;
+	private int						noRequests;
 	private String					name;
 	private String					description;
 	private String					pictureURL;
+	private boolean					isInappropriate;
 	private Collection<Category>	categories;
 
 
@@ -64,11 +65,25 @@ public class ServiceForm {
 		this.pictureURL = pictureURL;
 	}
 
+	public boolean getIsInappropriate() {
+		return this.isInappropriate;
+	}
+	public void setIsInappropriate(final boolean isInappropriate) {
+		this.isInappropriate = isInappropriate;
+	}
+
+	public int getNoRequests() {
+		return this.noRequests;
+	}
+
+	public void setNoRequests(final int noRequests) {
+		this.noRequests = noRequests;
+	}
+
 	// Relationships ----------------------------------------------------------
 
 	@Valid
 	@NotNull
-	@ManyToMany
 	public Collection<Category> getCategories() {
 		return this.categories;
 	}
