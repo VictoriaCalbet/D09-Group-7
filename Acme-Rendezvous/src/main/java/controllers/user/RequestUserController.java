@@ -17,11 +17,12 @@ import services.RendezvousService;
 import services.RequestService;
 import services.ServiceService;
 import services.UserService;
+import services.form.RequestFormService;
 import controllers.AbstractController;
 import domain.Rendezvous;
-import domain.Request;
 import domain.Service;
 import domain.User;
+import domain.form.RequestForm;
 
 @Controller
 @RequestMapping("/request/user")
@@ -29,6 +30,8 @@ public class RequestUserController extends AbstractController {
 
 	@Autowired
 	private RequestService		requestService;
+	@Autowired
+	private RequestFormService	requestFormService;
 
 	@Autowired
 	private ServiceService		serviceService;
@@ -50,11 +53,11 @@ public class RequestUserController extends AbstractController {
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public ModelAndView create(@RequestParam final int serviceId) {
 		ModelAndView result;
-		Request request;
-		request = this.requestService.create();
+		RequestForm requestForm;
+		requestForm = this.requestFormService.create();
 		final Service service = this.serviceService.findOne(serviceId);
-		request.setService(service);
-		result = this.createEditModelAndView(request);
+		requestForm.setService(service);
+		result = this.createEditModelAndView(requestForm);
 		final User principal = this.userService.findByPrincipal();
 		final Collection<Rendezvous> rendezvousesCreated = this.rendezvousService.findAllAvailableRendezvousesCreatedByUserId(principal.getId());
 		result.addObject("service", service);
@@ -67,10 +70,10 @@ public class RequestUserController extends AbstractController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public ModelAndView edit(@RequestParam final int requestId) {
 		final ModelAndView result;
-		Request request;
-		request = this.requestService.findOne(requestId);
+		RequestForm requestForm;
+		requestForm = this.requestFormService.create(requestId);
 
-		result = this.createEditModelAndView(request);
+		result = this.createEditModelAndView(requestForm);
 		result.addObject(requestId);
 
 		return result;
@@ -78,25 +81,21 @@ public class RequestUserController extends AbstractController {
 
 	//Saving //TODO
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "save")
-	public ModelAndView save(@Valid final Request request, final BindingResult binding) {
+	public ModelAndView save(@Valid final RequestForm requestForm, final BindingResult binding) {
 		ModelAndView result;
 
 		if (binding.hasErrors())
-			result = this.createEditModelAndView(request);
+			result = this.createEditModelAndView(requestForm);
 		else
 			try {
-				if (request.getId() > 0)
-					this.requestService.saveFromEdit(request);
-
-				else
-					this.requestService.saveFromCreate(request);
+				this.requestFormService.saveFromCreate(requestForm);
 				result = new ModelAndView("redirect:/service/user/list.do");
 
 			} catch (final Throwable oops) {
 				String messageError = "request.commit.error";
 				if (oops.getMessage().contains("message.error"))
 					messageError = oops.getMessage();
-				result = this.createEditModelAndView(request, messageError);
+				result = this.createEditModelAndView(requestForm, messageError);
 			}
 
 		return result;
@@ -104,20 +103,20 @@ public class RequestUserController extends AbstractController {
 
 	//Ancillary methods
 
-	protected ModelAndView createEditModelAndView(final Request request) {
+	protected ModelAndView createEditModelAndView(final RequestForm requestForm) {
 		ModelAndView result;
 
-		result = this.createEditModelAndView(request, null);
+		result = this.createEditModelAndView(requestForm, null);
 
 		return result;
 	}
 
-	protected ModelAndView createEditModelAndView(final Request request, final String messageCode) {
+	protected ModelAndView createEditModelAndView(final RequestForm requestForm, final String messageCode) {
 		ModelAndView result;
-		final Rendezvous rendezvous = request.getRendezvous();
-		final Service service = request.getService();
+		final Rendezvous rendezvous = requestForm.getRendezvous();
+		final Service service = requestForm.getService();
 		result = new ModelAndView("request/user/edit");
-		result.addObject("request", request);
+		result.addObject("requestForm", requestForm);
 		result.addObject("service", service);
 		result.addObject("rendezvous", rendezvous);
 		result.addObject("message", messageCode);

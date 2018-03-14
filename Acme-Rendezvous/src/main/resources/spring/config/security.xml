@@ -81,7 +81,7 @@
 		<security:intercept-url pattern="/rendezvous/**" access="permitAll" />
 		
 		<!-- Request -->
-		<security:intercept-url pattern="/request/user/**" access="hasRole('USER')" />
+		<security:intercept-url pattern="/request/user/*" access="hasRole('USER')" />
 		<!-- RSVP -->
 		<security:intercept-url pattern="/RSVP/user/**" access="hasRole('USER')" />
 		

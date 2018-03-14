@@ -20,7 +20,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="acme" tagdir="/WEB-INF/tags"%>
 	
-<form:form action="${requestURI}" modelAttribute="request">
+<form:form action="${requestURI}" modelAttribute="requestForm">
 	
 	<form:hidden path="id"/>
 	<form:hidden path="service"/>
