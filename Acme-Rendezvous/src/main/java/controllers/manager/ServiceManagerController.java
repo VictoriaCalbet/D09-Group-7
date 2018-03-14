@@ -17,10 +17,12 @@ import org.springframework.web.servlet.ModelAndView;
 import services.CategoryService;
 import services.ManagerService;
 import services.ServiceService;
+import services.form.ServiceFormService;
 import controllers.AbstractController;
 import domain.Category;
 import domain.Manager;
 import domain.Service;
+import domain.form.ServiceForm;
 
 @Controller
 @RequestMapping("/service/manager")
@@ -29,13 +31,16 @@ public class ServiceManagerController extends AbstractController {
 	// Services -------------------------------------------------------------
 
 	@Autowired
-	private ManagerService	managerService;
+	private ServiceService		serviceService;
 
 	@Autowired
-	private ServiceService	serviceService;
+	private ServiceFormService	serviceFormService;
 
 	@Autowired
-	private CategoryService	categoryService;
+	private ManagerService		managerService;
+
+	@Autowired
+	private CategoryService		categoryService;
 
 
 	// Constructors ---------------------------------------------------------
@@ -72,10 +77,10 @@ public class ServiceManagerController extends AbstractController {
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public ModelAndView create() {
 		ModelAndView result = null;
-		Service service = null;
+		ServiceForm serviceForm = null;
 
-		service = this.serviceService.create();
-		result = this.createEditModelAndView(service);
+		serviceForm = this.serviceFormService.createFromCreate();
+		result = this.createEditModelAndView(serviceForm);
 
 		return result;
 	}
@@ -103,6 +108,7 @@ public class ServiceManagerController extends AbstractController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public ModelAndView edit(@RequestParam final int serviceId) {
 		ModelAndView result = null;
+		ServiceForm serviceForm = null;
 		Service service = null;
 		Manager manager = null;
 
@@ -111,38 +117,42 @@ public class ServiceManagerController extends AbstractController {
 
 		Assert.isTrue(service.getManager().equals(manager));
 
-		result = this.createEditModelAndView(service);
+		serviceForm = this.serviceFormService.createFromEdit(serviceId);
+		result = this.createEditModelAndView(serviceForm);
 
 		return result;
 	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "save")
-	public ModelAndView save(@Valid final Service service, final BindingResult bindingResult) {
+	public ModelAndView save(@Valid final ServiceForm serviceForm, final BindingResult bindingResult) {
 		ModelAndView result = null;
 
 		if (bindingResult.hasErrors())
-			result = this.createEditModelAndView(service);
+			result = this.createEditModelAndView(serviceForm);
 		else
 			try {
-				if (service.getId() == 0)
-					this.serviceService.saveFromCreate(service);
+				if (serviceForm.getId() == 0)
+					this.serviceFormService.saveFromCreate(serviceForm);
 				else
-					this.serviceService.saveFromEdit(service);
+					this.serviceFormService.saveFromEdit(serviceForm);
 
 				result = new ModelAndView("redirect:/service/manager/list.do");
 			} catch (final Throwable oops) {
 				String messageError = "service.commit.error";
 				if (oops.getMessage().contains("message.error"))
 					messageError = oops.getMessage();
-				result = this.createEditModelAndView(service, messageError);
+				result = this.createEditModelAndView(serviceForm, messageError);
 			}
 
 		return result;
 	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "delete")
-	public ModelAndView delete(final Service service, final BindingResult bindingResult) {
+	public ModelAndView delete(final ServiceForm serviceForm, final BindingResult bindingResult) {
 		ModelAndView result = null;
+		Service service = null;
+
+		service = this.serviceService.findOne(serviceForm.getId());
 
 		try {
 			this.serviceService.delete(service);
@@ -165,15 +175,15 @@ public class ServiceManagerController extends AbstractController {
 
 	// Ancillary methods ----------------------------------------------------
 
-	protected ModelAndView createEditModelAndView(final Service service) {
+	protected ModelAndView createEditModelAndView(final ServiceForm serviceForm) {
 		ModelAndView result = null;
 
-		result = this.createEditModelAndView(service, null);
+		result = this.createEditModelAndView(serviceForm, null);
 
 		return result;
 	}
 
-	protected ModelAndView createEditModelAndView(final Service service, final String message) {
+	protected ModelAndView createEditModelAndView(final ServiceForm serviceForm, final String message) {
 		ModelAndView result = null;
 		String actionURI = null;
 		Collection<Category> categories = null;
@@ -181,12 +191,12 @@ public class ServiceManagerController extends AbstractController {
 		actionURI = "service/manager/edit.do";
 		categories = this.categoryService.findAll();
 
-		if (service.getId() == 0)
+		if (serviceForm.getId() == 0)
 			result = new ModelAndView("service/create");
 		else
 			result = new ModelAndView("service/edit");
 
-		result.addObject("service", service);
+		result.addObject("serviceForm", serviceForm);
 		result.addObject("categories", categories);
 		result.addObject("actionURI", actionURI);
 		result.addObject("message", message);
