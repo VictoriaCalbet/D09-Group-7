@@ -128,8 +128,6 @@ public class ServiceManagerController extends AbstractController {
 		ModelAndView result = null;
 		boolean bindingError;
 
-		// Añadido: al enviar una colección vacía en la vista, no envía una 
-		// lista vacía, sino null. Por ello, hacemos esta comprobación. 
 		if (bindingResult.hasFieldErrors("categories"))
 			bindingError = bindingResult.getErrorCount() > 1;
 		else
