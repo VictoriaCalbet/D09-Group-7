@@ -126,8 +126,14 @@ public class ServiceManagerController extends AbstractController {
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "save")
 	public ModelAndView save(@Valid final ServiceForm serviceForm, final BindingResult bindingResult) {
 		ModelAndView result = null;
+		boolean bindingError;
 
-		if (bindingResult.hasErrors())
+		if (bindingResult.hasFieldErrors("categories"))
+			bindingError = bindingResult.getErrorCount() > 1;
+		else
+			bindingError = bindingResult.getErrorCount() > 0;
+
+		if (bindingError)
 			result = this.createEditModelAndView(serviceForm);
 		else
 			try {

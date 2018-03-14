@@ -1,12 +1,17 @@
 
 package services.form;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import services.CategoryService;
 import services.ServiceService;
+import domain.Category;
 import domain.Service;
 import domain.form.ServiceForm;
 
@@ -18,6 +23,9 @@ public class ServiceFormService {
 
 	@Autowired
 	private ServiceService	serviceService;
+
+	@Autowired
+	private CategoryService	categoryService;
 
 
 	// Constructors -----------------------------------------------------------
@@ -71,7 +79,11 @@ public class ServiceFormService {
 		service.setName(serviceForm.getName());
 		service.setDescription(serviceForm.getDescription());
 		service.setPictureURL(serviceForm.getPictureURL());
-		service.setCategories(serviceForm.getCategories());
+
+		if (serviceForm.getCategories() == null)
+			service.setCategories(new ArrayList<Category>());
+		else
+			service.setCategories(serviceForm.getCategories());
 
 		result = this.serviceService.saveFromCreate(service);
 
@@ -88,7 +100,17 @@ public class ServiceFormService {
 		service.setName(serviceForm.getName());
 		service.setDescription(serviceForm.getDescription());
 		service.setPictureURL(serviceForm.getPictureURL());
-		service.setCategories(serviceForm.getCategories());
+
+		if (serviceForm.getCategories() == null) {
+			final Service serviceInDB = this.serviceService.findOne(service.getId());
+			final Collection<Category> categories = serviceInDB.getCategories();
+			for (final Category category : categories) {
+				category.getServices().remove(serviceInDB);
+				this.categoryService.save(category);
+			}
+			service.setCategories(new ArrayList<Category>());
+		} else
+			service.setCategories(serviceForm.getCategories());
 
 		result = this.serviceService.saveFromEdit(service);
 

@@ -98,7 +98,6 @@ public class ServiceService {
 
 		return result;
 	}
-
 	public Service saveFromEdit(final Service service) {
 		Service result = null;
 		Manager manager = null;
@@ -117,7 +116,6 @@ public class ServiceService {
 
 		return result;
 	}
-
 	public void delete(final Service service) {
 		Manager manager = null;
 
