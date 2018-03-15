@@ -24,4 +24,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 	@Query("select cat from Category cat where cat.parent = null")
 	public Collection<Category> getRootCategories();
 	
+	@Query("select cat from Category cat where cat.parent is not null and cat.parent.id=?1")
+	public Collection<Category> replaceParentCategories(int id);
+	
 }

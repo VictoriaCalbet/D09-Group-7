@@ -1,5 +1,5 @@
 <%--
- * textarea.tag
+ * display.tag
  *
  * Copyright (C) 2017 Universidad de Sevilla
  * 
@@ -28,7 +28,7 @@
 <%-- Definition --%>
 
 <tr>
-	<th><spring:message code="${code}" /> :</th>
+	<th><spring:message code="${code}" />:</th>
 	<td><jstl:out value="${value}" /></td>
 </tr>
 	

@@ -18,3 +18,20 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="acme" tagdir="/WEB-INF/tags"%>
 
+<form:form action="${requestURI}" modelAttribute="systemConfiguration">
+
+	<!-- Hidden attributes -->
+	<form:hidden path="id"/>
+	<form:hidden path="version"/>
+	
+	<!-- Editable attributes -->
+	<acme:textbox code="systemConfiguration.businessName" path="businessName"/>
+	<acme:textbox code="systemConfiguration.bannerURL" path="bannerURL"/>
+	<acme:textbox code="systemConfiguration.englishWelcomeMessage" path="englishWelcomeMessage"/>
+	<acme:textbox code="systemConfiguration.spanishWelcomeMessage" path="spanishWelcomeMessage"/>
+	
+	<!-- Action buttons -->
+	<acme:submit name="save" code="systemConfiguration.save" /> &nbsp;
+	<acme:cancel url="systemConfiguration/administrator/info.do" code="systemConfiguration.cancel" /> <br/>
+
+</form:form>

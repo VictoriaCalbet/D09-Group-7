@@ -16,7 +16,8 @@
 <%@taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
 <%@taglib prefix="display" uri="http://displaytag.sf.net"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="acme" tagdir="/WEB-INF/tags" %>
 
 <security:authentication property="principal" var="loggedactor"/>
 
@@ -25,40 +26,33 @@
 	<!-- Links to edit or display a service -->
 	<security:authorize access="hasRole('MANAGER')">
 		<display:column>
-			<jstl:if test="${row.manager.userAccount.id eq loggedactor.id}">
-				<a href="service/manager/edit.do?serviceId=${row.id}">
-					<spring:message code="service.edit"/>
-				</a>
+			<jstl:if test="${row.manager.userAccount.id eq loggedactor.id and empty row.requests and row.isInappropriate eq false}">
+				<spring:message var="serviceEditLink" code="service.edit"/>
+				<a href="service/manager/edit.do?serviceId=${row.id}"><jstl:out value="${serviceEditLink}"/></a>
 			</jstl:if>
 		</display:column>
 	</security:authorize>
-	
-	<security:authorize access="isAnyRole('USER', 'MANAGER', 'ADMIN')">
+
+	<security:authorize access="hasAnyRole('USER', 'MANAGER', 'ADMIN')">
 		<display:column>
-			<a href="${displayURI}${row.id}">
-				<spring:message code="service.display"/>
-			</a>
+			<spring:message var="serviceDisplayLink" code="service.display"/>
+			<a href="${displayURI}${row.id}"><jstl:out value="${serviceDisplayLink}"/></a>
 		</display:column>
 	</security:authorize>
+	
 	
 	<security:authorize access="hasRole('ADMIN')">
 		<display:column>
 			<jstl:choose>
-				<jstl:when test="${row.manager.userAccount.id eq loggedactor.id}">
-					<spring:message code="service.markAsInapropiate" var="serviceMarkAsInapropiateLink"/>
-					<a href="service/administrator/markAsInapropiate.do?serviceId=${row.id}"> <jstl:out value="${serviceMarkAsInapropiateLink}"/> </a>
+				<jstl:when test="${row.isInappropriate eq false}">
+					<spring:message code="service.markAsInappropriate" var="serviceMarkAsInappropriateLink"/>
+					<a href="service/administrator/markAsInappropriate.do?serviceId=${row.id}"><jstl:out value="${serviceMarkAsInappropriateLink}"/></a>
+				</jstl:when>
+				<jstl:when test="${row.isInappropriate eq true}">
+					<spring:message code="service.unmarkAsInappropriate" var="serviceUnmarkAsInappropriateLink"/>
+					<a href="service/administrator/unmarkAsInappropriate.do?serviceId=${row.id}"><jstl:out value="${serviceUnmarkAsInappropriateLink}"/></a>
 				</jstl:when>
 			</jstl:choose>
-		</display:column>
-	</security:authorize>
-
-	<security:authorize access="hasRole('MANAGER')">
-		<display:column>
-			<jstl:if test="${row.manager.userAccount.id eq loggedactor.id}">
-				<a href="service/manager/edit.do?serviceId=${row.id}">
-					<spring:message code="service.edit"/>
-				</a>
-			</jstl:if>
 		</display:column>
 	</security:authorize>
 	
@@ -68,17 +62,40 @@
 	<spring:message code="service.description" var="serviceDescriptionHeader"/>
 	<display:column property="description" title="${serviceDescriptionHeader}" />
 	
-	<spring:message code="service.picture" var="servicePictureHeader"/>
-	<display:column property="picture" title="${servicePictureHeader}"/>
 	
-	<spring:message code="service.isInapropiate" var="serviceIsInapropiateHeader"/>
-	<display:column property="isInapropiate" title="${serviceIsInapropiateHeader}"/>
+	<spring:message code="service.requests" var="serviceRequestsHeader" />
+	<security:authorize access="hasRole('USER')">
+		<display:column title="${serviceRequestsHeader}">
+			
+			<jstl:if test="${row.isInappropriate eq false }">
+			
+				<spring:message code="service.requestThisService" var="serviceRequestThisServiceLink"/>
+				<jstl:choose>
+				<jstl:when test="${!fn:contains(servicesPrincipal,row)}">
+				<a href="request/user/create.do?serviceId=${row.id}"><jstl:out value="${serviceRequestThisServiceLink}"/></a>
+				</jstl:when>
+				<jstl:otherwise>
+					<spring:message code= "service.requested"/>
+				</jstl:otherwise>
+				</jstl:choose>
+			</jstl:if>	
+			
+		</display:column>
+	</security:authorize>
+	
+	<spring:message code="service.pictureURL" var="servicepictureURLHeader"/>
+	<display:column title="${servicepictureURLHeader}">
+		<acme:image imageURL="${row.pictureURL}" imageNotFoundLocation="images/fotoNotFound.png" 
+					codeError="service.unspecifiedURL" height="60" width="60"/>
+	</display:column>
 </display:table>
 
 <security:authorize access="hasRole('MANAGER')">
 	<spring:message code="service.create" var="serviceCreateLink"/>
-	<a href="service/manager/create.do"> <jstl:out value="${serviceCreateLink}"/> </a>
+	<a href="service/manager/create.do"><jstl:out value="${serviceCreateLink}"/></a>
+	<br/> 
 </security:authorize>
+<br/>
 
-<spring:message code="service.cancel" var="serviceCancelLink"/>
-<a href="welcome/index.do"> <jstl:out value="${serviceCancelLink}"/> </a>
+<acme:cancel url="welcome/index.do" code="service.cancel"/>
+<br/>

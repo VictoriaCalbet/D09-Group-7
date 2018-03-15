@@ -3,6 +3,8 @@ package services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +23,8 @@ public class CategoryService {
 	@Autowired
 	private CategoryRepository	categoryRepository;
 
-
+	@Autowired
+	private ServiceService	serviceService;
 	// Supporting services ----------------------------------------------------
 
 	// Constructors -----------------------------------------------------------
@@ -45,7 +48,7 @@ public class CategoryService {
 	}
 
 	public Category save(final Category category) {
-		Assert.notNull(category);
+		Assert.notNull(category,"message.error.category.null");
 		
 		Category result = this.categoryRepository.save(category);
 
@@ -55,10 +58,10 @@ public class CategoryService {
 
 	public Category saveFromCreate(final Category category) {
 		
-		Assert.notNull(category);
-		Assert.isTrue(category.getId()==0);
-		Assert.notNull(category.getDescription());
-		Assert.notNull(category.getName());
+		Assert.notNull(category,"message.error.category.null");
+		Assert.isTrue(category.getId()==0,"message.error.category.id");
+		Assert.notNull(category.getDescription(),"message.error.category.description.null");
+		Assert.notNull(category.getName(),"message.error.category.name.null");
 		Category result = this.categoryRepository.save(category);
 		
 		return result;
@@ -67,10 +70,10 @@ public class CategoryService {
 	}
 
 	public Category saveFromEdit(final Category category) {
-		Assert.isTrue(category.getId()>0);
-		Assert.notNull(category);
-		Assert.notNull(category.getDescription());
-		Assert.notNull(category.getName());
+		Assert.isTrue(category.getId()>0,"message.error.category.id");
+		Assert.notNull(category,"message.error.category.null");
+		Assert.notNull(category.getDescription(),"message.error.category.description.null");
+		Assert.notNull(category.getName(),"message.error.category.name.null");
 		Category result;
 		result = this.categoryRepository.save(category);
 		
@@ -79,7 +82,24 @@ public class CategoryService {
 	
 	public void delete(Category category){
 		
-		Assert.notNull(category);
+		Assert.notNull(category,"message.error.category.null");
+		
+		Collection<Service> services = category.getServices();
+		
+		for(Service ser:services){
+			
+			ser.getCategories().remove(category);
+			this.serviceService.save(ser);
+			
+		}
+		Collection<Category> categories = this.replaceParentCategories(category.getId());
+		
+		for(Category cat:categories){
+			
+			cat.setParent(null);
+			this.categoryRepository.save(cat);
+		}
+				
 		
 		this.categoryRepository.delete(category);
 	}
@@ -106,7 +126,16 @@ public class CategoryService {
 		
 	}
 	
-public Collection<Category> getRootCategories(){
+	public Collection<Category> replaceParentCategories(int categoryId){
+		
+		Collection<Category> result = this.categoryRepository.replaceParentCategories(categoryId);
+		
+		return result;
+	
+		
+	}
+	
+	public Collection<Category> getRootCategories(){
 		
 		Collection<Category> cate = this.categoryRepository.getRootCategories();
 		
@@ -114,13 +143,35 @@ public Collection<Category> getRootCategories(){
 		
 	} 
 	
-//	public Integer getAverageNumberOfCategoriesPerRendezvous(){
-//		
-//		Integer aver = this.categoryRepository.getAverageNumberOfCategoriesPerRendezvous();
-//		
-//		return aver;
-//	}
-	
+	public Map<Integer,String> createCategoryLabels(Collection<Category> categories){
+		
+		Map<Integer,String> map = new HashMap<Integer,String>();
+		
+		String label="";
+		
+		for(Category ca:categories){
+			int id=ca.getId();
+			label=ca.getName();
+			Category parent=ca.getParent();
+			
+			while(parent!=null){
+
+				label=parent.getName()+">"+label;
+				ca=parent;
+				parent=ca.getParent();
+				
+			}
+			
+			map.put(id, label);
+			
+			}
+
+		
+		
+		return map;
+	}
+
+
 	public Integer getRatioOfServicesPerEachCategory(){
 		
 		Integer ratio = this.categoryRepository.getRatioOfServicesPerEachCategory();

@@ -18,3 +18,46 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="acme" tagdir="/WEB-INF/tags"%>
 
+<form:form action="${requestURI}" modelAttribute="categoryForm">
+
+	<!-- Hidden attributes -->
+	<form:hidden path="categoryId"/>
+	
+	<!-- Editable attributes -->
+	
+	<acme:textbox code="category.name" path="name"/>	
+	<acme:textbox code="category.description" path="description"/>
+	
+	<form:label path="parent">
+	<spring:message code="category.parent"/>
+	</form:label>
+    	
+	<form:select name="parent" path="parent">
+
+    	 <jstl:forEach var="category" items="${categories}">
+    	 	
+    	 	<jstl:if test="${category.id != categoryForm.categoryId}">
+     	
+    			<form:option value="${category.id}" label="${map.get(category.id)}"/>
+    		
+    		</jstl:if>
+     	</jstl:forEach>
+	</form:select>
+	
+	<form:errors cssClass="error" path="parent"/>
+	
+		<!-- Action buttons -->
+	<br/>
+	<acme:submit name="save" code="category.save" />
+	
+	
+	<jstl:if test="${categoryForm.categoryId>0}">
+	
+		<acme:submit name="delete" code="category.delete" />
+	
+	</jstl:if>
+	
+	<acme:cancel url="/" code="category.cancel" /> <br/>
+
+</form:form>
+

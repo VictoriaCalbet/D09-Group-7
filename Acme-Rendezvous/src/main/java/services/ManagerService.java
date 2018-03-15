@@ -64,6 +64,10 @@ public class ManagerService {
 
 	}
 
+	public void flush() {
+		this.managerRepository.flush();
+	}
+
 	public Manager saveFromCreate(final Manager manager) {
 		Assert.notNull(manager, "message.error.manager.null");
 		Assert.notNull(manager.getUserAccount().getUsername(), "message.error.manager.username.null");
@@ -145,5 +149,14 @@ public class ManagerService {
 		result = this.managerRepository.findByUserAccountId(userAccount.getId());
 		Assert.notNull(result);
 		return result;
+	}
+	//Managers with more services than average
+
+	public Collection<Manager> findManagersWithMoreServicesThanAverage() {
+		return this.managerRepository.findManagersWithMoreServicesThanAverage();
+	}
+
+	public Collection<Manager> findManagersWithMoreServicesCancelled() {
+		return this.managerRepository.findManagersWithMoreServicesCancelled();
 	}
 }

@@ -88,6 +88,9 @@ public class RendezvousService {
 		return this.rendezvousRepository.findRendezvousSimilarNotDeleted(u.getId());
 
 	}
+	public Rendezvous findRendezvousByService(final int serviceId) {
+		return this.rendezvousRepository.findRendezvousByService(serviceId);
+	}
 
 	public Collection<Rendezvous> findRendezvousSimilar(final int rendezvousId) {
 		return this.rendezvousRepository.findRendezvousSimilar(rendezvousId);
@@ -166,6 +169,16 @@ public class RendezvousService {
 			Assert.isTrue(rendezvous.getIsAdultOnly() == false);
 
 		Rendezvous result;
+		result = this.rendezvousRepository.save(rendezvous);
+
+		return result;
+	}
+
+	public Rendezvous saveWithoutConstraints(final Rendezvous rendezvous) {
+		Assert.notNull(rendezvous, "message.error.rendezvous.null");
+
+		Rendezvous result;
+
 		result = this.rendezvousRepository.save(rendezvous);
 
 		return result;

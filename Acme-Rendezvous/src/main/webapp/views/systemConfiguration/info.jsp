@@ -18,3 +18,17 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<div>
+	<b><spring:message code="systemConfiguration.businessName" />: </b>
+	<jstl:out value="${systemConfiguration.businessName}" />
+	<br /> <b><spring:message code="systemConfiguration.bannerURL" />: </b>
+	<jstl:out value="${systemConfiguration.bannerURL}" />
+	<br /> <b><spring:message code="systemConfiguration.englishWelcomeMessage" />: </b>
+	<jstl:out value="${systemConfiguration.englishWelcomeMessage}" />
+	<br /> <b><spring:message code="systemConfiguration.spanishWelcomeMessage" />: </b>
+	<jstl:out value="${systemConfiguration.spanishWelcomeMessage}" />
+</div>
+
+	<security:authorize access="hasRole('ADMIN')">
+	<br><a href="systemConfiguration/administrator/edit.do"> <spring:message code="systemConfiguration.edit" /></a>
+	</security:authorize>

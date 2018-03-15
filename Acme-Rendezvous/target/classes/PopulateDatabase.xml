@@ -631,7 +631,7 @@
 	
 	<!-- Requests #Requests -->
 	
-	<bean id="request1" class="domain.Request">
+	<bean id="request1" class="domain.Request"> 
 		<property name="comment" value="Comment of the request1"/>
 		<property name="creditCard" ref="creditCard1"/>
 		<property name="service" ref="service1"/>
@@ -765,7 +765,7 @@
 	<bean id="rsvp3" class="domain.RSVP">
 		<property name="isCancelled" value="true"/>
 		<property name="user" ref="user1"/>
-		<property name="rendezvous" ref="rendezvous5"/>
+		<property name="rendezvous" ref="rendezvous3"/>
 	</bean>
 
 	<bean id="rsvp4" class="domain.RSVP">

@@ -16,8 +16,7 @@
 	uri="http://www.springframework.org/security/tags"%>
 
 <div>
-	<a href=""><img src="images/logo.png"
-		alt="Acme Co., Inc." /></a>
+	<a href=""><img src="${bannerURL}" alt="${businessName}" height="150"/></a>
 </div>
 
 <div>
@@ -36,9 +35,28 @@
 			<li><a class="fNiv" href="rendezvous/administrator/list.do"><spring:message code="master.page.administrator.rendezvous.list" /></a></li>
 		</security:authorize>
 		
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="systemConfiguration/administrator/info.do"><spring:message code="systemConfiguration.header" /></a></li>
+		</security:authorize>
 		
 		<security:authorize access="hasRole('ADMIN')">
 			<li><a class="fNiv" href="administrator/dashboard.do"><spring:message code="master.page.administrator.dashboard" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="service/administrator/list.do"><spring:message code="master.page.administrator.service.list" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="category/administrator/list.do"><spring:message code="master.page.administrator.category.list" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('MANAGER')">
+			<li><a class="fNiv" href="service/manager/list.do"><spring:message code="master.page.manager.service.list" /></a></li>
+		</security:authorize>
+		
+		<security:authorize access="hasRole('USER')">
+			<li><a class="fNiv" href="service/user/list.do"><spring:message code="master.page.user.service.list" /></a></li>
 		</security:authorize>
 		
 		<security:authorize access="hasRole('USER')">

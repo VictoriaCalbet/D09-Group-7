@@ -72,7 +72,7 @@ public class CreditCard {
 		this.expirationYear = expirationYear;
 	}
 
-	@Range(min = 100, max = 999)
+	@Range(min = 1, max = 999)
 	public int getCvv() {
 		return this.cvv;
 	}

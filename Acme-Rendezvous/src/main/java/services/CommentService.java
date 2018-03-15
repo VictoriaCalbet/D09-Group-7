@@ -89,6 +89,14 @@ public class CommentService {
 		c.setMomentWritten(new Date(System.currentTimeMillis() - 1));
 		c.setUser(this.userService.findByPrincipal());
 		c.setOriginalComment(null);
+		
+		Collection<Comment> comments = ren.getComments();
+		
+		comments.add(c);
+		
+		ren.setComments(comments);
+		
+		this.rendezvousService.saveWithoutConstraints(ren);
 
 		final Comment savedC = this.commentRepository.save(c);
 

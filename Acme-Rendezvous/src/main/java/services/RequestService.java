@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import repositories.RequestRepository;
+import domain.CreditCard;
+import domain.Rendezvous;
 import domain.Request;
 
 @Service
@@ -20,8 +22,14 @@ public class RequestService {
 	@Autowired
 	private RequestRepository	requestRepository;
 
-
 	// Supporting services ----------------------------------------------------
+	@Autowired
+	private ServiceService		serviceService;
+	@Autowired
+	private UserService			userService;
+	@Autowired
+	private RendezvousService	RendezvousService;
+
 
 	// Constructors -----------------------------------------------------------
 
@@ -32,9 +40,15 @@ public class RequestService {
 	// Simple CRUD methods ----------------------------------------------------
 
 	public Request create() {
-		return null;
+		final Request result = new Request();
+		final CreditCard creditCard = new CreditCard();
+		final Rendezvous rendezvous = new Rendezvous();
+		final String comment = "";
+		result.setCreditCard(creditCard);
+		result.setComment(comment);
+		result.setRendezvous(rendezvous);
+		return result;
 	}
-
 	public Request save(final Request request) {
 		Assert.notNull(request);
 		Request result;
@@ -46,13 +60,26 @@ public class RequestService {
 	}
 
 	public Request saveFromCreate(final Request request) {
-		return null;
+		final domain.Service service = this.serviceService.findOne(request.getService().getId());
+		Assert.notNull(service);
+		Request result = this.create();
+
+		Assert.isTrue(request.getRendezvous().getIsDraft() == false);
+		Assert.isTrue(request.getRendezvous().getIsDeleted() == false);
+		Assert.isTrue(request.getService().getIsInappropriate() == false);
+
+		result = this.requestRepository.save(request);
+		return result;
 	}
 
 	public Request saveFromEdit(final Request request) {
-		return null;
-	}
+		Assert.notNull(request);
 
+		final Request result = this.requestRepository.save(request);
+
+		return result;
+
+	}
 	// Other business methods -------------------------------------------------
 
 	public Collection<Request> findAll() {
@@ -66,4 +93,5 @@ public class RequestService {
 		result = this.requestRepository.findOne(requestId);
 		return result;
 	}
+
 }

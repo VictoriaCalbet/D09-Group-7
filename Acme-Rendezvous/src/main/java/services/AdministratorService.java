@@ -62,6 +62,10 @@ public class AdministratorService {
 
 	}
 
+	public void flush() {
+		this.administratorRepository.flush();
+	}
+
 	public Administrator saveFromCreate(final Administrator administrator) {
 		Assert.notNull(administrator, "message.error.administrator.null");
 		Assert.notNull(administrator.getUserAccount().getUsername(), "message.error.administrator.username.null");

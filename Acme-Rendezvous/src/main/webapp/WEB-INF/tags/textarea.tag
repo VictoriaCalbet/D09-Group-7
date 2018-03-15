@@ -33,9 +33,7 @@
 <%-- Definition --%>
 
 <div class="form-group">
-	<form:label path="${path}">
-		<spring:message code="${code}" />
-	</form:label>
-	<form:textarea path="${path}" readonly="${readonly}" />
-	<form:errors path="${path}" cssClass="error" />
+    <b><form:label path="${path}"><spring:message code="${code}"/></form:label>:</b>
+    <form:textarea path="${path}" readonly="${readonly}" />
+    <form:errors path="${path}" cssClass="error" />
 </div>
