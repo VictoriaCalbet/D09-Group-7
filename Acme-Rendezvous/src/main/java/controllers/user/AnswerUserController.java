@@ -193,7 +193,7 @@ public class AnswerUserController extends AbstractController {
 					final String name = parameterNames.nextElement();
 					if (!(name.equals("save") || name.equals("rendezvousId") || name.contains("answerId"))) {
 						final String value = request.getParameter(name);
-						System.out.println(name + "|" + value);
+
 						Integer questionId;
 						questionId = new Integer(name);
 						Question questionInDB;
@@ -203,7 +203,7 @@ public class AnswerUserController extends AbstractController {
 						answer.setQuestion(questionInDB);
 						answer.setText(value);
 						answers.add(answer);
-						System.out.println(request.getParameter("answerId" + name));
+
 						answer.setId(new Integer(request.getParameter("answerId" + name)));
 						QuestionAndAnswerForm qaa;
 						qaa = new QuestionAndAnswerForm();

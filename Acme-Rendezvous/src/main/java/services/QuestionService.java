@@ -141,7 +141,7 @@ public class QuestionService {
 		for (final Answer a : answers)
 			this.answerService.delete(a);
 		this.questionRepository.delete(question);
-		this.rendezvousService.save(rendezvous);
+		this.rendezvousService.saveWithoutConstraints(rendezvous);
 	}
 	public void deleteByAdmin(final Question question) {
 		Assert.notNull(question, "message.error.question.null");

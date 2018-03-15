@@ -145,11 +145,13 @@ public class QuestionUserController extends AbstractController {
 			questionInDB = this.questionService.findOne(questionForm.getQuestionId());
 			this.questionService.delete(questionInDB);
 			result = new ModelAndView("redirect:/question/user/list.do?rendezvousId=" + questionForm.getRendezvousId());
+
 		} catch (final Throwable oops) {
 			final String error = "question.commit.error";
 			result = this.createEditModelAndView(questionForm, error);
 			result.addObject("requestURI", "question/user/edit.do");
 		}
+
 		return result;
 	}
 	//Auxiliares
