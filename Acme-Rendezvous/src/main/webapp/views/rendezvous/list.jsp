@@ -78,7 +78,8 @@
 	
 	<spring:message code="rendezvous.picture" var="pictureHeader" />
 	<display:column title="${pictureHeader}" style="${style}">
-		<img src="${row.picture}" height="42" width="42">
+		<acme:image imageURL="${row.picture}" imageNotFoundLocation="images/fotoNotFound.png" 
+		codeError="rendezvous.unspecifiedImage" height="60" width="60"/>	
 	</display:column>
 	
 	<spring:message code="rendezvous.gpsPoint.latitude" var="gpsPointLatitudeHeader" />
