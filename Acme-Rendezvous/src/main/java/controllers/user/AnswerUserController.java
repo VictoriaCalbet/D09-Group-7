@@ -4,13 +4,13 @@ package controllers.user;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
-import javax.validation.Valid;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -100,117 +100,280 @@ public class AnswerUserController extends AbstractController {
 		}
 		return result;
 	}
+
 	@RequestMapping(value = "/respond", method = RequestMethod.GET)
-	public ModelAndView respond(@RequestParam final int questionId) {
-		final ModelAndView result;
+	public ModelAndView respond(@RequestParam final int rendezvousId) {
+
+		ModelAndView result;
 		User user;
 		user = null;
 		try {
 			user = this.userService.findByPrincipal();
 		} catch (final Throwable oops) {
-
+			result = new ModelAndView("redirect:/");
 		}
 		final Date birthDate = user.getBirthDate();
 		final Calendar now = Calendar.getInstance();
 		now.set(Calendar.YEAR, now.get(Calendar.YEAR) - 18);
 		final Date yearLimit = now.getTime();
 
-		if (this.questionService.findOne(questionId).getRendezvous().getIsAdultOnly() && birthDate.after(yearLimit))
+		if (this.rendezvousService.findOne(rendezvousId).getIsAdultOnly() && birthDate.after(yearLimit))
 			result = new ModelAndView("redirect:/");
-		else if (this.questionService.findOne(questionId) == null || user == null || user.getRendezvoussesCreated().contains(this.questionService.findOne(questionId).getRendezvous()))
+		else if (this.rendezvousService.findOne(rendezvousId) == null || user == null || user.getRendezvoussesCreated().contains(this.rendezvousService.findOne(rendezvousId)))
 			result = new ModelAndView("redirect:/");
 		else {
-			QuestionAndAnswerForm questionAndAnswerForm;
-			questionAndAnswerForm = new QuestionAndAnswerForm();
-			Question questionInDB;
-			questionInDB = this.questionService.findOne(questionId);
-			if (questionInDB != null) {
-				questionAndAnswerForm.setQuestionId(questionId);
-				questionAndAnswerForm.setQuestionText(questionInDB.getText());
-				questionAndAnswerForm.setAnswerText("");
-
+			final List<QuestionAndAnswerForm> questionsAndAnswers;
+			questionsAndAnswers = new ArrayList<QuestionAndAnswerForm>();
+			final List<Question> questions;
+			questions = new ArrayList<Question>();
+			Rendezvous rendezvousInDB;
+			rendezvousInDB = this.rendezvousService.findOne(rendezvousId);
+			questions.addAll(rendezvousInDB.getQuestions());
+			List<Answer> answersInDB;
+			answersInDB = new ArrayList<Answer>();
+			for (final Question q : questions) {
+				QuestionAndAnswerForm qaa;
+				qaa = new QuestionAndAnswerForm();
+				qaa.setQuestionId(q.getId());
+				qaa.setQuestionText(q.getText());
+				qaa.setIsBlank(false);
 				Answer answer;
 				answer = null;
 				if (user != null)
-					answer = this.answerService.findAnswerByQuestionIdAndUserId(questionId, user.getId());
-				if (answer != null)
-					questionAndAnswerForm.setAnswerId(answer.getId());
-				else
-					questionAndAnswerForm.setAnswerId(0);
-				result = new ModelAndView("answer/edit");
-				result.addObject("questionAndAnswerForm", questionAndAnswerForm);
-				result.addObject("requestURI", "answer/user/respond.do?questionId=" + questionId);
-				result.addObject("rendezvousId", questionInDB.getRendezvous().getId());
-			} else
-				result = new ModelAndView("redirect:/");
+					answer = this.answerService.findAnswerByQuestionIdAndUserId(q.getId(), user.getId());
+				if (answer != null) {
+					qaa.setAnswerText(answer.getText());
+					qaa.setAnswerId(answer.getId());
+					answersInDB.add(answer);
+				} else {
+					qaa.setAnswerText("");
+					qaa.setAnswerId(0);
+				}
+				questionsAndAnswers.add(qaa);
+			}
+			result = new ModelAndView("questionsAnswersForm");
+			result.addObject("questionsAndAnswers", questionsAndAnswers);
+			result.addObject("requestURI", "answer/user/respond.do?rendezvousId=" + rendezvousId);
+			result.addObject("rendezvousId", rendezvousId);
+
 		}
 		return result;
 	}
+
 	@RequestMapping(value = "/respond", method = RequestMethod.POST, params = "save")
-	public ModelAndView save(@Valid final QuestionAndAnswerForm questionAndAnswerForm, final BindingResult binding) {
-		ModelAndView result;
+	public ModelAndView answerQuestions(final HttpServletRequest request) {
+		ModelAndView result = null;
 		User user;
 		user = null;
 		try {
 			user = this.userService.findByPrincipal();
 		} catch (final Throwable oops) {
-
+			result = new ModelAndView("redirect:/");
 		}
 		final Date birthDate = user.getBirthDate();
 		final Calendar now = Calendar.getInstance();
 		now.set(Calendar.YEAR, now.get(Calendar.YEAR) - 18);
 		final Date yearLimit = now.getTime();
 
-		if (this.questionService.findOne(questionAndAnswerForm.getQuestionId()).getRendezvous().getIsAdultOnly() && birthDate.after(yearLimit))
+		if (this.rendezvousService.findOne(new Integer(request.getParameter("rendezvousId"))).getIsAdultOnly() && birthDate.after(yearLimit))
 			result = new ModelAndView("redirect:/");
-		else if (this.questionService.findOne(questionAndAnswerForm.getQuestionId()) == null || user == null || user.getRendezvoussesCreated().contains(this.questionService.findOne(questionAndAnswerForm.getQuestionId()).getRendezvous()))
-			result = new ModelAndView("redirect:/");
-		else if (binding.hasErrors())
-			result = this.createEditModelAndView(questionAndAnswerForm);
-		else
+		else {
+			List<QuestionAndAnswerForm> questionsAndAnswers;
+			questionsAndAnswers = new ArrayList<QuestionAndAnswerForm>();
 			try {
-				Question questionInDB;
-				questionInDB = this.questionService.findOne(questionAndAnswerForm.getQuestionId());
-				if (questionAndAnswerForm.getAnswerId() == 0) {
-					Answer answer;
-					answer = this.answerService.create();
+				//------------
+				Enumeration<String> parameterNames;
+				parameterNames = request.getParameterNames();
 
-					answer.setQuestion(questionInDB);
-					answer.setUser(this.userService.findByPrincipal());
-					answer.setText(questionAndAnswerForm.getAnswerText());
-					this.answerService.saveFromCreate(answer);
-				} else {
-					Answer answer;
-					answer = this.answerService.findOne(questionAndAnswerForm.getAnswerId());
-					answer.setText(questionAndAnswerForm.getAnswerText());
-					this.answerService.saveFromEdit(answer);
+				List<Answer> answers;
+				answers = new ArrayList<Answer>();
+				Boolean anyBlank;
+				anyBlank = false;
+				while (parameterNames.hasMoreElements()) {
+					final String name = parameterNames.nextElement();
+					if (!(name.equals("save") || name.equals("rendezvousId") || name.contains("answerId"))) {
+						final String value = request.getParameter(name);
+						System.out.println(name + "|" + value);
+						Integer questionId;
+						questionId = new Integer(name);
+						Question questionInDB;
+						questionInDB = this.questionService.findOne(questionId);
+						Answer answer;
+						answer = this.answerService.create();
+						answer.setQuestion(questionInDB);
+						answer.setText(value);
+						answers.add(answer);
+						System.out.println(request.getParameter("answerId" + name));
+						answer.setId(new Integer(request.getParameter("answerId" + name)));
+						QuestionAndAnswerForm qaa;
+						qaa = new QuestionAndAnswerForm();
+						qaa.setAnswerId(0);
+						qaa.setAnswerText(value);
+						qaa.setQuestionId(questionId);
+						qaa.setQuestionText(questionInDB.getText());
+						qaa.setIsBlank(this.checkIsBlank(value));
+						questionsAndAnswers.add(qaa);
+						if (this.checkIsBlank(value))
+							anyBlank = true;
+					}
 				}
-
-				result = new ModelAndView("redirect:list.do?rendezvousId=" + questionInDB.getRendezvous().getId());
-
+				if (anyBlank)
+					result = this.createEditModelAndView(questionsAndAnswers, new Integer(request.getParameter("rendezvousId")));
+				else {
+					for (final Answer a : answers)
+						if (a.getId() == 0)
+							this.answerService.saveFromCreate(a);
+						else {
+							a.setUser(user);
+							this.answerService.saveFromEdit(a);
+						}
+					result = new ModelAndView("redirect:/RSVP/user/RSVP.do?rendezvousId=" + request.getParameter("rendezvousId"));
+				}
+				//---------
 			} catch (final Throwable oops) {
 				final String messageError = "answer.commit.error";
 
-				result = this.createEditModelAndView(questionAndAnswerForm, messageError);
+				result = this.createEditModelAndView(questionsAndAnswers, new Integer(request.getParameter("rendezvousId")), messageError);
 			}
+
+		}
 		return result;
 	}
+	/*
+	 * @RequestMapping(value = "/meh", method = RequestMethod.GET)
+	 * public ModelAndView respond2(@RequestParam final int questionId) {
+	 * final ModelAndView result;
+	 * User user;
+	 * user = null;
+	 * try {
+	 * user = this.userService.findByPrincipal();
+	 * } catch (final Throwable oops) {
+	 * 
+	 * }
+	 * final Date birthDate = user.getBirthDate();
+	 * final Calendar now = Calendar.getInstance();
+	 * now.set(Calendar.YEAR, now.get(Calendar.YEAR) - 18);
+	 * final Date yearLimit = now.getTime();
+	 * 
+	 * if (this.questionService.findOne(questionId).getRendezvous().getIsAdultOnly() && birthDate.after(yearLimit))
+	 * result = new ModelAndView("redirect:/");
+	 * else if (this.questionService.findOne(questionId) == null || user == null || user.getRendezvoussesCreated().contains(this.questionService.findOne(questionId).getRendezvous()))
+	 * result = new ModelAndView("redirect:/");
+	 * else {
+	 * QuestionAndAnswerForm questionAndAnswerForm;
+	 * questionAndAnswerForm = new QuestionAndAnswerForm();
+	 * Question questionInDB;
+	 * questionInDB = this.questionService.findOne(questionId);
+	 * if (questionInDB != null) {
+	 * questionAndAnswerForm.setQuestionId(questionId);
+	 * questionAndAnswerForm.setQuestionText(questionInDB.getText());
+	 * questionAndAnswerForm.setAnswerText("");
+	 * 
+	 * Answer answer;
+	 * answer = null;
+	 * if (user != null)
+	 * answer = this.answerService.findAnswerByQuestionIdAndUserId(questionId, user.getId());
+	 * if (answer != null)
+	 * questionAndAnswerForm.setAnswerId(answer.getId());
+	 * else
+	 * questionAndAnswerForm.setAnswerId(0);
+	 * result = new ModelAndView("answer/edit");
+	 * result.addObject("questionAndAnswerForm", questionAndAnswerForm);
+	 * result.addObject("requestURI", "answer/user/respond.do?questionId=" + questionId);
+	 * result.addObject("rendezvousId", questionInDB.getRendezvous().getId());
+	 * } else
+	 * result = new ModelAndView("redirect:/");
+	 * }
+	 * return result;
+	 * }
+	 * 
+	 * @RequestMapping(value = "/meh", method = RequestMethod.POST, params = "save")
+	 * public ModelAndView save2(@Valid final QuestionAndAnswerForm questionAndAnswerForm, final BindingResult binding) {
+	 * ModelAndView result;
+	 * User user;
+	 * user = null;
+	 * try {
+	 * user = this.userService.findByPrincipal();
+	 * } catch (final Throwable oops) {
+	 * 
+	 * }
+	 * final Date birthDate = user.getBirthDate();
+	 * final Calendar now = Calendar.getInstance();
+	 * now.set(Calendar.YEAR, now.get(Calendar.YEAR) - 18);
+	 * final Date yearLimit = now.getTime();
+	 * 
+	 * if (this.questionService.findOne(questionAndAnswerForm.getQuestionId()).getRendezvous().getIsAdultOnly() && birthDate.after(yearLimit))
+	 * result = new ModelAndView("redirect:/");
+	 * else if (this.questionService.findOne(questionAndAnswerForm.getQuestionId()) == null || user == null || user.getRendezvoussesCreated().contains(this.questionService.findOne(questionAndAnswerForm.getQuestionId()).getRendezvous()))
+	 * result = new ModelAndView("redirect:/");
+	 * else if (binding.hasErrors())
+	 * result = this.createEditModelAndView(questionAndAnswerForm);
+	 * else
+	 * try {
+	 * Question questionInDB;
+	 * questionInDB = this.questionService.findOne(questionAndAnswerForm.getQuestionId());
+	 * if (questionAndAnswerForm.getAnswerId() == 0) {
+	 * Answer answer;
+	 * answer = this.answerService.create();
+	 * 
+	 * answer.setQuestion(questionInDB);
+	 * answer.setUser(this.userService.findByPrincipal());
+	 * answer.setText(questionAndAnswerForm.getAnswerText());
+	 * this.answerService.saveFromCreate(answer);
+	 * } else {
+	 * Answer answer;
+	 * answer = this.answerService.findOne(questionAndAnswerForm.getAnswerId());
+	 * answer.setText(questionAndAnswerForm.getAnswerText());
+	 * this.answerService.saveFromEdit(answer);
+	 * }
+	 * 
+	 * result = new ModelAndView("redirect:list.do?rendezvousId=" + questionInDB.getRendezvous().getId());
+	 * 
+	 * } catch (final Throwable oops) {
+	 * final String messageError = "answer.commit.error";
+	 * 
+	 * result = this.createEditModelAndView(questionAndAnswerForm, messageError);
+	 * }
+	 * return result;
+	 * }
+	 */
 	//Auxialiares
-	private ModelAndView createEditModelAndView(final QuestionAndAnswerForm questionAndAnswerForm) {
+	private ModelAndView createEditModelAndView(final List<QuestionAndAnswerForm> questionAndAnswerForms, final int rendezvousId) {
 		ModelAndView result;
 
-		result = this.createEditModelAndView(questionAndAnswerForm, null);
+		result = this.createEditModelAndView(questionAndAnswerForms, rendezvousId, null);
 
 		return result;
 	}
-	private ModelAndView createEditModelAndView(final QuestionAndAnswerForm questionAndAnswerForm, final String message) {
+	private ModelAndView createEditModelAndView(final List<QuestionAndAnswerForm> questionAndAnswerForms, final int rendezvousId, final String message) {
 		ModelAndView result;
-		result = new ModelAndView("answer/edit");
-		result.addObject("questionAndAnswerForm", questionAndAnswerForm);
+		result = new ModelAndView("questionsAnswersForm");
+		result.addObject("questionsAndAnswers", questionAndAnswerForms);
 		result.addObject("message", message);
-		result.addObject("requestURI", "answer/user/respond.do");
+		result.addObject("requestURI", "answer/user/respond.do?rendezvousId=" + rendezvousId);
 
 		return result;
+	}
+	private Boolean checkIsBlank(final String answer) {
+		Boolean isBlank;
+		isBlank = false;
+		int nSpace;
+		nSpace = 0;
+		int length;
+		length = -1;
+		if (answer == null)
+			isBlank = true;
+		else if (answer.equals(""))
+			isBlank = true;
+		else {
+			length = answer.length();
+			for (int i = 0; i < answer.length(); i++)
+				if (answer.charAt(i) == ' ')
+					nSpace++;
+		}
+		if (nSpace == (length - 1))
+			isBlank = true;
+		return isBlank;
 	}
 
 }

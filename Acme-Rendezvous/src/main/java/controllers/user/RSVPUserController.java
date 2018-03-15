@@ -5,12 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -130,8 +127,8 @@ public class RSVPUserController extends AbstractController {
 		return result;
 
 	}
-	@RequestMapping(value = "/RSVP", method = RequestMethod.POST, params = "save")
-	public ModelAndView enrol(@Valid final Rendezvous rv, final BindingResult binding) {
+	@RequestMapping(value = "/RSVP", method = RequestMethod.GET)
+	public ModelAndView enrol(@RequestParam final int rendezvousId) {
 		ModelAndView result;
 		User user;
 		user = null;
@@ -141,7 +138,9 @@ public class RSVPUserController extends AbstractController {
 
 		}
 		Rendezvous rendezvousInDB;
-		rendezvousInDB = this.rendezvousService.findOne(rv.getId());
+		rendezvousInDB = this.rendezvousService.findOne(rendezvousId);
+		Rendezvous rv;
+		rv = rendezvousInDB;
 		List<Question> questions;
 		questions = new ArrayList<Question>();
 		questions.addAll(rendezvousInDB.getQuestions());
@@ -157,7 +156,7 @@ public class RSVPUserController extends AbstractController {
 		}
 		if (questions.size() == answersInDB.size()) {
 
-			if (binding.hasErrors())
+			if (false)//binding.hasErrors())
 				result = this.createEditModelAndView(rv);
 			else
 				try {

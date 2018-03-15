@@ -40,6 +40,7 @@
 		<value>/views/service/tiles.xml</value>
 		<value>/views/systemConfiguration/tiles.xml</value>
 		<value>/views/user/tiles.xml</value>
+		<value>/views/questionsAnswersForm/tiles.xml</value>
 	</util:list>
 
 </beans>

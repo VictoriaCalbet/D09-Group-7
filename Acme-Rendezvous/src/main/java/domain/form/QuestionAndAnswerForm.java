@@ -12,7 +12,16 @@ public class QuestionAndAnswerForm {
 	private String	answerText;
 	private int		questionId;
 	private int		answerId;
+	private Boolean	isBlank;
 
+
+	public Boolean getIsBlank() {
+		return this.isBlank;
+	}
+
+	public void setIsBlank(final Boolean isBlank) {
+		this.isBlank = isBlank;
+	}
 
 	public int getAnswerId() {
 		return this.answerId;
