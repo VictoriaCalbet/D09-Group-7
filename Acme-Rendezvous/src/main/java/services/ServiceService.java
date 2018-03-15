@@ -190,4 +190,8 @@ public class ServiceService {
 	public Collection<Service> findServicesByUserId(final int userId) {
 		return this.serviceRepository.findServicesByUserId(userId);
 	}
+
+	public Collection<Service> findBestSellingServices() {
+		return this.serviceRepository.findBestSellingServices();
+	}
 }

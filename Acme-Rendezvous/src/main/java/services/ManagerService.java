@@ -150,4 +150,13 @@ public class ManagerService {
 		Assert.notNull(result);
 		return result;
 	}
+	//Managers with more services than average
+
+	public Collection<Manager> findManagersWithMoreServicesThanAverage() {
+		return this.managerRepository.findManagersWithMoreServicesThanAverage();
+	}
+
+	public Collection<Manager> findManagersWithMoreServicesCancelled() {
+		return this.managerRepository.findManagersWithMoreServicesCancelled();
+	}
 }

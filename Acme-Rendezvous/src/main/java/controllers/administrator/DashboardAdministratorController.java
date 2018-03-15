@@ -12,11 +12,15 @@ import org.springframework.web.servlet.ModelAndView;
 import services.AnnouncementService;
 import services.AnswerService;
 import services.CommentService;
+import services.ManagerService;
 import services.QuestionService;
 import services.RendezvousService;
+import services.ServiceService;
 import services.UserService;
 import controllers.AbstractController;
+import domain.Manager;
 import domain.Rendezvous;
+import domain.Service;
 
 @Controller
 @RequestMapping("/administrator")
@@ -38,6 +42,12 @@ public class DashboardAdministratorController extends AbstractController {
 
 	@Autowired
 	private RendezvousService	rendezvousService;
+
+	@Autowired
+	private ServiceService		serviceService;
+
+	@Autowired
+	private ManagerService		managerService;
 
 	@Autowired
 	private UserService			userService;
@@ -78,9 +88,10 @@ public class DashboardAdministratorController extends AbstractController {
 		final Double ratioUserRendezvousesCreatedVsNeverCreated = this.userService.findRatioUserRendezvousesCreatedVsNeverCreated();
 		final Double avgUsersRSVPsPerRendezvous = this.userService.findAvgUsersRSVPsPerRendezvous();
 		final Double stdUsersRSVPsPerRendezvous = this.userService.findStdUsersRSVPsPerRendezvous();
-
+		final Collection<Service> bestSellingServices = this.serviceService.findBestSellingServices();
+		final Collection<Manager> managersWithMoreServicesThanAverage = this.managerService.findManagersWithMoreServicesThanAverage();
+		final Collection<Manager> managersWithMoreServicesCancelled = this.managerService.findManagersWithMoreServicesCancelled();
 		result = new ModelAndView("administrator/dashboard");
-
 		result.addObject("avgAnnouncementPerRendezvous", avgAnnouncementPerRendezvous);
 		result.addObject("stdAnnouncementPerRendezvous", stdAnnouncementPerRendezvous);
 		result.addObject("avgRepliesPerComment", avgRepliesPerComment);
@@ -99,12 +110,12 @@ public class DashboardAdministratorController extends AbstractController {
 		result.addObject("ratioUserRendezvousesCreatedVsNeverCreated", ratioUserRendezvousesCreatedVsNeverCreated);
 		result.addObject("avgUsersRSVPsPerRendezvous", avgUsersRSVPsPerRendezvous);
 		result.addObject("stdUsersRSVPsPerRendezvous", stdUsersRSVPsPerRendezvous);
-
+		result.addObject("bestSellingServices", bestSellingServices);
+		result.addObject("managersWithMoreServicesThanAverage", managersWithMoreServicesThanAverage);
 		result.addObject("requestURI", "administrator/dashboard.do");
 
 		return result;
 	}
-
 	// Display --------------------------------------------------------------
 
 	// Creation  ------------------------------------------------------------

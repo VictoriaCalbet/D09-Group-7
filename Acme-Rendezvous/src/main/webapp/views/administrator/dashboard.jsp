@@ -169,4 +169,77 @@
 		</tr>
 	</table>
 	
+	<!-- Dashboard 12 -->
+	<!-- The best-selling services -->
+	<table border="1">
+		<tr>
+			<td colspan="2"> <b> <spring:message code="administrator.bestSellingServices"/>:&nbsp; </b> </td>
+		</tr>
+		<tr>
+			<td> <b> <spring:message code="service.name"/>:&nbsp; </b> </td>
+			<td> <b> <spring:message code="service.timesSelled"/>:&nbsp; </b> </td>
+		</tr>
+		<jstl:forEach items="${bestSellingServices}" var="service">
+			<tr>
+				<td> <jstl:out value="${service.name}"/></td>
+				<td> <jstl:out value="${fn:length(service.requests)}"/></td>
+			</tr>
+		</jstl:forEach>
+	</table>
+	
+	<!-- Dashboard 13 -->
+	<!-- The managers who provide more services than the average -->
+	<table border="1">
+		<tr>
+			<td colspan="2"> <b> <spring:message code="administrator.managersWithMoreServicesThanAvg"/>:&nbsp; </b> </td>
+		</tr>
+		<tr>
+			<td> <b> <spring:message code="manager.name"/>:&nbsp; </b> </td>
+			<td> <b> <spring:message code="manager.numberOfServices"/>:&nbsp; </b> </td>
+		</tr>
+		<jstl:forEach items="${managersWithMoreServicesThanAverage}" var="manager">
+			<tr>
+				<td> <jstl:out value="${manager.name}"/></td>
+				<td> <jstl:out value="${fn:length(manager.services)}"/></td>
+			</tr>
+		</jstl:forEach>
+	</table>
+	<!-- Dashboard 14 -->
+	<!-- The managers who have got more services cancelled. -->
+	<table border="1">
+		<tr>
+			<td colspan="1"> <b> <spring:message code="administrator.managersWithMoreServicesCancelled"/>:&nbsp; </b> </td>
+		</tr>
+		
+		<jstl:choose>
+		<jstl:when test= "${fn:length(managersWithMoreServicesCancelled) > 0}">
+		<tr>
+			<td> <b> <spring:message code="manager.name"/>:&nbsp; 
+			</b> </td>
+		
+		</tr>
+		</jstl:when>
+		
+		
+		<jstl:otherwise>
+		<tr>
+			<td> <b> <spring:message code="manager.name"/>:<spring:message code="administrator.noManagersWithServicesCancelled"/> 
+		
+		</b> </td>
+		</tr>
+		</jstl:otherwise> 
+		
+		</jstl:choose>
+		
+		
+		<jstl:forEach items="${managersWithMoreServicesCancelled}" var="manager">
+			<tr>
+				<td> <jstl:out value="${manager.name}"/></td>
+			</tr>
+		</jstl:forEach>
+		
+		
+		
+		
+	</table>
 </security:authorize>
