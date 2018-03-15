@@ -17,6 +17,7 @@
 <%@taglib prefix="display" uri="http://displaytag.sf.net"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="acme" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="now" class="java.util.Date"/>
 
@@ -48,8 +49,11 @@
 <spring:message code="comment.text" var="commentText" />
 <display:column property="text" title="${commentText}"><jstl:out value="${row.text}"></jstl:out></display:column>
 
-<spring:message code="comment.picture" var="commentPic" />
-<display:column property="picture" title="${commentPic}"><jstl:out value="${row.picture}"></jstl:out></display:column>
+<spring:message code="comment.picture" var="commentpictureURLHeader"/>
+	<display:column title="${commentpictureURLHeader}">
+		<acme:image imageURL="${row.picture}" imageNotFoundLocation="images/fotoNotFound.png" 
+					codeError="comment.unspecifiedURL" height="60" width="60"/>
+	</display:column>
 
 <spring:message code="comment.momentWritten" var="commentMomentWritten" />
 <spring:message code="comment.date" var="commentDate"/>
