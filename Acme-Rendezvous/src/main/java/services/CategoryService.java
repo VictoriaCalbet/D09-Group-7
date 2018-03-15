@@ -90,7 +90,16 @@ public class CategoryService {
 			
 			ser.getCategories().remove(category);
 			this.serviceService.save(ser);
+			
 		}
+		Collection<Category> categories = this.replaceParentCategories(category.getId());
+		
+		for(Category cat:categories){
+			
+			cat.setParent(null);
+			this.categoryRepository.save(cat);
+		}
+				
 		
 		this.categoryRepository.delete(category);
 	}
@@ -114,6 +123,15 @@ public class CategoryService {
 		Collection<Category> cate = this.categoryRepository.getCategoriesByParent(categoryId);
 		
 		return cate;
+		
+	}
+	
+	public Collection<Category> replaceParentCategories(int categoryId){
+		
+		Collection<Category> result = this.categoryRepository.replaceParentCategories(categoryId);
+		
+		return result;
+	
 		
 	}
 	
