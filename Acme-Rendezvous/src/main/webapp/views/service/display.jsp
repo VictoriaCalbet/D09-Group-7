@@ -39,7 +39,7 @@
 		</tr>
 		<tr>
 			<td>
-				<spring:message code="service.NoRequests" var="serviceNoRequestsLabel" />
+				<spring:message code="service.noRequests" var="serviceNoRequestsLabel" />
 				<b><jstl:out value="${serviceNoRequestsLabel}"/>:&nbsp;</b> <jstl:out value="${fn:length(service.requests)}"/>
 			</td>
 			<td>
