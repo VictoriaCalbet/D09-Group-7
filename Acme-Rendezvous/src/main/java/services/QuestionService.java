@@ -83,6 +83,7 @@ public class QuestionService {
 		questions.addAll(rendezvousInDB.getQuestions());
 		questions.add(savedQuestion);
 		rendezvousInDB.setQuestions(questions);
+		this.rendezvousService.saveWithoutConstraints(rendezvousInDB);
 		return savedQuestion;
 	}
 	public Question saveFromEdit(final Question question) {
@@ -107,7 +108,7 @@ public class QuestionService {
 				break;
 			}
 		rendezvousInDB.setQuestions(questions);
-
+		this.rendezvousService.saveWithoutConstraints(rendezvousInDB);
 		return savedQuestion;
 	}
 	public Question saveByOtherUser(final Question question) {
@@ -125,7 +126,7 @@ public class QuestionService {
 				break;
 			}
 		rendezvousInDB.setQuestions(questions);
-
+		this.rendezvousService.saveWithoutConstraints(rendezvousInDB);
 		return savedQuestion;
 	}
 	public void delete(final Question question) {
@@ -155,7 +156,7 @@ public class QuestionService {
 		for (final Answer a : questionInDB.getAnswers())
 			this.answerService.delete(a);
 		this.questionRepository.delete(question);
-		this.rendezvousService.save(rendezvous);
+		this.rendezvousService.saveWithoutConstraints(rendezvous);
 
 	}
 	// Other business methods -------------------------------------------------
