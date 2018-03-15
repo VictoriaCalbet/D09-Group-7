@@ -156,6 +156,7 @@ public class RendezvousService {
 	public Rendezvous save(final Rendezvous rendezvous) {
 		Assert.notNull(rendezvous, "message.error.rendezvous.null");
 		Assert.isTrue(rendezvous.getMeetingMoment().after(new Date()), "message.error.rendezvous.meetingMoment.future");
+		Assert.notNull(rendezvous.getGpsPoint());
 		Assert.isTrue(!((rendezvous.getGpsPoint().getLongitude() == null && rendezvous.getGpsPoint().getLatitude() != null) || (rendezvous.getGpsPoint().getLongitude() != null && rendezvous.getGpsPoint().getLatitude() == null)),
 			"message.error.rendezvous.GPSPoint");
 
