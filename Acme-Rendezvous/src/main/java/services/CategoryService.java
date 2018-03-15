@@ -23,7 +23,8 @@ public class CategoryService {
 	@Autowired
 	private CategoryRepository	categoryRepository;
 
-
+	@Autowired
+	private ServiceService	serviceService;
 	// Supporting services ----------------------------------------------------
 
 	// Constructors -----------------------------------------------------------
@@ -82,6 +83,14 @@ public class CategoryService {
 	public void delete(Category category){
 		
 		Assert.notNull(category,"message.error.category.null");
+		
+		Collection<Service> services = category.getServices();
+		
+		for(Service ser:services){
+			
+			ser.getCategories().remove(category);
+			this.serviceService.save(ser);
+		}
 		
 		this.categoryRepository.delete(category);
 	}
