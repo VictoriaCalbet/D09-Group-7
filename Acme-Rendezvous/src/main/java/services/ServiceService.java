@@ -194,4 +194,8 @@ public class ServiceService {
 	public Collection<Service> findBestSellingServices() {
 		return this.serviceRepository.findBestSellingServices();
 	}
+
+	public Collection<Service> findServicesByRendezvousId(final int rendezvousId) {
+		return this.serviceRepository.findServicesByRendezvousId(rendezvousId);
+	}
 }
