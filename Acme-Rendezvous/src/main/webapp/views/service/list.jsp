@@ -26,16 +26,22 @@
 	<!-- Links to edit or display a service -->
 	<security:authorize access="hasRole('MANAGER')">
 		<display:column>
-			<jstl:if test="${row.manager.userAccount.id eq loggedactor.id and empty row.requests and row.isInappropriate eq false}">
-				<spring:message var="serviceEditLink" code="service.edit"/>
-				<a href="service/manager/edit.do?serviceId=${row.id}"><jstl:out value="${serviceEditLink}"/></a>
-			</jstl:if>
+			<jstl:choose>
+				<jstl:when test="${row.manager.userAccount.id eq loggedactor.id and empty row.requests and row.isInappropriate eq false}">
+					<spring:message var="serviceEditLink" code="service.edit"/>
+					<a href="service/manager/edit.do?serviceId=${row.id}"><jstl:out value="${serviceEditLink}"/></a>
+				</jstl:when>
+				<jstl:otherwise>
+					<spring:message code="service.list.noEditable" var="serviceNoEditableMessage" />
+					<jstl:out value="${serviceNoEditableMessage}"/>
+				</jstl:otherwise>
+			</jstl:choose>
 		</display:column>
 	</security:authorize>
 
 	<security:authorize access="hasAnyRole('USER', 'MANAGER', 'ADMIN')">
 		<display:column>
-			<spring:message var="serviceDisplayLink" code="service.display"/>
+			<spring:message code="service.display" var="serviceDisplayLink"/>
 			<a href="${displayURI}${row.id}"><jstl:out value="${serviceDisplayLink}"/></a>
 		</display:column>
 	</security:authorize>

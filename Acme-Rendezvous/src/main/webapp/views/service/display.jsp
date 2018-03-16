@@ -45,9 +45,18 @@
 			<td>
 				<spring:message code="service.categories" var="serviceCategoriesLabel"/>
 				<b><jstl:out value="${serviceCategoriesLabel}"/>:&nbsp;</b> 
-				<jstl:forEach items="${service.categories}" var="srv">
-					<jstl:out value="${srv.name}"/>
-				</jstl:forEach>
+				<jstl:choose>
+					<jstl:when test="${not empty categories}">
+						<jstl:forEach items="${service.categories}" var="srv">
+							<jstl:out value="${srv.name}"/>
+						</jstl:forEach>
+					</jstl:when>
+					<jstl:otherwise>
+						<spring:message code="service.display.itHasNoCategory" var="serviceItHasNoCategoryMessage"/>
+						<jstl:out value="${serviceItHasNoCategoryMessage}"/>
+					</jstl:otherwise>
+				</jstl:choose>
+				
 			</td>
 		</tr>
 		<tr>
