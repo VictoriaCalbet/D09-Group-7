@@ -23,7 +23,7 @@
 <form:form action="${requestURI}" modelAttribute="requestForm">
 	
 	<form:hidden path="id"/>
-	<form:hidden path="service"/>
+	<form:hidden path="rendezvous"/>
 <security:authorize access="hasRole('USER')">
 
 
@@ -34,7 +34,7 @@
 <acme:textbox code="request.creditCard.expirationMonth" path="creditCard.expirationMonth"/>
 <acme:textbox code="request.creditCard.expirationYear" path="creditCard.expirationYear"/>
 <acme:textbox code="request.creditCard.cvv" path="creditCard.cvv" />
-<acme:select code="request.rendezvous" path="rendezvous" items="${rendezvousesCreated}" itemLabel="name"/>
+<acme:select code="request.service" path="service" items="${availableServices}" itemLabel="name"/>
 	
 
 <input type="submit" name="save" value="<spring:message code="request.request"/>"/>
