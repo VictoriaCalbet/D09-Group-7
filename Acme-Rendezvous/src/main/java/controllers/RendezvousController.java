@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import services.ActorService;
 import services.CategoryService;
 import services.RendezvousService;
-import services.form.CategoryFormService;
 import domain.Actor;
 import domain.Category;
 import domain.Rendezvous;
@@ -34,8 +33,6 @@ public class RendezvousController extends AbstractController {
 	@Autowired
 	private ActorService		actorService;
 
-	@Autowired
-	private CategoryFormService	categoryFormService;
 	@Autowired
 	private CategoryService		categoryService;
 
@@ -85,18 +82,30 @@ public class RendezvousController extends AbstractController {
 
 	@RequestMapping(value = "/listCategory", method = RequestMethod.POST, params = "save")
 	public ModelAndView listCategory(@Valid final CategoryForm categoryForm, final BindingResult binding, @RequestParam(required = false) final String message) {
-		ModelAndView result;
-		final Collection<Category> categories = this.categoryService.findAll();
+		ModelAndView result = null;
+		Collection<Category> categories = null;
+		Collection<Rendezvous> rendezvouses = null;
+		Collection<Rendezvous> principalRendezvouses = null;
 
-		Assert.notNull(this.categoryService.findOne(categoryForm.getCategoryId()), "message.error.category.null");
-		final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousByCategories(categoryForm.getCategoryId());
+		categories = this.categoryService.findAll();
 
-		//RSVP button control
-		Collection<Rendezvous> principalRendezvouses = new ArrayList<Rendezvous>();
-		if (this.actorService.checkLogin()) {
-			final Actor principal = this.actorService.findByPrincipal();
-			principalRendezvouses = this.rendezvousService.findAllPrincipalRsvps(principal.getId());
-		}
+		if (categoryForm.getCategoryId() != 0) {
+			Assert.notNull(this.categoryService.findOne(categoryForm.getCategoryId()), "message.error.category.null");
+			rendezvouses = this.rendezvousService.findRendezvousByCategories(categoryForm.getCategoryId());
+
+			//RSVP button control
+			principalRendezvouses = new ArrayList<Rendezvous>();
+			if (this.actorService.checkLogin()) {
+				final Actor principal = this.actorService.findByPrincipal();
+				principalRendezvouses = this.rendezvousService.findAllPrincipalRsvps(principal.getId());
+			}
+		} else
+			try {
+				final Actor a = this.actorService.findByPrincipal();
+				rendezvouses = this.rendezvousService.findRendezvousesLogged(a);
+			} catch (final Throwable oops) {
+				rendezvouses = this.rendezvousService.findRendezvousesNotLogged();
+			}
 
 		result = new ModelAndView("rendezvous/list");
 		result.addObject("rendezvouses", rendezvouses);
