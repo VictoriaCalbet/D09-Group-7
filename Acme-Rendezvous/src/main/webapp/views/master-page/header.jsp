@@ -46,13 +46,23 @@
 		<security:authorize access="hasRole('ADMIN')">
 			<li><a class="fNiv" href="service/administrator/list.do"><spring:message code="master.page.administrator.service.list" /></a></li>
 		</security:authorize>
+	
 		
 		<security:authorize access="hasRole('ADMIN')">
 			<li><a class="fNiv" href="category/administrator/list.do"><spring:message code="master.page.administrator.category.list" /></a></li>
 		</security:authorize>
 		
 		<security:authorize access="hasRole('MANAGER')">
-			<li><a class="fNiv" href="service/manager/list.do"><spring:message code="master.page.manager.service.list" /></a></li>
+			<li>
+				<a class="fNiv">
+					<spring:message code="master.page.service"/>
+				</a>
+				<ul>
+					<li class="arrow"></li>
+						<li><a href="service/manager/list.do"><spring:message code="master.page.manager.service.list"/></a></li>
+						<li><a href="service/manager/list-created.do"><spring:message code="master.page.manager.service.listCreated"/></a></li>
+				</ul>
+			</li>
 		</security:authorize>
 		
 		<security:authorize access="hasRole('USER')">
