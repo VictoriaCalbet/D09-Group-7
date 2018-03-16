@@ -15,12 +15,13 @@ public interface ManagerRepository extends JpaRepository<Manager, Integer> {
 	@Query("select m from Manager m where m.userAccount.id = ?1")
 	Manager findByUserAccountId(int userAccountId);
 
-	//Managers who provide more services than average
-	//C-14.6.10 The listing of trips that have got at least 10% more applications than the average, ordered by number of applications
+	// Dashboard queries
 
+	// Acme-Rendezvous 2.0 - Requisito 6.2.2
 	@Query("select m from Manager m where m.services.size > (select avg(m.services.size) from Manager m)")
 	Collection<Manager> findManagersWithMoreServicesThanAverage();
 
+	// Acme-Rendezvous 2.0 - Requisito 6.2.3
 	@Query("select s.manager from Service s where s.isInappropriate=true")
 	Collection<Manager> findManagersWithMoreServicesCancelled();
 }
