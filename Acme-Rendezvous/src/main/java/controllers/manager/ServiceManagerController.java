@@ -52,15 +52,19 @@ public class ServiceManagerController extends AbstractController {
 	// Listing --------------------------------------------------------------
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list() {
+	public ModelAndView list(@RequestParam(required = false) final Integer rendezvousId) {
 		ModelAndView result = null;
 		Collection<Service> services = null;
 		String requestURI = null;
 		String displayURI = null;
 		Manager manager = null;
 
-		manager = this.managerService.findByPrincipal();
-		services = manager.getServices();
+		if (rendezvousId == null) {
+			manager = this.managerService.findByPrincipal();
+			services = manager.getServices();
+		} else
+			services = this.serviceService.findServicesByRendezvousId(rendezvousId);
+
 		requestURI = "service/manager/list.do";
 		displayURI = "service/manager/display.do?serviceId=";
 

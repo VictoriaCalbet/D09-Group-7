@@ -33,13 +33,17 @@ public class ServiceAdministratorController extends AbstractController {
 	// Listing --------------------------------------------------------------
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list(@RequestParam(required = false) final String message) {
+	public ModelAndView list(@RequestParam(required = false) final Integer rendezvousId, @RequestParam(required = false) final String message) {
 		ModelAndView result = null;
 		Collection<Service> services = null;
 		String requestURI = null;
 		String displayURI = null;
 
-		services = this.serviceService.findAll();
+		if (rendezvousId == null)
+			services = this.serviceService.findAll();
+		else
+			services = this.serviceService.findServicesByRendezvousId(rendezvousId);
+
 		requestURI = "service/administrator/list.do";
 		displayURI = "service/administrator/display.do?serviceId=";
 
