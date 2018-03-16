@@ -1,6 +1,7 @@
 
 package domain.form;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.validation.Valid;
@@ -85,7 +86,10 @@ public class ServiceForm {
 	@Valid
 	@NotNull
 	public Collection<Category> getCategories() {
-		return this.categories;
+		if (this.categories == null)
+			return new ArrayList<Category>();
+		else
+			return this.categories;
 	}
 	public void setCategories(final Collection<Category> categories) {
 		this.categories = categories;
