@@ -5,6 +5,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import services.RequestService;
 import services.UserService;
@@ -63,6 +64,11 @@ public class RequestFormService {
 		r.setId(requestForm.getId());
 		r.setRendezvous(requestForm.getRendezvous());
 		r.setService(requestForm.getService());
+
+		final User principal = this.userService.findByPrincipal();
+
+		Assert.isTrue(!requestForm.getRendezvous().getRequests().contains(requestForm), "message.error.request.alreadyRequested");
+
 		final Request requestSave = this.requestService.saveFromCreate(r);
 
 		return requestSave;
