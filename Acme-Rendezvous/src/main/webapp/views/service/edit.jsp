@@ -27,17 +27,28 @@
 			<form:hidden path="isInappropriate"/>
 			<form:hidden path="noRequests"/>
 		
-			<acme:selectMultiple items="${categories}" itemLabel="name" code="service.categories" path="categories"/>
+			<jstl:choose>
+				<jstl:when test="${not empty categories}">
+					<acme:selectMultiple items="${categories}" itemLabel="name" code="service.categories" path="categories"/>
+					<br/>
+				</jstl:when>
+				<jstl:otherwise>
+					<form:hidden path="categories"/>
+					<spring:message code="service.edit.noCategoriesAvailable" var="serviceNoCategoriesAvailableMessage"/>
+					<b><jstl:out value="${serviceNoCategoriesAvailableMessage}"/></b>
+					<br/>
+				</jstl:otherwise>
+			</jstl:choose>
+			
 			<acme:textbox code="service.name" path="name"/>
 			<acme:textbox code="service.description" path="description"/>
 			<acme:textbox code="service.pictureURL" path="pictureURL"/>
-			<br/>
 			
 			<acme:submit name="save" code="service.save"/> &nbsp;
 			
 			<jstl:if test="${serviceForm.id ne 0 and serviceForm.noRequests eq 0}">
 				<spring:message code="service.delete" var="serviceDeleteButton"/>
-				<input type="submit" name="delete" value="${serviceDeleteButton}" />
+				<input type="submit" name="delete" value="${serviceDeleteButton}"/>
 			</jstl:if>
 			
 			
