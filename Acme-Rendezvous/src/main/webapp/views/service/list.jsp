@@ -72,7 +72,7 @@
 		<display:column title="${serviceRequestsHeader}">
 			<jstl:if test="${row.isInappropriate eq false}">
 				<jstl:choose>
-					<jstl:when test="${!fn:contains(servicesPrincipal, row)}">
+					<jstl:when test="${(!fn:contains(principalServices, row))}">
 						<spring:message code="service.requestThisService" var="serviceRequestThisServiceLink"/>
 						<a href="request/user/create.do?serviceId=${row.id}"><jstl:out value="${serviceRequestThisServiceLink}"/></a>
 					</jstl:when>
