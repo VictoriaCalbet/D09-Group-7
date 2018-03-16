@@ -23,15 +23,15 @@
 <security:authentication property="principal" var="loggedactor"/>
 
 <security:authorize access="isAnonymous()">
-
-	<form:form action="rendezvous/listCategory.do" modelAttribute="categoryForm">
-		<acme:select items="${categories}" itemLabel="name" code="rendezvous.category" path="categoryId"/>	
-			<!-- Action buttons -->
-		<acme:submit name="save" code="rendezvous.search" />
-		<br>
-		<br>	
-
-	</form:form>
+	<jstl:if test="${not empty categories}">
+		<form:form action="rendezvous/listCategory.do" modelAttribute="categoryForm">
+			<acme:select items="${categories}" itemLabel="name" code="rendezvous.category" path="categoryId" optionalRow="true"/>	
+				<!-- Action buttons -->
+			<acme:submit name="save" code="rendezvous.search" />
+			<br>
+			<br>
+		</form:form>
+	</jstl:if>
 </security:authorize>
 
 <display:table name="rendezvouses" id="row" requestURI="${requestURI}" pagesize="5">
@@ -97,7 +97,6 @@
 		<display:column property="isDraft" title="${isDraftHeader}" style="${style}"/>
 		
 	</security:authorize>
-
 	
 	<spring:message code="rendezvous.creator" var="creatorHeader" />	
 	<display:column title="${creatorHeader}">	
@@ -130,7 +129,24 @@
 		<spring:message code="rendezvous.similarButton"/>
 		</a>	</jstl:otherwise>
 	</jstl:choose>
+	
 	</display:column>
+		<security:authorize access="hasAnyRole('ADMIN', 'MANAGER', 'USER')">
+		<spring:message code="rendezvous.services" var="servicesHeader"/>
+		<spring:message code="rendezvous.services.url" var="servicesURLMessage"/>
+		
+		<display:column title="${servicesHeader}">
+			<security:authorize access="hasRole('USER')">
+				<a href="service/user/list.do?rendezvousId=${row.id}"><jstl:out value="${servicesURLMessage}"/></a>
+			</security:authorize>
+			<security:authorize access="hasRole('MANAGER')">
+				<a href="service/manager/list.do?rendezvousId=${row.id}"><jstl:out value="${servicesURLMessage}"/></a>
+			</security:authorize>
+			<security:authorize access="hasRole('ADMIN')">
+				<a href="service/admin/list.do?rendezvousId=${row.id}"><jstl:out value="${servicesURLMessage}"/></a>
+			</security:authorize>
+		</display:column>
+	</security:authorize>
 	
 	<spring:message code="rendezvous.announcements" var="announcementsHeader" />
 	<display:column title="${announcementsHeader}">
@@ -141,79 +157,69 @@
 	
 	<spring:message code="rendezvous.comments" var="commentHeader" />	
 	<display:column title="${commentHeader}">
-			<a href="comment/list.do?rendezvousId=${row.id}"><spring:message code="rendezvous.commentButton"/></a>
+		<a href="comment/list.do?rendezvousId=${row.id}"><spring:message code="rendezvous.commentButton"/></a>
 	</display:column>
 	
 	
 	<security:authorize access="hasRole('USER')">
-	
-	<spring:message code="rendezvous.delete" var="deleteHeader" />	
-	<display:column title="${deleteHeader}">	
-		<jstl:if test="${!row.isDeleted && row.isDraft && row.creator.userAccount.username==loggedactor.username}">	
-			<a href="rendezvous/user/delete.do?rendezvousId=${row.id}">
-			 	<spring:message code="rendezvous.deleteButton" />
-			</a>
-		</jstl:if>
-	</display:column>
-	
-	<spring:message code="rendezvous.edit" var="editHeader" />	
-	<display:column title="${editHeader}">	
-		<jstl:if test="${!row.isDeleted && row.isDraft && row.creator.userAccount.username==loggedactor.username}">	
-			<a href="rendezvous/user/edit.do?rendezvousId=${row.id}">
-			 	<spring:message code="rendezvous.editButton" />
-			</a>
-		</jstl:if>
-	</display:column>
-	
-	<spring:message code="rendezvous.link" var="linkHeader" />	
-	<display:column title="${linkHeader}">	
-		<jstl:if test="${!row.isDeleted && row.creator.userAccount.username==loggedactor.username}">	
-			<a href="rendezvous/user/link.do?rendezvousId=${row.id}">
-			 	<spring:message code="rendezvous.linkButton" />
-			</a>
-		</jstl:if>
-	</display:column>
-	
-	<spring:message code="rendezvous.RSVPButton" var="rsvpHeader" />
-	<display:column title="${rsvpHeader}">
-	<jstl:choose>
-	<jstl:when test="${!principalRendezvouses.contains(row) and (row.isDraft==false) }">
-			
-			<a href="answer/user/respond.do?rendezvousId=${row.id}"> <spring:message code="rendezvous.RSVPButton" /></a>	
-
-	</jstl:when>
-	
-	<jstl:otherwise>
-		<spring:message code="rendezvous.AlreadyRSVPed" />
-		</jstl:otherwise>
-		</jstl:choose>
+		<spring:message code="rendezvous.delete" var="deleteHeader" />	
+		<display:column title="${deleteHeader}">	
+			<jstl:if test="${!row.isDeleted && row.isDraft && row.creator.userAccount.username==loggedactor.username}">	
+				<a href="rendezvous/user/delete.do?rendezvousId=${row.id}">
+				 	<spring:message code="rendezvous.deleteButton" />
+				</a>
+			</jstl:if>
 		</display:column>
-	<spring:message code="question.question" var="question"/>
-	<display:column title="${question}" sortable="false">
-		<a href="question/user/list.do?rendezvousId=${row.id}">
-			<spring:message code="rendezvous.showquestions" />
-		</a>
-	</display:column>
 		
+		<spring:message code="rendezvous.edit" var="editHeader" />	
+		<display:column title="${editHeader}">	
+			<jstl:if test="${!row.isDeleted && row.isDraft && row.creator.userAccount.username==loggedactor.username}">	
+				<a href="rendezvous/user/edit.do?rendezvousId=${row.id}">
+				 	<spring:message code="rendezvous.editButton" />
+				</a>
+			</jstl:if>
+		</display:column>
+		
+		<spring:message code="rendezvous.link" var="linkHeader" />	
+		<display:column title="${linkHeader}">	
+			<jstl:if test="${!row.isDeleted && row.creator.userAccount.username==loggedactor.username}">	
+				<a href="rendezvous/user/link.do?rendezvousId=${row.id}">
+				 	<spring:message code="rendezvous.linkButton" />
+				</a>
+			</jstl:if>
+		</display:column>
+		
+		<spring:message code="rendezvous.RSVPButton" var="rsvpHeader" />
+		<display:column title="${rsvpHeader}">
+			<jstl:choose>
+				<jstl:when test="${!principalRendezvouses.contains(row) and (row.isDraft==false) }">
+					<a href="answer/user/respond.do?rendezvousId=${row.id}"> <spring:message code="rendezvous.RSVPButton" /></a>
+				</jstl:when>
+				<jstl:otherwise>
+					<spring:message code="rendezvous.AlreadyRSVPed" />
+				</jstl:otherwise>
+			</jstl:choose>	
+		</display:column>
+	
+		<spring:message code="question.question" var="question"/>
+		<display:column title="${question}" sortable="false">
+			<a href="question/user/list.do?rendezvousId=${row.id}">
+				<spring:message code="rendezvous.showquestions" />
+			</a>
+		</display:column>
 	</security:authorize>
 	
 	<security:authorize access="hasRole('ADMIN')">
-	
-	<spring:message code="rendezvous.delete" var="deleteHeader" />	
-	<display:column title="${deleteHeader}">	
+		<spring:message code="rendezvous.delete" var="deleteHeader" />	
+		<display:column title="${deleteHeader}">	
 			<a href="rendezvous/administrator/delete.do?rendezvousId=${row.id}">
 			 	<spring:message code="rendezvous.deleteButton" />
 			</a>
-	</display:column>
-	
+		</display:column>
 	</security:authorize>
-	
-	
 </display:table>
 
 <span style="background-color:lightSeaGreen"><spring:message code="rendezvous.allPublic" /></span>
 <span style="background-color:brown"><spring:message code="rendezvous.adult" /></span>
 <span style="background-color:sandyBrown"><spring:message code="rendezvous.draft" /></span>
 <span style="background-color:SlateGray"><spring:message code="rendezvous.deleted" /></span>
-
-
