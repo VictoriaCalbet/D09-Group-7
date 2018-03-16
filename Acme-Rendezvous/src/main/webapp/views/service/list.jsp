@@ -85,6 +85,20 @@
 		</display:column>
 	</security:authorize>
 	
+	<spring:message code="service.isInappropriate" var="serviceIsInappropriateHeader"/>
+	<display:column title="${serviceIsInappropriateHeader}">
+		<jstl:choose>
+			<jstl:when test="${row.isInappropriate eq true}">
+				<spring:message code="service.isInappropriate.yes" var="serviceIsInappropriateYesInformation"/>
+				<jstl:out value="${serviceIsInappropriateYesInformation}"/>
+			</jstl:when>
+			<jstl:otherwise>
+				<spring:message code="service.isInappropriate.no" var="serviceIsInappropriateNoInformation"/>
+				<jstl:out value="${serviceIsInappropriateNoInformation}"/>
+			</jstl:otherwise>
+		</jstl:choose>
+	</display:column>
+	
 	<spring:message code="service.pictureURL" var="servicepictureURLHeader"/>
 	<display:column title="${servicepictureURLHeader}">
 		<acme:image imageURL="${row.pictureURL}" imageNotFoundLocation="images/fotoNotFound.png" 
