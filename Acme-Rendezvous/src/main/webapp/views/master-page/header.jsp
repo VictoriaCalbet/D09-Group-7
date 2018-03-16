@@ -22,68 +22,48 @@
 <div>
 	<ul id="jMenu">
 		<!-- Do not forget the "fNiv" class for the first level links !! -->
+		
+		<!-- #Rendezvous and #RSVP -->
 		<security:authorize access="permitAll">
-			<li><a class="fNiv" href="rendezvous/list.do"><spring:message code="master.page.rendezvous.list" /></a></li>
-			<li><a class="fNiv" href="user/list.do"><spring:message code="user.list" /></a></li>
-		</security:authorize>
-		
-		<security:authorize access="hasRole('ADMIN')">
-			<li><a class="fNiv" href="administrator/administrator/list.do"><spring:message code="master.page.administrator" /></a></li>
-		</security:authorize>
-		
-		<security:authorize access="hasRole('ADMIN')">
-			<li><a class="fNiv" href="rendezvous/administrator/list.do"><spring:message code="master.page.administrator.rendezvous.list" /></a></li>
-		</security:authorize>
-		
-		<security:authorize access="hasRole('ADMIN')">
-			<li><a class="fNiv" href="systemConfiguration/administrator/info.do"><spring:message code="systemConfiguration.header" /></a></li>
-		</security:authorize>
-		
-		<security:authorize access="hasRole('ADMIN')">
-			<li><a class="fNiv" href="administrator/dashboard.do"><spring:message code="master.page.administrator.dashboard" /></a></li>
-		</security:authorize>
-		
-		<security:authorize access="hasRole('ADMIN')">
-			<li><a class="fNiv" href="service/administrator/list.do"><spring:message code="master.page.administrator.service.list" /></a></li>
-		</security:authorize>
-	
-		
-		<security:authorize access="hasRole('ADMIN')">
-			<li><a class="fNiv" href="category/administrator/list.do"><spring:message code="master.page.administrator.category.list" /></a></li>
-		</security:authorize>
-		
-		<security:authorize access="hasRole('MANAGER')">
 			<li>
-				<a class="fNiv">
-					<spring:message code="master.page.service"/>
-				</a>
+				<a class="fNiv" href="rendezvous/list.do"><spring:message code="master.page.rendezvous"/></a>
 				<ul>
-					<li class="arrow"></li>
-						<li><a href="service/manager/list.do"><spring:message code="master.page.manager.service.list"/></a></li>
-						<li><a href="service/manager/list-created.do"><spring:message code="master.page.manager.service.listCreated"/></a></li>
+					<security:authorize access="hasRole('ADMIN')">
+						<li class="arrow"></li>
+						<li><a href="rendezvous/administrator/list.do"><spring:message code="master.page.administrator.rendezvous.list" /></a></li>
+					</security:authorize>
+					<security:authorize access="hasRole('USER')">
+						<li class="arrow"></li>
+						<li><a href="rendezvous/user/list.do"><spring:message code="master.page.user.rendezvous.list" /></a></li>
+						<li><a href="RSVP/user/list.do"><spring:message code="master.page.user.RSVP.list" /></a></li>
+						<li><a class="fNiv" href="RSVP/user/listRSVPs.do"><spring:message code="master.page.RSVP" /></a></li>	
+						<li><a href="rendezvous/user/create.do"><spring:message code="master.page.user.rendezvous.create" /></a></li>
+					</security:authorize>
 				</ul>
 			</li>
 		</security:authorize>
 		
-		<security:authorize access="hasRole('USER')">
-			<li><a class="fNiv" href="service/user/list.do"><spring:message code="master.page.user.service.list" /></a></li>
+		<!-- #Service -->
+		<security:authorize access="isAuthenticated()">
+			<li>
+				<a class="fNiv"><spring:message code="master.page.service"/></a>
+				<ul>
+					<li class="arrow"></li>
+					<security:authorize access="hasRole('ADMIN')">
+						<li><a href="service/administrator/list.do"><spring:message code="master.page.administrator.service.list" /></a></li>
+					</security:authorize>
+					<security:authorize access="hasRole('USER')">
+						<li><a href="service/user/list.do"><spring:message code="master.page.user.service.list" /></a></li>
+					</security:authorize>
+					<security:authorize access="hasRole('MANAGER')">
+						<li><a href="service/manager/list.do"><spring:message code="master.page.manager.service.list"/></a></li>
+						<li><a href="service/manager/list-created.do"><spring:message code="master.page.manager.service.listCreated"/></a></li>
+					</security:authorize>
+				</ul>
+			</li>
 		</security:authorize>
 		
-		<security:authorize access="hasRole('USER')">
-			<li><a class="fNiv" href="rendezvous/user/create.do"><spring:message code="master.page.user.rendezvous.create" /></a></li>
-		</security:authorize>
-		
-		<security:authorize access="hasRole('USER')">
-			<li><a class="fNiv" href="rendezvous/user/list.do"><spring:message code="master.page.user.rendezvous.list" /></a></li>
-		</security:authorize>
-		
-		<security:authorize access="hasRole('USER')">
-			<li><a class="fNiv" href="RSVP/user/list.do"><spring:message code="master.page.user.RSVP.list" /></a></li>
-		</security:authorize>
-		
-		<security:authorize access="hasRole('USER')">
-			<li><a class="fNiv" href="RSVP/user/listRSVPs.do"><spring:message code="master.page.RSVP" /></a></li>
-		</security:authorize>
+		<!-- #Announcement -->
 		<security:authorize access="hasAnyRole('ADMIN', 'USER')">
 			<li>
 				<a class="fNiv">
@@ -102,9 +82,41 @@
 			</li>
 		</security:authorize>
 		
+		<!-- #User and #Manager -->
+		<security:authorize access="permitAll">
+			<li>
+				<a class="fNiv" href="user/list.do"><spring:message code="user.list"/></a>
+				<ul>
+					<security:authorize access="isAnonymous()">
+						<li class="arrow"></li>
+						<li><a href="user/create.do"><spring:message code="user.create" /></a></li>
+						<li><a href="manager/create.do"><spring:message code="manager.create" /></a></li>
+					</security:authorize>
+				</ul>
+			</li>
+		</security:authorize>
+		
+		<!-- #Administrator -->
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="administrator/administrator/list.do"><spring:message code="master.page.administrator" /></a></li>
+		</security:authorize>
+		
+		<!-- #Category -->
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="category/administrator/list.do"><spring:message code="master.page.administrator.category.list" /></a></li>
+		</security:authorize>
+		
+		<!-- #SystemConfiguration -->
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="systemConfiguration/administrator/info.do"><spring:message code="systemConfiguration.header" /></a></li>
+		</security:authorize>
+		
+		<!-- #DashBoard -->
+		<security:authorize access="hasRole('ADMIN')">
+			<li><a class="fNiv" href="administrator/dashboard.do"><spring:message code="master.page.administrator.dashboard" /></a></li>
+		</security:authorize>
+		
 		<security:authorize access="isAnonymous()">
-			<li><a class="fNiv" href="user/create.do"><spring:message code="user.create" /></a></li>
-			<li><a class="fNiv" href="manager/create.do"><spring:message code="manager.create" /></a></li>
 			<li><a class="fNiv" href="security/login.do"><spring:message code="master.page.login" /></a></li>
 		</security:authorize>
 		
