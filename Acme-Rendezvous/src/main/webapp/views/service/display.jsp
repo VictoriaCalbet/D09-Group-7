@@ -46,7 +46,7 @@
 				<spring:message code="service.categories" var="serviceCategoriesLabel"/>
 				<b><jstl:out value="${serviceCategoriesLabel}"/>:&nbsp;</b> 
 				<jstl:choose>
-					<jstl:when test="${not empty categories}">
+					<jstl:when test="${not empty service.categories}">
 						<jstl:forEach items="${service.categories}" var="srv">
 							<jstl:out value="${srv.name}"/>
 						</jstl:forEach>
@@ -64,7 +64,7 @@
 				<spring:message code="service.isInappropriate" var="serviceIsInappropriateLabel" />
 				<b><jstl:out value="${serviceIsInappropriateLabel}"/>:&nbsp;</b> 
 				<jstl:choose>
-					<jstl:when test="${service.isInappropriate eq true }">
+					<jstl:when test="${service.isInappropriate eq true}">
 						<spring:message code="service.isInappropriate.yes" var="serviceIsInappropriateYes" />
 						<jstl:out value="${serviceIsInappropriateYes}"/>
 					</jstl:when>
