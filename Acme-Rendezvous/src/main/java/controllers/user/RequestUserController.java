@@ -51,16 +51,16 @@ public class RequestUserController extends AbstractController {
 
 	//Creating 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public ModelAndView create(@RequestParam final int serviceId) {
+	public ModelAndView create(@RequestParam final int rendezvousId) {
 		ModelAndView result;
 		RequestForm requestForm;
 		requestForm = this.requestFormService.create();
-		final Service service = this.serviceService.findOne(serviceId);
-		requestForm.setService(service);
+		final Rendezvous rendezvous = this.rendezvousService.findOne(rendezvousId);
+		requestForm.setRendezvous(rendezvous);
 		result = this.createEditModelAndView(requestForm);
 		final User principal = this.userService.findByPrincipal();
 		final Collection<Rendezvous> rendezvousesCreated = this.rendezvousService.findAllAvailableRendezvousesCreatedByUserId(principal.getId());
-		result.addObject("service", service);
+		result.addObject("rendezvous", rendezvous);
 		result.addObject("rendezvousesCreated", rendezvousesCreated);
 		return result;
 

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import services.RequestService;
 import services.ServiceService;
 import services.UserService;
 import controllers.AbstractController;
@@ -27,6 +28,8 @@ public class ServiceUserController extends AbstractController {
 
 	@Autowired
 	private UserService		userService;
+	@Autowired
+	private RequestService	requestService;
 
 
 	// Constructors ---------------------------------------------------------
@@ -59,7 +62,7 @@ public class ServiceUserController extends AbstractController {
 
 		result = new ModelAndView("service/list");
 
-		result.addObject("servicesPrincipal", principalServices);
+		result.addObject("principalServices", principalServices);
 		result.addObject("services", services);
 		result.addObject("requestURI", requestURI);
 		result.addObject("displayURI", displayURI);
