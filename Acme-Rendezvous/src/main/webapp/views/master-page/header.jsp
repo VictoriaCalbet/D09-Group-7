@@ -36,7 +36,7 @@
 						<li class="arrow"></li>
 						<li><a href="rendezvous/user/list.do"><spring:message code="master.page.user.rendezvous.list" /></a></li>
 						<li><a href="RSVP/user/list.do"><spring:message code="master.page.user.RSVP.list" /></a></li>
-						<li><a class="fNiv" href="RSVP/user/listRSVPs.do"><spring:message code="master.page.RSVP" /></a></li>	
+						<li><a href="RSVP/user/listRSVPs.do"><spring:message code="master.page.RSVP" /></a></li>	
 						<li><a href="rendezvous/user/create.do"><spring:message code="master.page.user.rendezvous.create" /></a></li>
 					</security:authorize>
 				</ul>
