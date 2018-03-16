@@ -54,26 +54,22 @@ public class ServiceManagerController extends AbstractController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list(@RequestParam(required = false) final Integer rendezvousId) {
 		ModelAndView result = null;
-		Collection<Service> services = null;
-		String requestURI = null;
-		String displayURI = null;
-		Manager manager = null;
 
-		if (rendezvousId == null) {
-			manager = this.managerService.findByPrincipal();
-			services = manager.getServices();
-		} else
-			services = this.serviceService.findServicesByRendezvousId(rendezvousId);
-
-		requestURI = "service/manager/list.do";
-		displayURI = "service/manager/display.do?serviceId=";
-
-		result = new ModelAndView("service/list");
-		result.addObject("services", services);
-		result.addObject("requestURI", requestURI);
-		result.addObject("displayURI", displayURI);
+		if (rendezvousId == null)
+			result = this.listModelAndView(this.serviceService.findAll());
+		else
+			result = this.listModelAndView(this.serviceService.findServicesByRendezvousId(rendezvousId));
 
 		return result;
+	}
+
+	@RequestMapping(value = "/list-created", method = RequestMethod.GET)
+	public ModelAndView listCreated() {
+		Manager manager = null;
+
+		manager = this.managerService.findByPrincipal();
+
+		return this.listModelAndView(manager.getServices());
 	}
 
 	// Creation  ------------------------------------------------------------
@@ -130,16 +126,8 @@ public class ServiceManagerController extends AbstractController {
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "save")
 	public ModelAndView save(@Valid final ServiceForm serviceForm, final BindingResult bindingResult) {
 		ModelAndView result = null;
-		boolean bindingError;
 
-		// Añadido: al enviar una colección vacía en la vista, no envía una 
-		// lista vacía, sino null. Por ello, hacemos esta comprobación. 
-		if (bindingResult.hasFieldErrors("categories"))
-			bindingError = bindingResult.getErrorCount() > 1;
-		else
-			bindingError = bindingResult.getErrorCount() > 0;
-
-		if (bindingError)
+		if (bindingResult.hasErrors())
 			result = this.createEditModelAndView(serviceForm);
 		else
 			try {
@@ -212,6 +200,22 @@ public class ServiceManagerController extends AbstractController {
 		result.addObject("categories", categories);
 		result.addObject("actionURI", actionURI);
 		result.addObject("message", message);
+
+		return result;
+	}
+
+	protected ModelAndView listModelAndView(final Collection<Service> services) {
+		ModelAndView result = null;
+		String requestURI = null;
+		String displayURI = null;
+
+		requestURI = "service/manager/list.do";
+		displayURI = "service/manager/display.do?serviceId=";
+
+		result = new ModelAndView("service/list");
+		result.addObject("services", services);
+		result.addObject("requestURI", requestURI);
+		result.addObject("displayURI", displayURI);
 
 		return result;
 	}
