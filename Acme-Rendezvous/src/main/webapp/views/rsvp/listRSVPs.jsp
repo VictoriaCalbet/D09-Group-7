@@ -21,10 +21,20 @@
 
 <display:table name="RSVPs" id="row" requestURI="${requestURI}" pagesize="5">
 
+<spring:message code="rsvp.isCancelled" var="rsvpCancelledHeader"/>
+<display:column title="${rsvpCancelledHeader}">
+		<jstl:choose>
+			<jstl:when test="${row.isCancelled eq true}">
+				<spring:message code="rsvp.yes" var="rsvpCancelled"/>
+				<jstl:out value="${rsvpCancelled}"/>
+			</jstl:when>
+			<jstl:otherwise>
+				<spring:message code="rsvp.no" var="rsvpNotCancelled"/>
+				<jstl:out value="${rsvpNotCancelled}"/>
+			</jstl:otherwise>
+		</jstl:choose>
+	</display:column>
 	
-<spring:message code="rsvp.isCancelled" var="isCanceledHeader" />
-<display:column property="isCancelled" title="${isCanceledHeader}" sortable="false" />
-
 <spring:message code="rendezvous.name" var="rendezvousHeader" />
 <display:column property="rendezvous.name" title="${rendezvousHeader}" sortable="false" />
 
