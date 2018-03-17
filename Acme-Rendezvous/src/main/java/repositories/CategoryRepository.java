@@ -28,6 +28,9 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 	public Double findAvgCategoriesCreatedPerRendezvous();
 
 	// Acme-Rendezvous 2.0 - Requisito 11.2.2
+	@Query("select avg(cat.services.size) from Category cat")
+	public Double getAvgOfServicesPerEachCategory();
+
 	@Query("select count(cat.services.size)*1.0/(select count(ca.services.size) from Category ca) from Category cat")
-	public Integer getRatioOfServicesPerEachCategory();
+	public Double getRatioOfServicesPerEachCategory();
 }
