@@ -280,7 +280,7 @@ public class RequestUserController extends AbstractController {
 		Random randomGenerator;
 		randomGenerator = new Random(userId);
 		for (int i = 0; i < bytes.length; i++)
-			encrypted[i] = (byte) (bytes[i] + randomGenerator.nextInt());
+			encrypted[i] = (byte) (bytes[i] + randomGenerator.nextInt(27));
 		strData = new String(encrypted);
 		try {
 			strData = URLEncoder.encode(strData, "UTF-8");
@@ -304,7 +304,7 @@ public class RequestUserController extends AbstractController {
 			Random randomGenerator;
 			randomGenerator = new Random(userId);
 			for (int i = 0; i < encrypted.length; i++)
-				decrypted[i] = (byte) (encrypted[i] - randomGenerator.nextInt());
+				decrypted[i] = (byte) (encrypted[i] - randomGenerator.nextInt(27));
 			strData = new String(decrypted);
 
 		} catch (final UnsupportedEncodingException e) {

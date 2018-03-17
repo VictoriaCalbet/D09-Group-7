@@ -27,7 +27,7 @@
 <security:authorize access="hasRole('USER')">
 
 
-<acme:textbox2 code="request.comment" path="comment" />
+<acme:textbox code="request.comment" path="comment" />
 <acme:textbox2 code="request.creditCard.brandName" path="creditCard.brandName" valueImput="${brandCookie}" />
 <acme:textbox2 code="request.creditCard.holderName" path="creditCard.holderName" valueImput="${holderCookie}"/>
 <acme:textbox2 code="request.creditCard.number" path="creditCard.number" valueImput="${numberCookie}"/>
