@@ -18,6 +18,9 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
 	@Query("select req.service from Rendezvous rvs join rvs.requests req where rvs.id = ?1")
 	public Collection<Service> findServicesByRendezvousId(int rendezvousId);
 
+	@Query("select srv from Service srv where srv.isInappropriate = false")
+	public Collection<Service> findAvailableServices();
+
 	// Dashboard queries
 
 	// Acme-Rendezvous 2.0 - Requisito 6.2.1
