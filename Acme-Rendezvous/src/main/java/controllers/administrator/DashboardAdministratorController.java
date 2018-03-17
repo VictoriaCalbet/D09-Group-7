@@ -150,8 +150,10 @@ public class DashboardAdministratorController extends AbstractController {
 		result.addObject("avgCategoriesCreatedPerRendezvous", avgCategoriesCreatedPerRendezvous);
 
 		// Requisito 11.2.2
-		final Integer ratioOfServicesPerEachCategory = this.categoryService.getRatioOfServicesPerEachCategory();
+		final Double ratioOfServicesPerEachCategory = this.categoryService.getRatioOfServicesPerEachCategory();
+		final Double avgOfServicesPerEachCategory = this.categoryService.getAvgOfServicesPerEachCategory();
 		result.addObject("ratioOfServicesPerEachCategory", ratioOfServicesPerEachCategory);
+		result.addObject("avgOfServicesPerEachCategory", avgOfServicesPerEachCategory);
 
 		// Requisito 11.2.3
 		final Double avgServicesRequestedPerRendezvous = this.serviceService.findAvgServicesRequestedPerRendezvous();
