@@ -201,4 +201,8 @@ public class ServiceService {
 	public Collection<Service> findServicesAvailablesToRequest(final int rendezvousId) {
 		return this.serviceRepository.findServicesAvailablesToRequest(rendezvousId);
 	}
+
+	public Collection<Service> findAvailableServices() {
+		return this.serviceRepository.findAvailableServices();
+	}
 }
