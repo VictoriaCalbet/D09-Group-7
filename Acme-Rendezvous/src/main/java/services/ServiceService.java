@@ -191,18 +191,50 @@ public class ServiceService {
 		return this.serviceRepository.findAvailableServicesByUserId(userId);
 	}
 
-	public Collection<Service> findBestSellingServices() {
-		return this.serviceRepository.findBestSellingServices();
-	}
-
 	public Collection<Service> findServicesByRendezvousId(final int rendezvousId) {
 		return this.serviceRepository.findServicesByRendezvousId(rendezvousId);
 	}
+
 	public Collection<Service> findServicesAvailablesToRequest(final int rendezvousId) {
 		return this.serviceRepository.findServicesAvailablesToRequest(rendezvousId);
 	}
 
 	public Collection<Service> findAvailableServices() {
 		return this.serviceRepository.findAvailableServices();
+	}
+
+	// Dashboard services ------------------------------------------------------
+
+	// TODO: Acme-Rendezvous 2.0 - Requisito 6.2.1
+	public Collection<Service> findBestSellingServices() {
+		return this.serviceRepository.findBestSellingServices();
+	}
+
+	// Acme-Rendezvous 2.0 - Requisito 11.2.3
+	public Double findAvgServicesRequestedPerRendezvous() {
+		return this.serviceRepository.findAvgServicesRequestedPerRendezvous();
+	}
+
+	public Double findMinServicesRequestedPerRendezvous() {
+		return this.serviceRepository.findMinServicesRequestedPerRendezvous();
+	}
+
+	public Double findMaxServicesRequestedPerRendezvous() {
+		return this.serviceRepository.findMaxServicesRequestedPerRendezvous();
+	}
+
+	public Double findStdServicesRequestedPerRendezvous() {
+		return this.serviceRepository.findStdServicesRequestedPerRendezvous();
+	}
+
+	// Acme-Rendezvous 2.0 - Requisito 11.2.4
+	public Collection<Service> findTopSellingServices() {
+		Collection<Service> result = null;
+		result = this.serviceRepository.findTopSellingServices();
+
+		if (result != null && result.size() > 7)
+			result = new ArrayList<Service>(result).subList(0, 7);
+
+		return result;
 	}
 }

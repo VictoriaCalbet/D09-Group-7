@@ -187,8 +187,9 @@ public class QuestionService {
 		return correct;
 	}
 
-	// Dashboard methods ------------------------------------------------------
+	// Dashboard services ------------------------------------------------------
 
+	// Acme-Rendezvous 1.0 - Requisito 22.1.1
 	public Double findAvgNoQuestionsPerRendezvous() {
 		Double result = null;
 		result = this.questionRepository.findAvgNoQuestionsPerRendezvous();

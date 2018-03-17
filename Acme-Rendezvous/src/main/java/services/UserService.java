@@ -164,14 +164,16 @@ public class UserService {
 		return this.userRepository.findAttendantsOfRendezvous(rendezvousId);
 	}
 
-	// Dashboard methods ------------------------------------------------------
+	// Dashboard services ------------------------------------------------------
 
+	// Acme-Rendezvous 1.0 - Requisito 6.3.2
 	public Double findRatioUserRendezvousesCreatedVsNeverCreated() {
 		Double result = null;
 		result = this.userRepository.findRatioUserRendezvousesCreatedVsNeverCreated();
 		return result;
 	}
 
+	// Acme-Rendezvous 1.0 - Requisito 6.3.3
 	public Double findAvgUsersRSVPsPerRendezvous() {
 		Double result = null;
 		result = this.userRepository.findAvgUsersRSVPsPerRendezvous();

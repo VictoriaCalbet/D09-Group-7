@@ -109,8 +109,10 @@ public class AnswerService {
 		answer = this.answerRepository.findAnswerByQuestionIdAndUserId(questionId, userId);
 		return answer;
 	}
-	// Dashboard methods ------------------------------------------------------
 
+	// Dashboard services ------------------------------------------------------
+
+	// Acme-Rendezvous 1.0 - Requisito 22.1.2
 	public Double findAvgNoAnswersToTheQuestionsPerRendezvous() {
 		Double result = null;
 		result = this.answerRepository.findAvgNoAnswersToTheQuestionPerRendezvous();

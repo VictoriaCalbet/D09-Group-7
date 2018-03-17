@@ -150,12 +150,15 @@ public class ManagerService {
 		Assert.notNull(result);
 		return result;
 	}
-	//Managers with more services than average
 
+	// Dashboard services ------------------------------------------------------
+
+	// Acme-Rendezvous 2.0 - Requisito 6.2.2
 	public Collection<Manager> findManagersWithMoreServicesThanAverage() {
 		return this.managerRepository.findManagersWithMoreServicesThanAverage();
 	}
 
+	// Acme-Rendezvous 2.0 - Requisito 6.2.3
 	public Collection<Manager> findManagersWithMoreServicesCancelled() {
 		return this.managerRepository.findManagersWithMoreServicesCancelled();
 	}

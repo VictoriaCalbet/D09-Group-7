@@ -168,8 +168,9 @@ public class AnnouncementService {
 		return announcements;
 	}
 
-	// Dashboard methods ------------------------------------------------------
+	// Dashboard services ------------------------------------------------------
 
+	// Acme-Rendezvous 1.0 - Requisito 17.2.1
 	public Double findAvgAnnouncementPerRendezvous() {
 		Double result = null;
 		result = this.announcementRepository.findAvgAnnouncementPerRendezvous();

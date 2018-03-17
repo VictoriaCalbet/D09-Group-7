@@ -40,8 +40,6 @@ public class RendezvousService {
 	private ActorService			actorService;
 	@Autowired
 	private RSVPService				rsvpService;
-	@Autowired
-	private CategoryService			categoryService;
 
 
 	// Constructors -----------------------------------------------------------
@@ -283,8 +281,9 @@ public class RendezvousService {
 		return result;
 	}
 
-	// Dashboard methods ------------------------------------------------------
+	// Dashboard services ------------------------------------------------------
 
+	// Acme-Rendezvous 1.0 - Requisito 6.3.1
 	public Double findAvgRendezvousesCreatedPerUser() {
 		Double result = null;
 		result = this.rendezvousRepository.findAvgRendezvousesCreatedPerUser();
@@ -297,6 +296,7 @@ public class RendezvousService {
 		return result;
 	}
 
+	// Acme-Rendezvous 1.0 - Requisito 6.3.4
 	public Double findAvgRendezvousRSVPsPerUsers() {
 		Double result = null;
 		result = this.rendezvousRepository.findAvgRendezvousRSVPsPerUsers();
@@ -309,6 +309,7 @@ public class RendezvousService {
 		return result;
 	}
 
+	// Acme-Rendezvous 1.0 - Requisito 6.3.5
 	public Collection<Rendezvous> findTop10RendezvousByRSVPs() {
 		Collection<Rendezvous> result = null;
 		result = this.rendezvousRepository.findAllRendezvousByRSVPs();
@@ -319,12 +320,14 @@ public class RendezvousService {
 		return result;
 	}
 
+	// Acme-Rendezvous 1.0 - Requisito 17.2.2
 	public Collection<Rendezvous> findAllRendezvousNoAnnouncementsIsAbove75PerCentNoAnnouncementPerRendezvous() {
 		Collection<Rendezvous> result = null;
 		result = this.rendezvousRepository.findAllRendezvousNoAnnouncementsIsAbove75PerCentNoAnnouncementPerRendezvous();
 		return result;
 	}
 
+	// Acme-Rendezvous 1.0 - Requisito 17.2.3
 	public Collection<Rendezvous> findRendezvousesThatLinkedToRvGreaterThanAvgPlus10() {
 		Collection<Rendezvous> result = null;
 		result = this.rendezvousRepository.findRendezvousesThatLinkedToRvGreaterThanAvgPlus10();

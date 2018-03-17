@@ -24,7 +24,9 @@ public class CategoryService {
 	private CategoryRepository	categoryRepository;
 
 	@Autowired
-	private ServiceService	serviceService;
+	private ServiceService		serviceService;
+
+
 	// Supporting services ----------------------------------------------------
 
 	// Constructors -----------------------------------------------------------
@@ -36,71 +38,68 @@ public class CategoryService {
 	// Simple CRUD methods ----------------------------------------------------
 
 	public Category create() {
-		
-		Category cat = new Category();
-		
-		Collection<Service> services = new ArrayList<Service>();
-		
+
+		final Category cat = new Category();
+
+		final Collection<Service> services = new ArrayList<Service>();
+
 		cat.setServices(services);
-		
-		
+
 		return cat;
 	}
 
 	public Category save(final Category category) {
-		Assert.notNull(category,"message.error.category.null");
-		
-		Category result = this.categoryRepository.save(category);
+		Assert.notNull(category, "message.error.category.null");
+
+		final Category result = this.categoryRepository.save(category);
 
 		return result;
 
 	}
 
 	public Category saveFromCreate(final Category category) {
-		
-		Assert.notNull(category,"message.error.category.null");
-		Assert.isTrue(category.getId()==0,"message.error.category.id");
-		Assert.notNull(category.getDescription(),"message.error.category.description.null");
-		Assert.notNull(category.getName(),"message.error.category.name.null");
-		Category result = this.categoryRepository.save(category);
-		
+
+		Assert.notNull(category, "message.error.category.null");
+		Assert.isTrue(category.getId() == 0, "message.error.category.id");
+		Assert.notNull(category.getDescription(), "message.error.category.description.null");
+		Assert.notNull(category.getName(), "message.error.category.name.null");
+		final Category result = this.categoryRepository.save(category);
+
 		return result;
-		
-		
+
 	}
 
 	public Category saveFromEdit(final Category category) {
-		Assert.isTrue(category.getId()>0,"message.error.category.id");
-		Assert.notNull(category,"message.error.category.null");
-		Assert.notNull(category.getDescription(),"message.error.category.description.null");
-		Assert.notNull(category.getName(),"message.error.category.name.null");
+		Assert.isTrue(category.getId() > 0, "message.error.category.id");
+		Assert.notNull(category, "message.error.category.null");
+		Assert.notNull(category.getDescription(), "message.error.category.description.null");
+		Assert.notNull(category.getName(), "message.error.category.name.null");
 		Category result;
 		result = this.categoryRepository.save(category);
-		
+
 		return result;
 	}
-	
-	public void delete(Category category){
-		
-		Assert.notNull(category,"message.error.category.null");
-		
-		Collection<Service> services = category.getServices();
-		
-		for(Service ser:services){
-			
+
+	public void delete(final Category category) {
+
+		Assert.notNull(category, "message.error.category.null");
+
+		final Collection<Service> services = category.getServices();
+
+		for (final Service ser : services) {
+
 			ser.getCategories().remove(category);
 			this.serviceService.save(ser);
-			
+
 		}
-		Collection<Category> categories = this.replaceParentCategories(category.getId());
-		
-		for(Category cat:categories){
-			
+		final Collection<Category> categories = this.replaceParentCategories(category.getId());
+
+		for (final Category cat : categories) {
+
 			cat.setParent(null);
 			this.categoryRepository.save(cat);
 		}
-				
-		
+
 		this.categoryRepository.delete(category);
 	}
 
@@ -117,65 +116,66 @@ public class CategoryService {
 		result = this.categoryRepository.findOne(categoryId);
 		return result;
 	}
-	
-	public Collection<Category> getCategoriesByParent(int categoryId){
-		
-		Collection<Category> cate = this.categoryRepository.getCategoriesByParent(categoryId);
-		
+
+	public Collection<Category> getCategoriesByParent(final int categoryId) {
+
+		final Collection<Category> cate = this.categoryRepository.getCategoriesByParent(categoryId);
+
 		return cate;
-		
+
 	}
-	
-	public Collection<Category> replaceParentCategories(int categoryId){
-		
-		Collection<Category> result = this.categoryRepository.replaceParentCategories(categoryId);
-		
+
+	public Collection<Category> replaceParentCategories(final int categoryId) {
+
+		final Collection<Category> result = this.categoryRepository.replaceParentCategories(categoryId);
+
 		return result;
-	
-		
+
 	}
-	
-	public Collection<Category> getRootCategories(){
-		
-		Collection<Category> cate = this.categoryRepository.getRootCategories();
-		
+
+	public Collection<Category> getRootCategories() {
+
+		final Collection<Category> cate = this.categoryRepository.getRootCategories();
+
 		return cate;
-		
-	} 
-	
-	public Map<Integer,String> createCategoryLabels(Collection<Category> categories){
-		
-		Map<Integer,String> map = new HashMap<Integer,String>();
-		
-		String label="";
-		
-		for(Category ca:categories){
-			int id=ca.getId();
-			label=ca.getName();
-			Category parent=ca.getParent();
-			
-			while(parent!=null){
 
-				label=parent.getName()+">"+label;
-				ca=parent;
-				parent=ca.getParent();
-				
+	}
+
+	public Map<Integer, String> createCategoryLabels(final Collection<Category> categories) {
+
+		final Map<Integer, String> map = new HashMap<Integer, String>();
+
+		String label = "";
+
+		for (Category ca : categories) {
+			final int id = ca.getId();
+			label = ca.getName();
+			Category parent = ca.getParent();
+
+			while (parent != null) {
+
+				label = parent.getName() + ">" + label;
+				ca = parent;
+				parent = ca.getParent();
+
 			}
-			
+
 			map.put(id, label);
-			
-			}
 
-		
-		
+		}
+
 		return map;
 	}
 
+	// Dashboard services ------------------------------------------------------
 
-	public Integer getRatioOfServicesPerEachCategory(){
-		
-		Integer ratio = this.categoryRepository.getRatioOfServicesPerEachCategory();
-		
-		return ratio;
+	// Acme-Rendezvous 2.0 - Requisito 11.2.1
+	public Double findAvgCategoriesCreatedPerRendezvous() {
+		return this.categoryRepository.findAvgCategoriesCreatedPerRendezvous();
+	}
+
+	// Acme-Rendezvous 2.0 - Requisito 11.2.2
+	public Integer getRatioOfServicesPerEachCategory() {
+		return this.categoryRepository.getRatioOfServicesPerEachCategory();
 	}
 }
