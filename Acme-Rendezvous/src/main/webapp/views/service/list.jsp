@@ -22,10 +22,19 @@
 <security:authentication property="principal" var="loggedactor"/>
 
 <display:table name="services" id="row" requestURI="${requestURI}" pagesize="10">
+	
+	<jstl:choose>
+		<jstl:when test="${row.isInappropriate eq true}">
+			<jstl:set var="style" value="background-color:#F95734; color:white;"/>
+		</jstl:when>
+		<jstl:otherwise>
+			<jstl:set var="style" value="background-color:#6FD6FF;"/>
+		</jstl:otherwise>
+	</jstl:choose>
 
 	<!-- Links to edit or display a service -->
 	<security:authorize access="hasRole('MANAGER')">
-		<display:column>
+		<display:column style="${style}">
 			<jstl:choose>
 				<jstl:when test="${row.manager.userAccount.id eq loggedactor.id and empty row.requests and row.isInappropriate eq false}">
 					<spring:message var="serviceEditLink" code="service.edit"/>
@@ -40,14 +49,14 @@
 	</security:authorize>
 
 	<security:authorize access="hasAnyRole('USER', 'MANAGER', 'ADMIN')">
-		<display:column>
+		<display:column style="${style}">
 			<spring:message code="service.display" var="serviceDisplayLink"/>
 			<a href="${displayURI}${row.id}"><jstl:out value="${serviceDisplayLink}"/></a>
 		</display:column>
 	</security:authorize>
 	
 	<security:authorize access="hasRole('ADMIN')">
-		<display:column>
+		<display:column style="${style}">
 			<jstl:choose>
 				<jstl:when test="${row.isInappropriate eq false}">
 					<spring:message code="service.markAsInappropriate" var="serviceMarkAsInappropriateLink"/>
@@ -61,17 +70,17 @@
 		</display:column>
 	</security:authorize>
 	
+
+
+	
 	<spring:message code="service.name" var="serviceNameHeader"/>
-	<display:column property="name" title="${serviceNameHeader}" />
+	<display:column property="name" title="${serviceNameHeader}" style="${style}"/>
 	
 	<spring:message code="service.description" var="serviceDescriptionHeader"/>
-	<display:column property="description" title="${serviceDescriptionHeader}" />
-	
-	
-	
+	<display:column property="description" title="${serviceDescriptionHeader}" style="${style}"/>
 	
 	<spring:message code="service.isInappropriate" var="serviceIsInappropriateHeader"/>
-	<display:column title="${serviceIsInappropriateHeader}">
+	<display:column title="${serviceIsInappropriateHeader}" style="${style}">
 		<jstl:choose>
 			<jstl:when test="${row.isInappropriate eq true}">
 				<spring:message code="service.isInappropriate.yes" var="serviceIsInappropriateYesInformation"/>
@@ -85,18 +94,22 @@
 	</display:column>
 	
 	<spring:message code="service.pictureURL" var="servicepictureURLHeader"/>
-	<display:column title="${servicepictureURLHeader}">
+	<display:column title="${servicepictureURLHeader}" style="${style}">
 		<acme:image imageURL="${row.pictureURL}" imageNotFoundLocation="images/fotoNotFound.png" 
 					codeError="service.unspecifiedURL" height="60" width="60"/>
 	</display:column>
 </display:table>
 
+<span style="background-color:#F95734; color:white;"> <spring:message code="service.list.thisServiceIsInappropriate"/> </span>
+<span style="background-color:#6FD6FF;"> <spring:message code="service.list.thisServiceNotIsInappropriate"/> </span>
+<br/>
 <security:authorize access="hasRole('MANAGER')">
 	<spring:message code="service.create" var="serviceCreateLink"/>
 	<a href="service/manager/create.do"><jstl:out value="${serviceCreateLink}"/></a>
 	<br/> 
 </security:authorize>
 <br/>
+
 
 <acme:cancel url="welcome/index.do" code="service.cancel"/>
 <br/>
