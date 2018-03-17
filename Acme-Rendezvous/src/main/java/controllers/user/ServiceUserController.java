@@ -58,7 +58,7 @@ public class ServiceUserController extends AbstractController {
 		displayURI = "service/user/display.do?serviceId=";
 
 		principalUser = this.userService.findByPrincipal();
-		principalServices = this.serviceService.findServicesByUserId(principalUser.getId());
+		principalServices = this.serviceService.findAvailableServicesByUserId(principalUser.getId());
 
 		result = new ModelAndView("service/list");
 

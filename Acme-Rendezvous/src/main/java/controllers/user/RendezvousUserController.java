@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import services.RendezvousService;
+import services.ServiceService;
 import services.UserService;
 import services.form.RendezvousFormService;
 import services.form.RendezvousLinkedFormService;
 import controllers.AbstractController;
 import domain.Rendezvous;
+import domain.Service;
 import domain.User;
 import domain.form.RendezvousForm;
 import domain.form.RendezvousLinkedForm;
@@ -38,6 +40,9 @@ public class RendezvousUserController extends AbstractController {
 
 	@Autowired
 	private UserService					userService;
+
+	@Autowired
+	private ServiceService				serviceService;
 
 	@Autowired
 	private RendezvousLinkedFormService	rendezvousLinkedFormService;
@@ -63,14 +68,17 @@ public class RendezvousUserController extends AbstractController {
 		Collection<Rendezvous> principalRendezvouses = new ArrayList<Rendezvous>();
 		principalRendezvouses = this.rendezvousService.findAllAttendedByUserId(u.getId());
 		result = new ModelAndView("rendezvous/list");
+
+		final Collection<Service> allServices = this.serviceService.findAvailableServicesByUserId(u.getId());
+
 		result.addObject("principalRendezvouses", principalRendezvouses);
+
 		result.addObject("rendezvouses", rendezvouses);
 		result.addObject("message", message);
 		result.addObject("requestURI", "rendezvous/user/list.do");
 
 		return result;
 	}
-
 	// Creation ----------------------------------------------------------------
 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)

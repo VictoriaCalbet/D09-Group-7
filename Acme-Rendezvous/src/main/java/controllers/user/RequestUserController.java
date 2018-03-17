@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import services.RendezvousService;
-import services.RequestService;
 import services.ServiceService;
 import services.UserService;
 import services.form.RequestFormService;
@@ -28,8 +27,6 @@ import domain.form.RequestForm;
 @RequestMapping("/request/user")
 public class RequestUserController extends AbstractController {
 
-	@Autowired
-	private RequestService		requestService;
 	@Autowired
 	private RequestFormService	requestFormService;
 
@@ -60,7 +57,10 @@ public class RequestUserController extends AbstractController {
 		result = this.createEditModelAndView(requestForm);
 		final User principal = this.userService.findByPrincipal();
 		final Collection<Rendezvous> rendezvousesCreated = this.rendezvousService.findAllAvailableRendezvousesCreatedByUserId(principal.getId());
+		final Collection<Service> availableServices = this.serviceService.findServicesAvailablesToRequest(rendezvousId);
+
 		result.addObject("rendezvous", rendezvous);
+		result.addObject("availableServices", availableServices);
 		result.addObject("rendezvousesCreated", rendezvousesCreated);
 		return result;
 
@@ -79,7 +79,7 @@ public class RequestUserController extends AbstractController {
 		return result;
 	}
 
-	//Saving //TODO
+	//Saving
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "save")
 	public ModelAndView save(@Valid final RequestForm requestForm, final BindingResult binding) {
 		ModelAndView result;
@@ -89,7 +89,7 @@ public class RequestUserController extends AbstractController {
 		else
 			try {
 				this.requestFormService.saveFromCreate(requestForm);
-				result = new ModelAndView("redirect:/service/user/list.do");
+				result = new ModelAndView("redirect:/rendezvous/user/list.do");
 
 			} catch (final Throwable oops) {
 				String messageError = "request.commit.error";
