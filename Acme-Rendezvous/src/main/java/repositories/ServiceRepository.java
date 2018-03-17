@@ -27,7 +27,7 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
 	// Dashboard queries
 
 	// TODO: Acme-Rendezvous 2.0 - Requisito 6.2.1
-	@Query("select avg(rvs.requests.size) from Rendezvous rvs")
+	@Query("select s from Service s order by s.requests.size desc")
 	public Collection<Service> findBestSellingServices();
 
 	// Acme-Rendezvous 2.0 - Requisito 11.2.3

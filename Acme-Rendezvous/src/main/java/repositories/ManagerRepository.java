@@ -22,6 +22,6 @@ public interface ManagerRepository extends JpaRepository<Manager, Integer> {
 	Collection<Manager> findManagersWithMoreServicesThanAverage();
 
 	// Acme-Rendezvous 2.0 - Requisito 6.2.3
-	@Query("select s.manager from Service s where s.isInappropriate=true")
+	@Query("select s.manager, count(s.manager) from Service s where s.isInappropriate=true group by s.manager")
 	Collection<Manager> findManagersWithMoreServicesCancelled();
 }
