@@ -52,13 +52,13 @@ public class ServiceManagerController extends AbstractController {
 	// Listing --------------------------------------------------------------
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list(@RequestParam(required = false) final Integer rendezvousId) {
+	public ModelAndView list(@RequestParam(required = false) final Integer rendezvousId, @RequestParam(required = false) final String message) {
 		ModelAndView result = null;
 
 		if (rendezvousId == null)
-			result = this.listModelAndView(this.serviceService.findAvailableServices());
+			result = this.listModelAndView(this.serviceService.findAvailableServices(), message);
 		else
-			result = this.listModelAndView(this.serviceService.findServicesByRendezvousId(rendezvousId));
+			result = this.listModelAndView(this.serviceService.findServicesByRendezvousId(rendezvousId), message);
 
 		return result;
 	}
@@ -206,6 +206,13 @@ public class ServiceManagerController extends AbstractController {
 
 	protected ModelAndView listModelAndView(final Collection<Service> services) {
 		ModelAndView result = null;
+
+		result = this.listModelAndView(services, null);
+
+		return result;
+	}
+	protected ModelAndView listModelAndView(final Collection<Service> services, final String message) {
+		ModelAndView result = null;
 		String requestURI = null;
 		String displayURI = null;
 
@@ -216,6 +223,7 @@ public class ServiceManagerController extends AbstractController {
 		result.addObject("services", services);
 		result.addObject("requestURI", requestURI);
 		result.addObject("displayURI", displayURI);
+		result.addObject("message", message);
 
 		return result;
 	}
