@@ -21,7 +21,7 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
 	@Query("select srv from Service srv where srv.isInappropriate = false")
 	public Collection<Service> findAvailableServices();
 
-	@Query("select srv from Service srv where srv.id not IN (select r.service.id from Request r where r.rendezvous.id = ?1)")
+	@Query("select srv from Service srv where srv.id not IN (select r.service.id from Request r where r.rendezvous.id = ?1) and srv.isInappropriate = false")
 	public Collection<Service> findServicesAvailablesToRequest(int rendezvousId);
 
 	// Dashboard queries
