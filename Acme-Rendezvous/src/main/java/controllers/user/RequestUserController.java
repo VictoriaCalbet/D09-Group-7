@@ -1,8 +1,15 @@
 
 package controllers.user;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.Random;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +56,7 @@ public class RequestUserController extends AbstractController {
 
 	//Creating 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public ModelAndView create(@RequestParam final int rendezvousId) {
+	public ModelAndView create(final HttpServletRequest request, @RequestParam final int rendezvousId) {
 		ModelAndView result;
 		RequestForm requestForm;
 		requestForm = this.requestFormService.create();
@@ -71,6 +78,56 @@ public class RequestUserController extends AbstractController {
 
 		}
 
+		User user;
+		user = this.userService.findByPrincipal();
+		Cookie[] cookies;
+		cookies = request.getCookies();
+		String brandCookie;
+		brandCookie = "";
+		String holderCookie;
+		holderCookie = "";
+		String numberCookie;
+		numberCookie = "";
+		String monthCookie;
+		monthCookie = "";
+		String yearCookie;
+		yearCookie = "";
+		String cvvCookie;
+		cvvCookie = "";
+		String userCookie;
+		userCookie = "";
+		for (final Cookie c : cookies) {
+			if (c.getName().equals("brandCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				brandCookie = c.getValue();
+			if (c.getName().equals("userCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				userCookie = c.getValue();
+			if (c.getName().equals("holderCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				holderCookie = c.getValue();
+			if (c.getName().equals("numberCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				numberCookie = c.getValue();
+			if (c.getName().equals("monthCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				monthCookie = c.getValue();
+			if (c.getName().equals("yearCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				yearCookie = c.getValue();
+			if (c.getName().equals("cvvCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				cvvCookie = c.getValue();
+		}
+		if (userCookie != "" && new Integer(this.decrypt(userCookie, user.getId())).equals(new Integer(user.getId()))) {
+			result.addObject("brandCookie", this.decrypt(brandCookie, user.getId()));
+			result.addObject("holderCookie", this.decrypt(holderCookie, user.getId()));
+			result.addObject("numberCookie", this.decrypt(numberCookie, user.getId()));
+			result.addObject("monthCookie", this.decrypt(monthCookie, user.getId()));
+			result.addObject("yearCookie", this.decrypt(yearCookie, user.getId()));
+			result.addObject("cvvCookie", this.decrypt(cvvCookie, user.getId()));
+		} else {
+			result.addObject("brandCookie", "");
+			result.addObject("holderCookie", "");
+			result.addObject("numberCookie", "");
+			result.addObject("monthCookie", "");
+			result.addObject("yearCookie", "");
+			result.addObject("cvvCookie", "");
+		}
+
 		result.addObject("rendezvous", rendezvous);
 		result.addObject("availableServices", availableServices);
 		result.addObject("rendezvousesCreated", rendezvousesCreated);
@@ -80,7 +137,7 @@ public class RequestUserController extends AbstractController {
 	//EDITIONS
 	//Editing
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
-	public ModelAndView edit(@RequestParam final int requestId) {
+	public ModelAndView edit(final HttpServletRequest request, @RequestParam final int requestId) {
 		final ModelAndView result;
 		RequestForm requestForm;
 		requestForm = this.requestFormService.create(requestId);
@@ -88,21 +145,79 @@ public class RequestUserController extends AbstractController {
 		result = this.createEditModelAndView(requestForm);
 		result.addObject(requestId);
 
+		User user;
+		user = this.userService.findByPrincipal();
+		Cookie[] cookies;
+		cookies = request.getCookies();
+		String brandCookie;
+		brandCookie = "";
+		String holderCookie;
+		holderCookie = "";
+		String numberCookie;
+		numberCookie = "";
+		String monthCookie;
+		monthCookie = "";
+		String yearCookie;
+		yearCookie = "";
+		String cvvCookie;
+		cvvCookie = "";
+		String userCookie;
+		userCookie = "";
+		for (final Cookie c : cookies) {
+			if (c.getName().equals("brandCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				brandCookie = c.getValue();
+			if (c.getName().equals("userCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				userCookie = c.getValue();
+			if (c.getName().equals("holderCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				holderCookie = c.getValue();
+			if (c.getName().equals("numberCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				numberCookie = c.getValue();
+			if (c.getName().equals("monthCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				monthCookie = c.getValue();
+			if (c.getName().equals("yearCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				yearCookie = c.getValue();
+			if (c.getName().equals("cvvCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				cvvCookie = c.getValue();
+		}
+		if (userCookie != "" && new Integer(this.decrypt(userCookie, user.getId())).equals(new Integer(user.getId()))) {
+			result.addObject("brandCookie", this.decrypt(brandCookie, user.getId()));
+			result.addObject("holderCookie", this.decrypt(holderCookie, user.getId()));
+			result.addObject("numberCookie", this.decrypt(numberCookie, user.getId()));
+			result.addObject("monthCookie", this.decrypt(monthCookie, user.getId()));
+			result.addObject("yearCookie", this.decrypt(yearCookie, user.getId()));
+			result.addObject("cvvCookie", this.decrypt(cvvCookie, user.getId()));
+		} else {
+			result.addObject("brandCookie", "");
+			result.addObject("holderCookie", "");
+			result.addObject("numberCookie", "");
+			result.addObject("monthCookie", "");
+			result.addObject("yearCookie", "");
+			result.addObject("cvvCookie", "");
+		}
+
 		return result;
 	}
 
 	//Saving
 	@RequestMapping(value = "/edit", method = RequestMethod.POST, params = "save")
-	public ModelAndView save(@Valid final RequestForm requestForm, final BindingResult binding) {
+	public ModelAndView save(final HttpServletResponse response, @Valid final RequestForm requestForm, final BindingResult binding) {
 		ModelAndView result;
 
 		if (binding.hasErrors())
 			result = this.createEditModelAndView(requestForm);
 		else
 			try {
+				User user;
+				user = this.userService.findByPrincipal();
 				this.requestFormService.saveFromCreate(requestForm);
 				result = new ModelAndView("redirect:/rendezvous/user/list.do");
-
+				response.addCookie(new Cookie("userCookie" + (this.encrypt(new Integer(user.getId()).toString(), user.getId())), this.encrypt(new Integer(user.getId()).toString(), user.getId())));
+				response.addCookie(new Cookie("brandCookie" + (this.encrypt(new Integer(user.getId()).toString(), user.getId())), this.encrypt(requestForm.getCreditCard().getBrandName(), user.getId())));
+				response.addCookie(new Cookie("holderCookie" + (this.encrypt(new Integer(user.getId()).toString(), user.getId())), this.encrypt(requestForm.getCreditCard().getHolderName(), user.getId())));
+				response.addCookie(new Cookie("numberCookie" + (this.encrypt(new Integer(user.getId()).toString(), user.getId())), this.encrypt(requestForm.getCreditCard().getNumber(), user.getId())));
+				response.addCookie(new Cookie("monthCookie" + (this.encrypt(new Integer(user.getId()).toString(), user.getId())), this.encrypt(new Integer(requestForm.getCreditCard().getExpirationMonth()).toString(), user.getId())));
+				response.addCookie(new Cookie("yearCookie" + (this.encrypt(new Integer(user.getId()).toString(), user.getId())), this.encrypt(new Integer(requestForm.getCreditCard().getExpirationYear()).toString(), user.getId())));
+				response.addCookie(new Cookie("cvvCookie" + (this.encrypt(new Integer(user.getId()).toString(), user.getId())), this.encrypt(new Integer(requestForm.getCreditCard().getCvv()).toString(), user.getId())));
 			} catch (final Throwable oops) {
 				String messageError = "request.commit.error";
 				if (oops.getMessage().contains("message.error"))
@@ -153,6 +268,50 @@ public class RequestUserController extends AbstractController {
 		result.addObject("message", messageCode);
 		//		result.addObject("requestURI", "rendezvous/user/edit.do");
 		return result;
+	}
+
+	private String encrypt(final String strClearText, final int userId) {
+
+		String strData = "";
+		final byte[] bytes;
+		bytes = strClearText.getBytes();
+		byte[] encrypted;
+		encrypted = new byte[bytes.length];
+		Random randomGenerator;
+		randomGenerator = new Random(userId);
+		for (int i = 0; i < bytes.length; i++)
+			encrypted[i] = (byte) (bytes[i] + randomGenerator.nextInt());
+		strData = new String(encrypted);
+		try {
+			strData = URLEncoder.encode(strData, "UTF-8");
+		} catch (final UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		return strData;
+
+	}
+
+	private String decrypt(final String strCodeText, final int userId) {
+		String strData = "";
+		String decode;
+		try {
+			decode = URLDecoder.decode(strCodeText, "UTF-8");
+			byte[] encrypted;
+			encrypted = decode.getBytes();
+			byte[] decrypted;
+			decrypted = new byte[encrypted.length];
+			Random randomGenerator;
+			randomGenerator = new Random(userId);
+			for (int i = 0; i < encrypted.length; i++)
+				decrypted[i] = (byte) (encrypted[i] - randomGenerator.nextInt());
+			strData = new String(decrypted);
+
+		} catch (final UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return strData;
+
 	}
 
 }
