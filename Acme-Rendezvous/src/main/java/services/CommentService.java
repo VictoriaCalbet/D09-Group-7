@@ -165,7 +165,7 @@ public class CommentService {
 		}
 
 		//guardar usuario, rendezvous, borrar replies de comentario original si lo tiene y borrar replies de este comentario en cascada
-		this.rendezvousService.save(rendez);
+		this.rendezvousService.saveWithoutConstraints(rendez);
 
 		final User user = comment.getUser();
 		user.getComments().remove(comment);
