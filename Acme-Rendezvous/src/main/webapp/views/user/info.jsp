@@ -18,6 +18,7 @@
 	uri="http://www.springframework.org/security/tags"%>
 <%@taglib prefix="display" uri="http://displaytag.sf.net"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="acme" tagdir="/WEB-INF/tags"%>
 
 <jsp:useBean id="now" class="java.util.Date" />
 
@@ -81,7 +82,8 @@
 			
 			<spring:message code="rendezvous.picture" var="pictureHeader" />
 			<display:column title="${pictureHeader}" style="${style}">
-				<img src="${row.picture}" height="42" width="42">
+				<acme:image imageURL="${row.picture}" imageNotFoundLocation="images/fotoNotFound.png" 
+					codeError="rendezvous.unspecifiedImage" height="60" width="60"/>
 			</display:column>
 			
 			<spring:message code="rendezvous.gpsPoint.latitude" var="gpsPointLatitudeHeader" />
