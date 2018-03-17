@@ -175,7 +175,11 @@ public class CategoryService {
 	}
 
 	// Acme-Rendezvous 2.0 - Requisito 11.2.2
-	public Integer getRatioOfServicesPerEachCategory() {
+	public Double getAvgOfServicesPerEachCategory() {
+		return this.categoryRepository.getAvgOfServicesPerEachCategory();
+	}
+
+	public Double getRatioOfServicesPerEachCategory() {
 		return this.categoryRepository.getRatioOfServicesPerEachCategory();
 	}
 }
