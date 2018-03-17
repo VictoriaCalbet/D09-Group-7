@@ -187,8 +187,8 @@ public class ServiceService {
 			request.setService(null);
 	}
 
-	public Collection<Service> findServicesByUserId(final int userId) {
-		return this.serviceRepository.findServicesByUserId(userId);
+	public Collection<Service> findAvailableServicesByUserId(final int userId) {
+		return this.serviceRepository.findAvailableServicesByUserId(userId);
 	}
 
 	public Collection<Service> findBestSellingServices() {
@@ -197,5 +197,8 @@ public class ServiceService {
 
 	public Collection<Service> findServicesByRendezvousId(final int rendezvousId) {
 		return this.serviceRepository.findServicesByRendezvousId(rendezvousId);
+	}
+	public Collection<Service> findServicesAvailablesToRequest(final int rendezvousId) {
+		return this.serviceRepository.findServicesAvailablesToRequest(rendezvousId);
 	}
 }

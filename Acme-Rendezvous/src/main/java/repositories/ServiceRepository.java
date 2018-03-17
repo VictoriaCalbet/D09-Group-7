@@ -12,8 +12,8 @@ import domain.Service;
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Integer> {
 
-	@Query("select r.service from Request r join r.rendezvous rq join rq.creator s where s.id = ?1")
-	public Collection<Service> findServicesByUserId(int userId);
+	@Query("select r.service from Request r join r.rendezvous rq join rq.creator s where s.id = ?1 and r.service.isInappropriate = false")
+	public Collection<Service> findAvailableServicesByUserId(int userId);
 
 	@Query("select req.service from Rendezvous rvs join rvs.requests req where rvs.id = ?1")
 	public Collection<Service> findServicesByRendezvousId(int rendezvousId);
@@ -38,5 +38,8 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
 	//
 	//      @Query("select sqrt(sum(rvs.requests.size * rvs.requests.size) / count(rvs.requests.size) - (avg(rvs.requests.size) * avg(rvs.requests.size))) from Rendezvous rvs")
 	//      public Double findStdServicesRequestedPerRendezvous();
+
+	@Query("select srv from Service srv where srv.id not IN (select r.service.id from Request r where r.rendezvous.id = ?1)")
+	public Collection<Service> findServicesAvailablesToRequest(int rendezvousId);
 
 }
