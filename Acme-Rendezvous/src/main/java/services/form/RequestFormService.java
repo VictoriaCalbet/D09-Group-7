@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import services.RequestService;
-import services.UserService;
 import domain.Request;
-import domain.User;
 import domain.form.RequestForm;
 
 @Service
@@ -23,9 +21,6 @@ public class RequestFormService {
 
 	@Autowired
 	private RequestService	requestService;
-
-	@Autowired
-	private UserService		userService;
 
 
 	// Constructors -----------------------------------------------------------
@@ -44,7 +39,6 @@ public class RequestFormService {
 
 	public RequestForm create(final int requestId) {
 		final Request r = this.requestService.findOne(requestId);
-		final User u = this.userService.findByPrincipal();
 
 		final RequestForm requestForm = new RequestForm();
 		requestForm.setComment(r.getComment());
@@ -52,9 +46,9 @@ public class RequestFormService {
 		requestForm.setId(r.getId());
 		requestForm.setRendezvous(r.getRendezvous());
 		requestForm.setService(r.getService());
+
 		return requestForm;
 	}
-
 	public Request saveFromCreate(final RequestForm requestForm) {
 
 		final Request r = this.requestService.create();
@@ -64,8 +58,6 @@ public class RequestFormService {
 		r.setId(requestForm.getId());
 		r.setRendezvous(requestForm.getRendezvous());
 		r.setService(requestForm.getService());
-
-		final User principal = this.userService.findByPrincipal();
 
 		Assert.isTrue(!requestForm.getRendezvous().getRequests().contains(requestForm), "message.error.request.alreadyRequested");
 

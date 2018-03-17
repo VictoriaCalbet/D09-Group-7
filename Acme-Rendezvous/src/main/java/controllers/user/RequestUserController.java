@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -57,7 +58,18 @@ public class RequestUserController extends AbstractController {
 		result = this.createEditModelAndView(requestForm);
 		final User principal = this.userService.findByPrincipal();
 		final Collection<Rendezvous> rendezvousesCreated = this.rendezvousService.findAllAvailableRendezvousesCreatedByUserId(principal.getId());
-		final Collection<Service> availableServices = this.serviceService.findServicesAvailablesToRequest(rendezvousId);
+		final Collection<Service> availableServices = this.serviceService.findAvailableServicesToRequest(rendezvousId);
+
+		try {
+			Assert.notEmpty(this.serviceService.findAvailableServicesToRequest(rendezvous.getId()), "message.error.noAvailableServices");
+
+		} catch (final Throwable oops) {
+			String messageError = "message.error.noAvailableServices";
+			if (oops.getMessage().contains("message.error"))
+				messageError = oops.getMessage();
+			result = this.listModelAndView("redirect:/rendezvous/user/list.do", messageError);
+
+		}
 
 		result.addObject("rendezvous", rendezvous);
 		result.addObject("availableServices", availableServices);
@@ -121,6 +133,25 @@ public class RequestUserController extends AbstractController {
 		result.addObject("rendezvous", rendezvous);
 		result.addObject("message", messageCode);
 		result.addObject("requestURI", "request/user/edit.do");
+		return result;
+	}
+
+	protected ModelAndView listModelAndView(final String string) {
+		ModelAndView result;
+
+		result = this.listModelAndView(string, null);
+
+		return result;
+	}
+
+	protected ModelAndView listModelAndView(final String string, final String messageCode) {
+		ModelAndView result;
+
+		result = new ModelAndView("redirect:/rendezvous/user/list.do");
+		result.addObject("string", string);
+
+		result.addObject("message", messageCode);
+		//		result.addObject("requestURI", "rendezvous/user/edit.do");
 		return result;
 	}
 

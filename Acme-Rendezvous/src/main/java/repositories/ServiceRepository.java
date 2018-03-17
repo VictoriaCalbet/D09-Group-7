@@ -22,7 +22,7 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
 	public Collection<Service> findAvailableServices();
 
 	@Query("select srv from Service srv where srv.id not IN (select r.service.id from Request r where r.rendezvous.id = ?1) and srv.isInappropriate = false")
-	public Collection<Service> findServicesAvailablesToRequest(int rendezvousId);
+	public Collection<Service> findAvailableServicesToRequest(int rendezvousId);
 
 	// Dashboard queries
 

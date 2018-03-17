@@ -195,8 +195,8 @@ public class ServiceService {
 		return this.serviceRepository.findServicesByRendezvousId(rendezvousId);
 	}
 
-	public Collection<Service> findServicesAvailablesToRequest(final int rendezvousId) {
-		return this.serviceRepository.findServicesAvailablesToRequest(rendezvousId);
+	public Collection<Service> findAvailableServicesToRequest(final int rendezvousId) {
+		return this.serviceRepository.findAvailableServicesToRequest(rendezvousId);
 	}
 
 	public Collection<Service> findAvailableServices() {
