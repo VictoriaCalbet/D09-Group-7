@@ -67,23 +67,8 @@
 	<spring:message code="service.description" var="serviceDescriptionHeader"/>
 	<display:column property="description" title="${serviceDescriptionHeader}" />
 	
-	<spring:message code="service.requests" var="serviceRequestsHeader" />
-	<security:authorize access="hasRole('USER')">
-		<display:column title="${serviceRequestsHeader}">
-			<jstl:if test="${row.isInappropriate eq false}">
-				<jstl:choose>
-					<jstl:when test="${(!fn:contains(principalServices, row))}">
-						<spring:message code="service.requestThisService" var="serviceRequestThisServiceLink"/>
-						<a href="request/user/create.do?serviceId=${row.id}"><jstl:out value="${serviceRequestThisServiceLink}"/></a>
-					</jstl:when>
-					<jstl:otherwise>
-						<spring:message code= "service.requested" var="serviceRequestedMessage"/>
-						<jstl:out value="${serviceRequestedMessage}"/>
-					</jstl:otherwise>
-				</jstl:choose>
-			</jstl:if>	
-		</display:column>
-	</security:authorize>
+	
+	
 	
 	<spring:message code="service.isInappropriate" var="serviceIsInappropriateHeader"/>
 	<display:column title="${serviceIsInappropriateHeader}">

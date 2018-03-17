@@ -148,6 +148,22 @@
 		</display:column>
 	</security:authorize>
 	
+	<security:authorize access="hasRole('USER')">
+	<spring:message code="rendezvous.request" var="rendezvousRequestHeader"/>
+		<display:column title="${rendezvousRequestHeader}">
+				<jstl:choose>
+					 <jstl:when test="${(fn:contains(principalRendezvouses, row))}">
+						<spring:message code="service.requestThisService" var="serviceRequestThisServiceLink"/>
+						<a href="request/user/create.do?rendezvousId=${row.id}"><jstl:out value="${serviceRequestThisServiceLink}"/></a>
+					 </jstl:when> 
+				 	<jstl:otherwise>
+						<spring:message code= "rendezvous.notOwner" var="rendezvousNotOwner"/>
+						<jstl:out value="${rendezvousNotOwner}"/> 
+					</jstl:otherwise>
+				</jstl:choose>
+		</display:column>
+	</security:authorize>
+	
 	<spring:message code="rendezvous.announcements" var="announcementsHeader" />
 	<display:column title="${announcementsHeader}">
 		<a href="announcement/list.do?rendezvousId=${row.id}">
@@ -207,6 +223,9 @@
 				<spring:message code="rendezvous.showquestions" />
 			</a>
 		</display:column>
+		
+		
+		
 	</security:authorize>
 	
 	<security:authorize access="hasRole('ADMIN')">
@@ -216,6 +235,7 @@
 			 	<spring:message code="rendezvous.deleteButton" />
 			</a>
 		</display:column>
+		
 	</security:authorize>
 </display:table>
 
