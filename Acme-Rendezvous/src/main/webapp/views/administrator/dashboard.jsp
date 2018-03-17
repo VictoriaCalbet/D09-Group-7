@@ -22,6 +22,9 @@
 	<br/>
 	<spring:message code="dashboard.avg" var="dashboardAvg"/>
 	<spring:message code="dashboard.std" var="dashboardStd"/>
+	<spring:message code="dashboard.min" var="dashboardMin"/>
+	<spring:message code="dashboard.max" var="dashboardMax"/>
+	<spring:message code="dashboard.ratio" var="dashboardRatio"/>
 	<spring:message code="rendezvous.creator" var="rendezvousCreator"/>
 	<spring:message code="rendezvous.name" var="rendezvousName"/>
 	
@@ -176,13 +179,17 @@
 			<td colspan="2"> <b> <spring:message code="administrator.bestSellingServices"/>:&nbsp; </b> </td>
 		</tr>
 		<tr>
-			<td> <b> <spring:message code="service.name"/>:&nbsp; </b> </td>
-			<td> <b> <spring:message code="service.timesSelled"/>:&nbsp; </b> </td>
+			<td> 
+				<b> <spring:message code="service.name" var="serviceName"/><jstl:out value="${serviceName}"/>:&nbsp;</b>
+			</td>
+			<td> 
+				<b> <spring:message code="service.timesSelled" var="serviceTimesSelled"/><jstl:out value="${serviceTimesSelled}"/>:&nbsp;</b> 
+			</td>
 		</tr>
-		<jstl:forEach items="${bestSellingServices}" var="service">
+		<jstl:forEach items="${bestSellingServices}" var="srv">
 			<tr>
-				<td> <jstl:out value="${service.name}"/></td>
-				<td> <jstl:out value="${fn:length(service.requests)}"/></td>
+				<td> <jstl:out value="${srv.name}"/></td>
+				<td> <jstl:out value="${fn:length(srv.requests)}"/></td>
 			</tr>
 		</jstl:forEach>
 	</table>
@@ -204,42 +211,105 @@
 			</tr>
 		</jstl:forEach>
 	</table>
+	
 	<!-- Dashboard 14 -->
 	<!-- The managers who have got more services cancelled. -->
+	
+	<jstl:choose>
+		<jstl:when test="${fn:length(managersWithMoreServicesCancelled) le 0}">
+			<jstl:set var="colspan" value="1"/>
+		</jstl:when>
+		<jstl:otherwise>
+			<jstl:set var="colspan" value="2"/>
+		</jstl:otherwise>
+	</jstl:choose>
+	
 	<table border="1">
 		<tr>
-			<td colspan="1"> <b> <spring:message code="administrator.managersWithMoreServicesCancelled"/>:&nbsp; </b> </td>
+			<td colspan="${colspan}"> <b> <spring:message code="administrator.managersWithMoreServicesCancelled"/>:&nbsp; </b> </td>
+			<jstl:if test="${fn:length(managersWithMoreServicesCancelled) le 0}">
+				<td><spring:message code="administrator.noManagersWithServicesCancelled"/></td>
+			</jstl:if>
 		</tr>
 		
-		<jstl:choose>
-		<jstl:when test= "${fn:length(managersWithMoreServicesCancelled) > 0}">
-		<tr>
-			<td> <b> <spring:message code="manager.name"/>:&nbsp; 
-			</b> </td>
-		
-		</tr>
-		</jstl:when>
-		
-		
-		<jstl:otherwise>
-		<tr>
-			<td> <b> <spring:message code="manager.name"/>:<spring:message code="administrator.noManagersWithServicesCancelled"/> 
-		
-		</b> </td>
-		</tr>
-		</jstl:otherwise> 
-		
-		</jstl:choose>
-		
-		
-		<jstl:forEach items="${managersWithMoreServicesCancelled}" var="manager">
+		<jstl:if test="${fn:length(managersWithMoreServicesCancelled) > 0}">
 			<tr>
-				<td> <jstl:out value="${manager.name}"/></td>
+				<td><b><spring:message code="manager.name"/>:&nbsp;</b></td>
+				<td><b><spring:message code="manager.servicesCancelled"/>:&nbsp;</b></td>
 			</tr>
-		</jstl:forEach>
+			<jstl:forEach items="${managersWithMoreServicesCancelled}" var="manager">
+				<tr>
+					<td> <jstl:out value="${manager[0].name}"/></td>
+					<td> <jstl:out value="${manager[1]}"/></td>
+				</tr>
+			</jstl:forEach>
+		</jstl:if> 
+	</table>
+	
+	<!-- Dashboard 15 -->
+	<table border="1">
+		<tr>
+			<td> <b> <spring:message code="administrator.avgCategoriesCreatedPerRendezvous"/>:&nbsp; </b> </td>
+			<td> <jstl:out value="${avgCategoriesCreatedPerRendezvous}"/></td>
+		</tr>
+	</table>
+	
+	<!-- Dashboard 16 -->
+	<table border="1">
+		<tr>
+			<td colspan="2"> <b> <spring:message code="administrator.avgRatioOfServicesPerEachCategory"/>:&nbsp; </b> </td>
+		</tr>
+		<tr>
+			<td> <b> <jstl:out value="${dashboardAvg}"/>:&nbsp; </b> <jstl:out value="${avgOfServicesPerEachCategory}"/></td>
+			<td> <b> <jstl:out value="${dashboardRatio}"/>:&nbsp; </b> <jstl:out value="${ratioOfServicesPerEachCategory}"/></td>
+		</tr>
+	</table>
+	
+	<!-- Dashboard 17 -->
+	<table border="1">
+		<tr>
+			<td colspan="2"> <b> <spring:message code="administrator.avgStdMinMaxServicesRequestedPerRendezvous"/>:&nbsp; </b> </td>
+		</tr>
+		<tr>
+			<td> <b> <jstl:out value="${dashboardAvg}"/>:&nbsp; </b> <jstl:out value="${avgServicesRequestedPerRendezvous}"/></td>
+			<td> <b> <jstl:out value="${dashboardStd}"/>:&nbsp; </b> <jstl:out value="${minServicesRequestedPerRendezvous}"/></td>
+		</tr>
+		<tr>
+			<td> <b> <jstl:out value="${dashboardMin}"/>:&nbsp; </b> <jstl:out value="${minServicesRequestedPerRendezvous}"/></td>
+			<td> <b> <jstl:out value="${dashboardMax}"/>:&nbsp; </b> <jstl:out value="${maxServicesRequestedPerRendezvous}"/></td>
+		</tr>
+	</table>
+	
+	<!-- Dashboard 18 -->
+	
+	<jstl:choose>
+		<jstl:when test="${fn:length(topSellingServices) le 0}">
+			<jstl:set var="colspan" value="1"/>
+		</jstl:when>
+		<jstl:otherwise>
+			<jstl:set var="colspan" value="2"/>
+		</jstl:otherwise>
+	</jstl:choose>
+	
+	<table border="1">
+		<tr>
+			<td colspan="${colspan}"> <b> <spring:message code="administrator.topSellingServices"/>:&nbsp; </b> </td>
+			<jstl:if test="${fn:length(administrator.topSellingServices) lt 0}">
+				<td><spring:message code="administrator.noSellingServices"/></td>
+			</jstl:if>
+		</tr>
 		
-		
-		
-		
+		<jstl:if test="${fn:length(topSellingServices) > 0}">
+			<tr>
+				<td><b><spring:message code="service.name"/>:&nbsp;</b></td>
+				<td><b><spring:message code="service.sold"/>:&nbsp;</b></td>
+			</tr>
+			<jstl:forEach items="${topSellingServices}" var="sellingServices">
+				<tr>
+					<td> <jstl:out value="${sellingServices.name}"/></td>
+					<td> <jstl:out value="${fn:length(sellingServices.requests)}"/></td>
+				</tr>
+			</jstl:forEach>
+		</jstl:if> 
 	</table>
 </security:authorize>
