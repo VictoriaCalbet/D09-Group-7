@@ -56,7 +56,7 @@ public class ServiceManagerController extends AbstractController {
 		ModelAndView result = null;
 
 		if (rendezvousId == null)
-			result = this.listModelAndView(this.serviceService.findAll());
+			result = this.listModelAndView(this.serviceService.findAvailableServices());
 		else
 			result = this.listModelAndView(this.serviceService.findServicesByRendezvousId(rendezvousId));
 

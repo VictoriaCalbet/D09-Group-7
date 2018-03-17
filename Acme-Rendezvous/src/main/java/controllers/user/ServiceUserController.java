@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import services.RequestService;
 import services.ServiceService;
 import services.UserService;
 import controllers.AbstractController;
@@ -28,8 +27,6 @@ public class ServiceUserController extends AbstractController {
 
 	@Autowired
 	private UserService		userService;
-	@Autowired
-	private RequestService	requestService;
 
 
 	// Constructors ---------------------------------------------------------
@@ -44,25 +41,22 @@ public class ServiceUserController extends AbstractController {
 	public ModelAndView list(@RequestParam(required = false) final Integer rendezvousId) {
 		ModelAndView result = null;
 		Collection<Service> services = null;
-		Collection<Service> principalServices = null;
 		String requestURI = null;
 		String displayURI = null;
-		User principalUser = null;
+		User user = null;
+
+		user = this.userService.findByPrincipal();
 
 		if (rendezvousId == null)
-			services = this.serviceService.findAll();
+			services = this.serviceService.findAvailableServicesByUserId(user.getId());
 		else
 			services = this.serviceService.findServicesByRendezvousId(rendezvousId);
 
 		requestURI = "service/user/list.do";
 		displayURI = "service/user/display.do?serviceId=";
 
-		principalUser = this.userService.findByPrincipal();
-		principalServices = this.serviceService.findAvailableServicesByUserId(principalUser.getId());
-
 		result = new ModelAndView("service/list");
 
-		result.addObject("principalServices", principalServices);
 		result.addObject("services", services);
 		result.addObject("requestURI", requestURI);
 		result.addObject("displayURI", displayURI);
