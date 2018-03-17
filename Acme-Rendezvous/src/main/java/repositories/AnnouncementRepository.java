@@ -20,6 +20,7 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Inte
 
 	// Dashboard queries
 
+	// Acme-Rendezvous 1.0 - Requisito 17.2.1
 	@Query("select avg(rvs.announcements.size) from Rendezvous rvs")
 	public Double findAvgAnnouncementPerRendezvous();
 

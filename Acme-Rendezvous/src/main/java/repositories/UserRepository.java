@@ -20,9 +20,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
 	// Dashboard queries
 
+	// Acme-Rendezvous 1.0 - Requisito 6.3.2
 	@Query("select count(usr)*1.0/(select count(u) from User u where u.rendezvoussesCreated is empty) from User usr where usr.rendezvoussesCreated is not empty")
 	public Double findRatioUserRendezvousesCreatedVsNeverCreated();
 
+	// Acme-Rendezvous 1.0 - Requisito 6.3.3
 	@Query("select avg(rvs.rsvps.size) from Rendezvous rvs")
 	public Double findAvgUsersRSVPsPerRendezvous();
 

@@ -12,6 +12,7 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
 	// Dashboard queries
 
+	// Acme-Rendezvous 1.0 - Requisito 22.1.1
 	@Query("select avg(rvs.questions.size) from Rendezvous rvs")
 	public Double findAvgNoQuestionsPerRendezvous();
 

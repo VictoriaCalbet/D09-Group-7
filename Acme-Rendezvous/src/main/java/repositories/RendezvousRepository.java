@@ -44,24 +44,29 @@ public interface RendezvousRepository extends JpaRepository<Rendezvous, Integer>
 
 	// Dashboard queries
 
+	// Acme-Rendezvous 1.0 - Requisito 6.3.1
 	@Query("select avg(usr.rendezvoussesCreated.size) from User usr")
 	public Double findAvgRendezvousesCreatedPerUser();
 
 	@Query("select  sqrt(sum(usr.rendezvoussesCreated.size * usr.rendezvoussesCreated.size) / count(usr.rendezvoussesCreated.size) - (avg(usr.rendezvoussesCreated.size) * avg(usr.rendezvoussesCreated.size))) from User usr")
 	public Double findStdRendezvousesCreatedPerUser();
 
+	// Acme-Rendezvous 1.0 - Requisito 6.3.4
 	@Query("select avg(usr.rsvps.size) from User usr")
 	public Double findAvgRendezvousRSVPsPerUsers();
 
 	@Query("select sqrt(sum(usr.rsvps.size * usr.rsvps.size) / count(usr.rsvps.size) - (avg(usr.rsvps.size) * avg(usr.rsvps.size))) from User usr")
 	public Double findStdRendezvousRSVPsPerUsers();
 
+	// Acme-Rendezvous 1.0 - Requisito 6.3.5
 	@Query("select rvs from Rendezvous rvs order by rvs.rsvps.size desc")
 	public Collection<Rendezvous> findAllRendezvousByRSVPs();
 
+	// Acme-Rendezvous 1.0 - Requisito 17.2.2
 	@Query("select rvs from Rendezvous rvs where rvs.announcements.size > (select avg(rv.announcements.size) * 0.75 from Rendezvous rv)")
 	public Collection<Rendezvous> findAllRendezvousNoAnnouncementsIsAbove75PerCentNoAnnouncementPerRendezvous();
 
+	// Acme-Rendezvous 1.0 - Requisito 17.2.3
 	@Query("select rvs from Rendezvous rvs where rvs.isLinkedTo.size > (select avg(rv.isLinkedTo.size)*1.1 from Rendezvous rv)")
 	public Collection<Rendezvous> findRendezvousesThatLinkedToRvGreaterThanAvgPlus10();
 

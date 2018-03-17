@@ -23,12 +23,13 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
 	@Query("select c from Comment c where c.originalComment=null and c.rendezvous.id=?1")
 	public Collection<Comment> getOriginalCommentsByRendezvousId(int id);
-	
+
 	@Query("select c.replies from Comment c where c.originalComment.id=?1")
 	public Collection<Comment> getRepliesOfCommentById(int id);
 
 	// Dashboard queries
 
+	// Acme-Rendezvous 1.0 - Requisito 22.1.3
 	@Query("select avg(cmt.replies.size) from Comment cmt")
 	public Double findAvgRepliesPerComment();
 

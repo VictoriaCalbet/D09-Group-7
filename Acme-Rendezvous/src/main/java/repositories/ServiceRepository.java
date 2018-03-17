@@ -21,28 +21,29 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
 	@Query("select srv from Service srv where srv.isInappropriate = false")
 	public Collection<Service> findAvailableServices();
 
-	// Dashboard queries
-
-	// Acme-Rendezvous 2.0 - Requisito 6.2.1
-	@Query("select s from Service s  order by s.requests.size desc")
-	public Collection<Service> findBestSellingServices();
-
-	// Acme-Rendezvous 2.0 - Requisito 11.2.3
-	// The average, the minimum, the maximum, and the standard deviation of services requested per rendezvous.
-	// REVISION de Utrilla - añadir:
-	//      @Query("select avg(rvs.requests.size) from Rendezvous rvs")
-	//      public Double findAvgServicesRequestedPerRendezvous();
-	//
-	//      @Query("select min(rvs.requests.size) from Rendezvous rvs")
-	// 		public Double findMinServicesRequestedPerRendezvous();
-	// 
-	//      @Query("select max(rvs.requests.size) from Rendezvous rvs")
-	// 		public Double findMinServicesRequestedPerRendezvous();	
-	//
-	//      @Query("select sqrt(sum(rvs.requests.size * rvs.requests.size) / count(rvs.requests.size) - (avg(rvs.requests.size) * avg(rvs.requests.size))) from Rendezvous rvs")
-	//      public Double findStdServicesRequestedPerRendezvous();
-
 	@Query("select srv from Service srv where srv.id not IN (select r.service.id from Request r where r.rendezvous.id = ?1)")
 	public Collection<Service> findServicesAvailablesToRequest(int rendezvousId);
 
+	// Dashboard queries
+
+	// TODO: Acme-Rendezvous 2.0 - Requisito 6.2.1
+	@Query("select avg(rvs.requests.size) from Rendezvous rvs")
+	public Collection<Service> findBestSellingServices();
+
+	// Acme-Rendezvous 2.0 - Requisito 11.2.3
+	@Query("select avg(rvs.requests.size) from Rendezvous rvs")
+	public Double findAvgServicesRequestedPerRendezvous();
+
+	@Query("select min(rvs.requests.size) from Rendezvous rvs")
+	public Double findMinServicesRequestedPerRendezvous();
+
+	@Query("select max(rvs.requests.size) from Rendezvous rvs")
+	public Double findMaxServicesRequestedPerRendezvous();
+
+	@Query("select sqrt(sum(rvs.requests.size * rvs.requests.size) / count(rvs.requests.size) - (avg(rvs.requests.size) * avg(rvs.requests.size))) from Rendezvous rvs")
+	public Double findStdServicesRequestedPerRendezvous();
+
+	// Acme-Rendezvous 2.0 - Requisito 11.2.4
+	@Query("select s from Service s order by s.requests.size desc")
+	public Collection<Service> findTopSellingServices();
 }

@@ -24,11 +24,8 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 	// Dashboard queries
 
 	// Acme-Rendezvous 2.0 - Requisito 11.2.1
-	//     @Query("select avg(cat.rendezvouses.size) from Category cat")
-	//     public Integer getAverageNumberOfCategoriesPerRendezvous();
-	// REVISION de Utrilla- cambiar por: 
-	//     @Query("select avg(srv.categories.size) from Rendezvous rvs join rvs.requests req join req.service srv")
-	//     public Double findAvgCategoriesCreatedPerRendezvous();
+	@Query("select avg(srv.categories.size) from Rendezvous rvs join rvs.requests req join req.service srv")
+	public Double findAvgCategoriesCreatedPerRendezvous();
 
 	// Acme-Rendezvous 2.0 - Requisito 11.2.2
 	@Query("select count(cat.services.size)*1.0/(select count(ca.services.size) from Category ca) from Category cat")
