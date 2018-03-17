@@ -27,13 +27,13 @@
 <security:authorize access="hasRole('USER')">
 
 
-<acme:textbox code="request.comment" path="comment" />
-<acme:textbox code="request.creditCard.brandName" path="creditCard.brandName" valueImput="${brandCookie}" />
-<acme:textbox code="request.creditCard.holderName" path="creditCard.holderName" valueImput="${holderCookie}"/>
-<acme:textbox code="request.creditCard.number" path="creditCard.number" valueImput="${numberCookie}"/>
-<acme:textbox code="request.creditCard.expirationMonth" path="creditCard.expirationMonth" valueImput="${monthCookie}"/>
-<acme:textbox code="request.creditCard.expirationYear" path="creditCard.expirationYear" valueImput="${yearCookie}"/>
-<acme:textbox code="request.creditCard.cvv" path="creditCard.cvv" valueImput="${cvvCookie}"/>
+<acme:textbox2 code="request.comment" path="comment" />
+<acme:textbox2 code="request.creditCard.brandName" path="creditCard.brandName" valueImput="${brandCookie}" />
+<acme:textbox2 code="request.creditCard.holderName" path="creditCard.holderName" valueImput="${holderCookie}"/>
+<acme:textbox2 code="request.creditCard.number" path="creditCard.number" valueImput="${numberCookie}"/>
+<acme:textbox2 code="request.creditCard.expirationMonth" path="creditCard.expirationMonth" valueImput="${monthCookie}"/>
+<acme:textbox2 code="request.creditCard.expirationYear" path="creditCard.expirationYear" valueImput="${yearCookie}"/>
+<acme:textbox2 code="request.creditCard.cvv" path="creditCard.cvv" valueImput="${cvvCookie}"/>
 <acme:select code="request.service" path="service" items="${availableServices}" itemLabel="name"/>
 	
 
