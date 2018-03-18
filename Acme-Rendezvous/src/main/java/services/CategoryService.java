@@ -183,4 +183,9 @@ public class CategoryService {
 	public Double getRatioOfServicesPerEachCategory() {
 		return this.categoryRepository.getRatioOfServicesPerEachCategory();
 	}
+	
+	public void flush(){
+		
+		this.categoryRepository.flush();
+	}
 }

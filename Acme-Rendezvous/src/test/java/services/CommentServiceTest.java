@@ -1,26 +1,16 @@
 
 package services;
 
-import java.util.Collection;
-import java.util.Date;
-
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.Assert;
-
-import security.UserAccount;
 import utilities.AbstractTest;
-import domain.Administrator;
 import domain.Comment;
-import domain.Manager;
-import domain.RSVP;
 import domain.Rendezvous;
 import domain.User;
 
@@ -41,11 +31,6 @@ public class CommentServiceTest extends AbstractTest {
 	@Autowired
 	private RendezvousService	rendezvousService;
 
-	@Autowired
-	private RSVPService			rsvpService;
-
-	@Autowired
-	private AdministratorService			administratorService;
 	//Begin tests
 
 	@Test
