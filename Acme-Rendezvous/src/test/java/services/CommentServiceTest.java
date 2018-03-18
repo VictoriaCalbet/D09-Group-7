@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -14,8 +15,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
+import security.UserAccount;
 import utilities.AbstractTest;
+import domain.Administrator;
 import domain.Comment;
+import domain.Manager;
 import domain.RSVP;
 import domain.Rendezvous;
 import domain.User;
@@ -40,269 +44,168 @@ public class CommentServiceTest extends AbstractTest {
 	@Autowired
 	private RSVPService			rsvpService;
 
-
+	@Autowired
+	private AdministratorService			administratorService;
 	//Begin tests
 
 	@Test
-	public void testCreate() {
+	public void testDeleteComment() {
+		// Comment: text, optional URL picture,rendezvous, expectedException
+		Comment comment = this.commentService.findOne(this.getEntityId("comment1"));
+					
+		final Object[][] testingData = {
+				
+				{
+				comment,null
+			},{
+				null,NullPointerException.class
+			}
+		};
 
-		this.authenticate("user1");
-
-		final Comment comment = this.commentService.create();
-
-		Assert.isNull(comment.getOriginalComment());
-		Assert.isNull(comment.getPicture());
-		Assert.isNull(comment.getRendezvous());
-		Assert.isNull(comment.getText());
-		Assert.isTrue(comment.getId() <= 0);
-
-		this.unauthenticate();
-	}
-
-	@Test
-	public void testSaveFromCreate() {
-
-		this.authenticate("user2");
-
-		//Creation of a rendezvous 
-
-		final User principal = this.userService.findByPrincipal();
-		Rendezvous r;
-		r = this.rendezvousService.create();
-
-		r.setName("Dolar");
-		r.setDescription("descripcion1");
-		r.setMeetingMoment(new DateTime().plusDays(10).toDate());
-		r.setPicture("http://jsequeiros.com/comprimir-fotografias-e-imagenes-con-microsoft-office-picture-manager.html");
-		r.setGpsPoint(null);
-		r.setIsAdultOnly(false);
-		r.setIsDeleted(false);
-		r.setIsDraft(false);
-
-		final User creator = principal;
-		r.setCreator(creator);
-
-		final Rendezvous savedR = this.rendezvousService.save(r);
-
-		this.unauthenticate();
-
-		//Creation of the RSVP
-
-		this.authenticate("user1");
-
-		final RSVP createdRSVP = this.rsvpService.create(savedR);
-		Assert.notNull(createdRSVP);
-
-		Collection<RSVP> principalRSVPS = principal.getRsvps();
-		this.rsvpService.save(createdRSVP);
-		principalRSVPS = principal.getRsvps();
-
-		this.rsvpService.RSVPaRendezvous(createdRSVP.getRendezvous().getId());
-
-		Assert.isTrue(!principalRSVPS.contains(createdRSVP));
-
-		//Post a comment 
-
-		final Comment comment = this.commentService.create();
-
-		final User user = this.userService.findByPrincipal();
-
-		Assert.isNull(comment.getOriginalComment());
-		Assert.isNull(comment.getPicture());
-		Assert.isNull(comment.getRendezvous());
-		Assert.isNull(comment.getText());
-		Assert.isTrue(comment.getId() <= 0);
-
-		comment.setText("Lalala");
-		comment.setUser(user);
-		comment.setMomentWritten(new Date(System.currentTimeMillis() - 1));
-		comment.setOriginalComment(null);
-		comment.setRendezvous(savedR);
-
-		final Comment savedC = this.commentService.save(comment);
-
-		Assert.isTrue(savedC.getId() > 0);
-
-		this.unauthenticate();
+		for (int i = 0; i < testingData.length; i++)
+			this.testDeleteCommentTemplate((Comment) testingData[i][0], (Class<?>) testingData[i][1]);
 
 	}
+	
+	protected void testDeleteCommentTemplate(final Comment comment, final Class<?> expectedException) {
 
+			Class<?> caught;
+			String messageError;
+
+			caught = null;
+			messageError = null;
+
+			try {
+				this.authenticate("admin");
+
+				this.commentService.delete(comment.getId());
+
+				this.unauthenticate();
+				this.commentService.flush();
+			} catch (final Throwable oops) {
+				caught = oops.getClass();
+				messageError = oops.getMessage();
+			}
+
+			this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
+		}
+	
+	
 	@Test
-	public void testSaveReply() {
+	public void testSaveFromCreateComment() {
+		// Comment: text, optional URL picture,rendezvous, expectedException
+		Rendezvous rendezvous = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
+		User user = this.userService.findOne(this.getEntityId("user1"));
+		//Comment comment = this.commentService.findOne(this.getEntityId("comment3"));
+		
+		final Object[][] testingData = {
+				
+				{
+				"testText1", null, rendezvous, user,null, null
+			},{
+				"testText2","http://images.nationalgeographic.com.es/medio/2015/12/21/bf63ef82rio_narcea_tineo_720x480.jpg",rendezvous, user, null, null
+			},{
+				null,"http://images.nationalgeographic.com.es/medio/2015/12/21/bf63ef82rio_narcea_tineo_720x480.jpg",rendezvous, user, null, IllegalArgumentException.class
+			},			{
+				"testText4", "Lalala", rendezvous, user, null, ConstraintViolationException.class
+			}, {
+				null, null, null, null, null, IllegalArgumentException.class
+			}
+		};
 
-		this.authenticate("user2");
-		final User principal = this.userService.findByPrincipal();
-		Rendezvous r;
-		r = this.rendezvousService.create();
+		for (int i = 0; i < testingData.length; i++)
+			this.testSaveFromCreateCommentTemplate((String) testingData[i][0], (String) testingData[i][1], (Rendezvous) testingData[i][2], (User) testingData[i][3],(Comment) testingData[i][4], (Class<?>) testingData[i][5]);
 
-		r.setName("Dolar");
-		r.setDescription("descripcion1");
-		r.setMeetingMoment(new DateTime().plusDays(10).toDate());
-		r.setPicture("http://jsequeiros.com/comprimir-fotografias-e-imagenes-con-microsoft-office-picture-manager.html");
-		r.setGpsPoint(null);
-		r.setIsAdultOnly(false);
-		r.setIsDeleted(false);
-		r.setIsDraft(false);
+	}
+	
+	protected void testSaveFromCreateCommentTemplate(final String text, final String url, final Rendezvous rendezvous, final User user, final Comment originalComment, final Class<?> expectedException) {
 
-		final User creator = principal;
-		r.setCreator(creator);
+		Class<?> caught;
+		String messageError;
 
-		final Rendezvous savedR = this.rendezvousService.save(r);
+		caught = null;
+		messageError = null;
 
-		this.unauthenticate();
+		try {
+			this.authenticate("user1");
 
-		//Creation of the RSVP
+			final Comment comment = this.commentService.create();
+			
+			comment.setPicture(url);
+			comment.setUser(user);
+			comment.setText(text);
+			comment.setRendezvous(rendezvous);
+			comment.setOriginalComment(originalComment);
+			
+			this.commentService.saveFromCreate(comment, rendezvous);
+			
+			this.unauthenticate();
+			this.commentService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		}
 
-		this.authenticate("user1");
-
-		final RSVP createdRSVP = this.rsvpService.create(savedR);
-		Assert.notNull(createdRSVP);
-
-		Collection<RSVP> principalRSVPS = principal.getRsvps();
-		this.rsvpService.save(createdRSVP);
-		principalRSVPS = principal.getRsvps();
-
-		this.rsvpService.RSVPaRendezvous(createdRSVP.getRendezvous().getId());
-
-		Assert.isTrue(!principalRSVPS.contains(createdRSVP));
-
-		//Post a comment
-
-		final Comment comment = this.commentService.create();
-
-		final User user = this.userService.findByPrincipal();
-
-		Assert.isNull(comment.getOriginalComment());
-		Assert.isNull(comment.getPicture());
-		Assert.isNull(comment.getRendezvous());
-		Assert.isNull(comment.getText());
-		Assert.isTrue(comment.getId() <= 0);
-
-		comment.setText("Lalala");
-		comment.setUser(user);
-		comment.setMomentWritten(new Date(System.currentTimeMillis() - 1));
-		comment.setOriginalComment(null);
-		comment.setRendezvous(savedR);
-
-		final Comment savedC = this.commentService.save(comment);
-
-		Assert.isTrue(savedC.getId() > 0);
-
-		this.unauthenticate();
-
-		this.authenticate("user2");
-
-		final Comment comment2 = this.commentService.create();
-
-		final User user2 = this.userService.findByPrincipal();
-
-		Assert.isNull(comment2.getOriginalComment());
-		Assert.isNull(comment2.getPicture());
-		Assert.isNull(comment2.getRendezvous());
-		Assert.isNull(comment2.getText());
-		Assert.isTrue(comment2.getId() <= 0);
-
-		comment.setRendezvous(r);
-		comment2.setText("Lalala2");
-		comment2.setUser(user2);
-		comment2.setMomentWritten(new Date(System.currentTimeMillis() - 1));
-		comment2.setOriginalComment(savedC);
-
-		final Comment savedC2 = this.commentService.save(comment2);
-
-		Assert.isTrue(savedC2.getId() > 0);
-		Assert.notNull(savedC2.getOriginalComment());
-
-		this.unauthenticate();
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
 
 	}
 
 	@Test
-	public void testDelete() {
+	public void testSaveReplyComment() {
+		// Comment: text, optional URL picture,rendezvous, expectedException
+		Rendezvous rendezvous = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
+		User user = this.userService.findOne(this.getEntityId("user2"));
+		Comment comment = this.commentService.findOne(this.getEntityId("comment2"));
+		
+		final Object[][] testingData = {
+				
+				{
+				"testText1", null, rendezvous, user,comment, null
+			},{
+				"testText2","http://images.nationalgeographic.com.es/medio/2015/12/21/bf63ef82rio_narcea_tineo_720x480.jpg",rendezvous, user, comment, null
+			},{
+				null,"http://images.nationalgeographic.com.es/medio/2015/12/21/bf63ef82rio_narcea_tineo_720x480.jpg",rendezvous, user, comment, IllegalArgumentException.class
+			},			{
+				"testText4", "Lalala", rendezvous, user, comment, ConstraintViolationException.class
+			}, {
+				null, null, null, null, comment, IllegalArgumentException.class
+			}
+		};
 
-		this.authenticate("user2");
-
-		//Creation of a rendezvous 
-
-		final User principal = this.userService.findByPrincipal();
-		Rendezvous r;
-		r = this.rendezvousService.create();
-
-		r.setName("Dolar");
-		r.setDescription("descripcion1");
-		r.setMeetingMoment(new DateTime().plusDays(10).toDate());
-		r.setPicture("http://jsequeiros.com/comprimir-fotografias-e-imagenes-con-microsoft-office-picture-manager.html");
-		r.setGpsPoint(null);
-		r.setIsAdultOnly(false);
-		r.setIsDeleted(false);
-		r.setIsDraft(false);
-
-		final User creator = principal;
-		r.setCreator(creator);
-
-		final Rendezvous savedR = this.rendezvousService.save(r);
-
-		this.unauthenticate();
-
-		//Creation of the RSVP
-
-		this.authenticate("user1");
-
-		final RSVP createdRSVP = this.rsvpService.create(savedR);
-		Assert.notNull(createdRSVP);
-
-		Collection<RSVP> principalRSVPS = principal.getRsvps();
-		this.rsvpService.save(createdRSVP);
-		principalRSVPS = principal.getRsvps();
-
-		this.rsvpService.RSVPaRendezvous(createdRSVP.getRendezvous().getId());
-
-		Assert.isTrue(!principalRSVPS.contains(createdRSVP));
-
-		//Post a comment 
-
-		final Comment comment = this.commentService.create();
-
-		final User user = this.userService.findByPrincipal();
-
-		Assert.isNull(comment.getOriginalComment());
-		Assert.isNull(comment.getPicture());
-		Assert.isNull(comment.getRendezvous());
-		Assert.isNull(comment.getText());
-		Assert.isTrue(comment.getId() <= 0);
-
-		comment.setText("Lalala");
-		comment.setUser(user);
-		comment.setMomentWritten(new Date(System.currentTimeMillis() - 1));
-		comment.setOriginalComment(null);
-		comment.setRendezvous(savedR);
-
-		final Comment savedC = this.commentService.save(comment);
-
-		Assert.isTrue(savedC.getId() > 0);
-		this.unauthenticate();
-
-		this.authenticate("admin");
-
-		//Deleting the comment
-
-		final Collection<Comment> commentsRendez = savedR.getComments();
-		commentsRendez.remove(comment);
-		savedR.setComments(commentsRendez);
-
-		//guardar usuario, rendezvous, borrar replies de comentario original si lo tiene y borrar replies de este comentario en cascada
-		this.rendezvousService.save(savedR);
-
-		final User userC = savedC.getUser();
-		userC.getComments().remove(comment);
-		this.userService.save(userC);
-
-		this.commentService.delete(savedC.getId());
-
-		Assert.isNull(this.commentService.findOne(savedC.getId()));
-
-		this.unauthenticate();
+		for (int i = 0; i < testingData.length; i++)
+			this.testSaveFromCreateCommentTemplate((String) testingData[i][0], (String) testingData[i][1], (Rendezvous) testingData[i][2], (User) testingData[i][3],(Comment) testingData[i][4], (Class<?>) testingData[i][5]);
 
 	}
+	
+	protected void testSaveReplyTemplate(final String text, final String url, final Rendezvous rendezvous, final User user, final Comment originalComment, final Class<?> expectedException) {
 
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			this.authenticate("user1");
+
+			final Comment comment = this.commentService.create();
+			
+			comment.setPicture(url);
+			comment.setUser(user);
+			comment.setText(text);
+			
+			this.commentService.saveReply(originalComment, comment);
+			
+			this.unauthenticate();
+			this.commentService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		}
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
+	}
+	
 }

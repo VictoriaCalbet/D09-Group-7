@@ -226,4 +226,9 @@ public class CommentService {
 		result = this.commentRepository.findStdRepliesPerComment();
 		return result;
 	}
+	
+	public void flush(){
+		
+		this.commentRepository.flush();
+	}
 }
