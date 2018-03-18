@@ -179,30 +179,56 @@
 	
 	<security:authorize access="hasRole('USER')">
 		<spring:message code="rendezvous.delete" var="deleteHeader" />	
-		<display:column title="${deleteHeader}">	
-			<jstl:if test="${!row.isDeleted && row.isDraft && row.creator.userAccount.username==loggedactor.username}">	
-				<a href="rendezvous/user/delete.do?rendezvousId=${row.id}">
-				 	<spring:message code="rendezvous.deleteButton" />
-				</a>
-			</jstl:if>
+		<display:column title="${deleteHeader}">
+			<jstl:choose>
+				<jstl:when test="${!row.isDeleted && row.isDraft && row.creator.userAccount.username==loggedactor.username}">	
+					<a href="rendezvous/user/delete.do?rendezvousId=${row.id}">
+					 	<spring:message code="rendezvous.deleteButton" />
+					</a>
+				</jstl:when>
+				<jstl:otherwise>
+					<spring:message code= "rendezvous.notDeleted" var="rendezvousNotDeleted"/>
+						<jstl:out value="${rendezvousNotDeleted}"/> 
+				</jstl:otherwise>
+			</jstl:choose>	
+	
 		</display:column>
 		
 		<spring:message code="rendezvous.edit" var="editHeader" />	
-		<display:column title="${editHeader}">	
-			<jstl:if test="${!row.isDeleted && row.isDraft && row.creator.userAccount.username==loggedactor.username}">	
-				<a href="rendezvous/user/edit.do?rendezvousId=${row.id}">
-				 	<spring:message code="rendezvous.editButton" />
-				</a>
-			</jstl:if>
+		<display:column title="${editHeader}">
+			<jstl:choose>
+			
+				<jstl:when test="${!row.isDeleted && row.isDraft && row.creator.userAccount.username==loggedactor.username}">	
+					<a href="rendezvous/user/edit.do?rendezvousId=${row.id}">
+					 	<spring:message code="rendezvous.editButton" />
+					</a>
+				</jstl:when>
+				<jstl:otherwise>
+					<spring:message code= "rendezvous.notEdit" var="rendezvousNotEditable"/>
+						<jstl:out value="${rendezvousNotEditable}"/> 
+				</jstl:otherwise>
+			</jstl:choose>	
+				
+				
 		</display:column>
 		
 		<spring:message code="rendezvous.link" var="linkHeader" />	
 		<display:column title="${linkHeader}">	
-			<jstl:if test="${!row.isDeleted && row.creator.userAccount.username==loggedactor.username}">	
-				<a href="rendezvous/user/link.do?rendezvousId=${row.id}">
-				 	<spring:message code="rendezvous.linkButton" />
-				</a>
-			</jstl:if>
+			<jstl:choose>
+		
+				<jstl:when test="${!row.isDeleted && row.creator.userAccount.username==loggedactor.username}">	
+					<a href="rendezvous/user/link.do?rendezvousId=${row.id}">
+					 	<spring:message code="rendezvous.linkButton" />
+					</a>
+				</jstl:when>
+				<jstl:otherwise>
+					<spring:message code= "rendezvous.notLinked" var="rendezvousNotLinked"/>
+						<jstl:out value="${rendezvousNotLinked}"/> 
+				</jstl:otherwise>
+			</jstl:choose>
+				
+				
+				
 		</display:column>
 		
 		<spring:message code="rendezvous.RSVPButton" var="rsvpHeader" />
