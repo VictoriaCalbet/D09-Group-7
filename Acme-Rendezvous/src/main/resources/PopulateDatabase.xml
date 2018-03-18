@@ -285,6 +285,7 @@
 		<property name="requests">
 		<list>
 			<ref bean="request1"/>
+			
 		</list>
 		</property>
 		<property name="categories">
@@ -305,6 +306,7 @@
 		<property name="requests">
 		<list>
 			<ref bean="request2"/>
+			<ref bean="request6"/>
 		</list>
 		</property>
 		<property name="categories">
@@ -431,7 +433,7 @@
 		
 		<property name="requests">
 		<list>
-			
+			<ref bean ="request6"/>
 		</list>
 		</property>
 		
@@ -657,6 +659,13 @@
 		<property name="creditCard" ref="creditCard3"/>
 		<property name="service" ref="service5"/>
 		<property name="rendezvous" ref="rendezvous6"/>
+	</bean>
+	
+	<bean id="request6" class="domain.Request">
+		<property name="comments" value="Comments of the request6"/>
+		<property name="creditCard" ref="creditCard3"/>
+		<property name="service" ref="service2"/>
+		<property name="rendezvous" ref="rendezvous2"/>
 	</bean>
 	
 	<!-- Credit Cards #CreditCards -->
