@@ -188,7 +188,6 @@ public class RendezvousService {
 		Assert.notNull(rendezvous, "message.error.rendezvous.null");
 		final User u = this.userService.findByPrincipal();
 		Assert.isTrue(rendezvous.getCreator().equals(u), "message.error.rendezvous.user");
-		Assert.isTrue(rendezvous.getIsDraft(), "message.error.rendezvous.isDraft");
 		Assert.isTrue(!rendezvous.getIsDeleted(), "message.error.rendezvous.isDeleted");
 
 		Assert.isTrue(rendezvous.getMeetingMoment().after(new Date()), "message.error.rendezvous.meetingMoment.future");

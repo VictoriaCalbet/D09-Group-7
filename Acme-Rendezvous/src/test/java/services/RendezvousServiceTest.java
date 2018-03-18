@@ -88,7 +88,7 @@ public class RendezvousServiceTest extends AbstractTest {
 	 * 1º Good test -> expected: rendezvous edited
 	 * 2º Bad test -> cannot edit a rendezvous with past date
 	 * 3º Bad test -> cannot edit a deleted rendezvous
-	 * 4º Bad test -> cannot edit a rendezvous in mode final
+	 * 4º Bad test -> an admin cannot edit a rendezvous
 	 * 5º Bad test -> an user cannot edit rendezvous if this rendezvous isn't own.
 	 */
 	@Test
@@ -102,7 +102,7 @@ public class RendezvousServiceTest extends AbstractTest {
 			}, {
 				"user1", "rendezvous1", new DateTime().plusDays(10).toDate(), false, 81, IllegalArgumentException.class
 			}, {
-				"user1", "rendezvous1", new DateTime().plusDays(10).toDate(), false, 83, IllegalArgumentException.class
+				"admin", "rendezvous1", new DateTime().plusDays(10).toDate(), false, 83, IllegalArgumentException.class
 			}, {
 				"user3", "rendezvous1", new DateTime().plusDays(2).toDate(), false, 82, IllegalArgumentException.class
 			}

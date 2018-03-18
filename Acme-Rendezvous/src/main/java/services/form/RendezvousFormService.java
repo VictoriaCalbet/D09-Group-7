@@ -99,7 +99,7 @@ public class RendezvousFormService {
 	public Rendezvous saveFromEdit(final RendezvousForm rendezvousForm) {
 
 		final Rendezvous r = this.rendezvousService.findOne(rendezvousForm.getId());
-
+		Assert.isTrue(r.getIsDraft(), "message.error.rendezvous.isDraft");
 		r.setDescription(rendezvousForm.getDescription());
 		r.setName(rendezvousForm.getName());
 		r.setGpsPoint(rendezvousForm.getGpsPoint());
