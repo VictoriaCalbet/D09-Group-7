@@ -95,25 +95,25 @@ public class CommentFormService {
 		c.setText(cF.getText());
 		c.setPicture(cF.getPicture());
 		c.setMomentWritten(new Date(System.currentTimeMillis() - 1));
-		c.setOriginalComment(null);
-		c.setUser(this.userService.findByPrincipal());
-		c.setReplies(new ArrayList<Comment>());
-		c.setRendezvous(rendez);
+//		c.setOriginalComment(null);
+//		c.setUser(this.userService.findByPrincipal());
+//		c.setReplies(new ArrayList<Comment>());
+//		c.setRendezvous(rendez);
 
-		final Comment savedC = this.commentRepository.save(c);
+		final Comment savedC = this.commentService.saveFromCreate(c, rendez);
 
-		final User user = this.userService.findByPrincipal();
-
-		final Collection<Comment> comments = user.getComments();
-		comments.add(savedC);
-		user.setComments(comments);
-
-		final Collection<Comment> rendezComments = rendez.getComments();
-		rendezComments.add(savedC);
-		rendez.setComments(rendezComments);
-
-		this.userService.save(user);
-		this.rendezvousService.saveWithoutConstraints(rendez);
+//		final User user = this.userService.findByPrincipal();
+//
+//		final Collection<Comment> comments = user.getComments();
+//		comments.add(savedC);
+//		user.setComments(comments);
+//
+//		final Collection<Comment> rendezComments = rendez.getComments();
+//		rendezComments.add(savedC);
+//		rendez.setComments(rendezComments);
+//
+//		this.userService.save(user);
+//		this.rendezvousService.saveWithoutConstraints(rendez);
 
 		return savedC;
 	}
@@ -130,32 +130,14 @@ public class CommentFormService {
 		c.setText(cF.getText());
 		c.setPicture(cF.getPicture());
 		c.setMomentWritten(new Date(System.currentTimeMillis() - 1));
-		c.setOriginalComment(r);
-		c.setUser(this.userService.findByPrincipal());
-		c.setReplies(new ArrayList<Comment>());
+//		c.setOriginalComment(r);
+//		c.setUser(this.userService.findByPrincipal());
+//		c.setReplies(new ArrayList<Comment>());
 		c.setRendezvous(r.getRendezvous());
 
-		final User user = this.userService.findByPrincipal();
+		
 
-		final Comment savedC = this.commentRepository.save(c);
-
-		final Collection<Comment> replies = r.getReplies();
-		replies.add(savedC);
-		r.setReplies(replies);
-		this.commentRepository.save(r);
-
-		final Collection<Comment> comments = user.getComments();
-		comments.add(savedC);
-		user.setComments(comments);
-
-		final Rendezvous rendez = savedC.getRendezvous();
-
-		final Collection<Comment> rendezComments = rendez.getComments();
-		rendezComments.add(savedC);
-		rendez.setComments(rendezComments);
-
-		this.userService.save(user);
-		this.rendezvousService.saveWithoutConstraints(rendez);
+		final Comment savedC = this.commentService.saveReply(r,c);
 
 		return savedC;
 	}
@@ -167,30 +149,32 @@ public class CommentFormService {
 		Assert.notNull(admin, "message.error.comment.notAnAdmin");
 
 		final Comment comment = this.commentRepository.findOne(commentF.getId());
+		
+		this.commentService.delete(comment.getId());
 
-		final Rendezvous rendez = comment.getRendezvous();
-		final Collection<Comment> commentsRendez = rendez.getComments();
-		commentsRendez.remove(comment);
-		rendez.setComments(commentsRendez);
-
-		final Comment commentO = comment.getOriginalComment();
-
-		if (commentO != null) {
-
-			final Collection<Comment> replies = commentO.getReplies();
-			replies.remove(comment);
-			commentO.setReplies(replies);
-			this.commentRepository.save(commentO);
-		}
-
-		//guardar usuario, rendezvous, borrar replies de comentario original si lo tiene y borrar replies de este comentario en cascada
-
-		this.rendezvousService.saveWithoutConstraints(rendez);
-		final User user = comment.getUser();
-		user.getComments().remove(comment);
-		this.userService.save(user);
-
-		this.commentRepository.delete(comment);
+//		final Rendezvous rendez = comment.getRendezvous();
+//		final Collection<Comment> commentsRendez = rendez.getComments();
+//		commentsRendez.remove(comment);
+//		rendez.setComments(commentsRendez);
+//
+//		final Comment commentO = comment.getOriginalComment();
+//
+//		if (commentO != null) {
+//
+//			final Collection<Comment> replies = commentO.getReplies();
+//			replies.remove(comment);
+//			commentO.setReplies(replies);
+//			this.commentRepository.save(commentO);
+//		}
+//
+//		//guardar usuario, rendezvous, borrar replies de comentario original si lo tiene y borrar replies de este comentario en cascada
+//
+//		this.rendezvousService.saveWithoutConstraints(rendez);
+//		final User user = comment.getUser();
+//		user.getComments().remove(comment);
+//		this.userService.save(user);
+//
+//		this.commentRepository.delete(comment);
 
 	}
 

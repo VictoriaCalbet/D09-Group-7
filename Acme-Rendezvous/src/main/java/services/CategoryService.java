@@ -63,6 +63,7 @@ public class CategoryService {
 		Assert.isTrue(category.getId() == 0, "message.error.category.id");
 		Assert.notNull(category.getDescription(), "message.error.category.description.null");
 		Assert.notNull(category.getName(), "message.error.category.name.null");
+		
 		final Category result = this.categoryRepository.save(category);
 
 		return result;

@@ -33,6 +33,8 @@
 	</form:label>
     	
 	<form:select name="parent" path="parent">
+			
+		 <form:option value="${null}" label="None"></form:option>	
 
     	 <jstl:forEach var="category" items="${categories}">
     	 	

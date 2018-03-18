@@ -72,10 +72,10 @@ public class CategoryFormService {
 		final Category category;
 		
 		category = this.categoryService.create();
-
+		
+		category.setParent(categoryForm.getParent());
 		category.setName(categoryForm.getName());
 		category.setDescription(categoryForm.getDescription());
-		category.setParent(categoryForm.getParent());
 
 		result = this.categoryService.saveFromCreate(category);
 
@@ -85,8 +85,9 @@ public class CategoryFormService {
 	public Category saveFromEdit(final CategoryForm categoryForm) {
 		Assert.notNull(categoryForm);
 		Assert.notNull(categoryForm.getName(), "message.error.categoryForm.name.null");
+		if(categoryForm.getParent()!=null){
 		Assert.isTrue(categoryForm.getCategoryId()!=categoryForm.getParent().getId(),"message.error.category.InvalidParent");
-
+		}
 		final Administrator principal = this.administratorService.findByPrincipal();
 		
 		Assert.notNull(principal,"message.error.categoryForm.notAnAdmin");

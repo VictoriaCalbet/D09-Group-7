@@ -89,6 +89,12 @@ public class CommentService {
 		c.setMomentWritten(new Date(System.currentTimeMillis() - 1));
 		c.setUser(this.userService.findByPrincipal());
 		c.setOriginalComment(null);
+		
+		final Collection<Comment> comments2 = user.getComments();
+		comments2.add(c);
+		user.setComments(comments2);
+		
+		
 
 		final Collection<Comment> comments = ren.getComments();
 
@@ -97,7 +103,9 @@ public class CommentService {
 		ren.setComments(comments);
 
 		this.rendezvousService.saveWithoutConstraints(ren);
-
+		
+		this.userService.save(user);
+		
 		final Comment savedC = this.commentRepository.save(c);
 
 		return savedC;
@@ -126,7 +134,23 @@ public class CommentService {
 		final Collection<Comment> replies = c.getReplies();
 		replies.add(savedC);
 		c.setReplies(replies);
-		this.commentRepository.save(savedC);
+		this.commentRepository.save(c);
+		
+		final Collection<Comment> comments2 = user.getComments();
+		comments2.add(r);
+		user.setComments(comments2);
+		
+		this.userService.save(user);
+		
+		Rendezvous ren = c.getRendezvous();
+		
+		final Collection<Comment> comments = ren.getComments();
+
+		comments.add(c);
+
+		ren.setComments(comments);
+
+		this.rendezvousService.saveWithoutConstraints(ren);
 
 		return savedC;
 	}
