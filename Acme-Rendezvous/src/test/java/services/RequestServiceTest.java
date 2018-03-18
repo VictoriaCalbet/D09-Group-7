@@ -2,6 +2,7 @@
 package services;
 
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import utilities.AbstractTest;
+import domain.CreditCard;
 import domain.Rendezvous;
 import domain.Request;
 import domain.Service;
@@ -44,31 +46,89 @@ public class RequestServiceTest extends AbstractTest {
 	@Test
 	public void testCreateRequestDriver() {
 		final Object testingData[][] = {
-			{
-				"user1", "86", "80", "76", null
 
+			//Note: the service 5 will be always inappropriate in these tests
+			{
+				//Positive test1: Requesting a service for a rendezvous created by the user and a valid credit card
+				//Positive test2: Requesting a service for a valid rendezvous and a valid credit card
+				//Positive test3: Requesting a service not requested yet for a valid rendezvous
+				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 18, 502, null
+			}, {
+				//Positive test4: Requesting the same service, from another user and different rendezvous 
+				"user2", "service4", "rendezvous5", "David Romero", "Visa", "4716228108990601", 9, 18, 502, null
+			}, {
+				//Negative test1: Requesting a service for a rendezvous that the user has not created
+				"user2", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 18, 502, IllegalArgumentException.class
+			}, {
+				//Negative test2: Requesting a null service
+				"user1", null, "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 18, 502, NullPointerException.class
+			}, {
+				//Negative test3: Requesting a service with null rendezvous
+				"user1", "service4", null, "David Romero", "Visa", "4716228108990601", 9, 18, 502, NullPointerException.class
+			}, {
+				//Negative test4: Requesting an available service for an available rendezvous but invalid CreditCard number
+				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990444", 9, 18, 502, ConstraintViolationException.class
+
+			}, {
+				//Negative test5: Requesting an available service for an available rendezvous but null creditCard number
+				"user1", "service4", "rendezvous1", "David Romero", "Visa", null, 9, 18, 502, ConstraintViolationException.class
+			}, {
+
+				//Negative test6: Requesting an inappropriate service
+				"user1", "service5", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 18, 502, IllegalArgumentException.class
+			}, {
+				//Negative test7: Requesting an appropriate service, but the user is not the creator of the rendezvous
+				"user1", "service1", "rendezvous5", "David Romero", "Visa", "4716228108990601", 9, 18, 502, IllegalArgumentException.class
+			}, {
+				//Negative test8: Requesting an appropriate service, the user is the creator,but the rendezvous is in draft mode
+				"user1", "service1", "rendezvous3", "David Romero", "Visa", "4716228108990601", 9, 18, 502, IllegalArgumentException.class
+			}, {
+				//Negative test9: Requesting an appropriate service, but already requested for that rendezvous
+				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 18, 502, ConstraintViolationException.class
 			}
 
 		};
 
 		for (int i = 0; i < testingData.length; i++)
-			this.testCreateRequestTemplate((String) testingData[i][0], (int) testingData[i][1], (int) testingData[i][2], (int) testingData[i][3], (Class<?>) testingData[i][4]);
+			this.testCreateRequestTemplate((String) testingData[i][0], (String) testingData[i][1], (String) testingData[i][2], (String) testingData[i][3], (String) testingData[i][4], (String) testingData[i][5], (int) testingData[i][6],
+				(int) testingData[i][7], (int) testingData[i][8], (Class<?>) testingData[i][9]);
 	}
-	protected void testCreateRequestTemplate(final String username, final int requestId, final int rendezvousId, final int serviceId, final Class<?> expectedException) {
+	protected void testCreateRequestTemplate(final String username, final String serviceBean, final String rendezvousBean, final String holderName, final String brandName, final String number, final int month, final int year, final int cvv,
+		final Class<?> expectedException) {
 		Class<?> caught;
 		caught = null;
 
 		try {
 			this.authenticate(username);
+
+			final CreditCard creditCard1 = new CreditCard();
+			creditCard1.setBrandName(brandName);
+			creditCard1.setCvv(cvv);
+			creditCard1.setHolderName(holderName);
+			creditCard1.setNumber(number);
+			creditCard1.setExpirationMonth(month);
+			creditCard1.setExpirationYear(year);
+
+			final Request request = this.requestService.create();
+
+			int serviceId = this.getEntityId(serviceBean);
+			serviceId += 1;
+			int rendezvousId = this.getEntityId(rendezvousBean);
+			rendezvousId += 1;
+			request.setCreditCard(creditCard1);
+
 			final Service service = this.serviceService.findOne(serviceId);
-			final Request request = this.requestService.findOne(requestId);
 			final Rendezvous rendezvous = this.rendezvousService.findOne(rendezvousId);
 			request.setService(service);
 			request.setRendezvous(rendezvous);
+
+			//Changing service5 to inappropriate
+			if (serviceBean.equals("service5"))
+				request.getService().setIsInappropriate(true);
 			this.requestService.saveFromCreate(request);
 
 			this.unauthenticate();
-
+			this.requestService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 		}

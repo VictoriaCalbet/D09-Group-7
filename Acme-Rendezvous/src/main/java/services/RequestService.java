@@ -12,6 +12,7 @@ import repositories.RequestRepository;
 import domain.CreditCard;
 import domain.Rendezvous;
 import domain.Request;
+import domain.User;
 
 @Service
 @Transactional
@@ -25,6 +26,9 @@ public class RequestService {
 	// Supporting services ----------------------------------------------------
 	@Autowired
 	private ServiceService		serviceService;
+
+	@Autowired
+	private UserService			userService;
 
 
 	// Constructors -----------------------------------------------------------
@@ -63,7 +67,9 @@ public class RequestService {
 		Assert.isTrue(request.getRendezvous().getIsDraft() == false);
 		Assert.isTrue(request.getRendezvous().getIsDeleted() == false);
 		Assert.isTrue(request.getService().getIsInappropriate() == false);
-
+		Assert.isTrue(!request.getRendezvous().getRequests().contains(request));
+		final User principal = this.userService.findByPrincipal();
+		Assert.isTrue(principal.getRendezvoussesCreated().contains(request.getRendezvous()));
 		result = this.requestRepository.save(request);
 		return result;
 	}
@@ -88,6 +94,9 @@ public class RequestService {
 		Request result = null;
 		result = this.requestRepository.findOne(requestId);
 		return result;
+	}
+	public void flush() {
+		this.requestRepository.flush();
 	}
 
 }
