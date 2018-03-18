@@ -25,11 +25,17 @@
 	<!-- Links to edit or display an announcement -->
 	<security:authorize access="hasRole('USER')">
 		<display:column>
-			<jstl:if test="${row.rendezvous.creator.userAccount.id eq loggedactor.id}">
-				<a href="announcement/user/edit.do?announcementId=${row.id}">
-					<spring:message code="announcement.edit"/>
-				</a>
-			</jstl:if>
+			<jstl:choose>
+				<jstl:when test="${row.rendezvous.creator.userAccount.id eq loggedactor.id}">
+					<a href="announcement/user/edit.do?announcementId=${row.id}">
+						<spring:message code="announcement.edit"/>
+					</a>
+				</jstl:when>
+				<jstl:otherwise>
+					<spring:message code="announcement.list.noEditable" var="announcementNoEditableMessage"/>
+					<jstl:out value="${announcementNoEditableMessage}"/> 
+				</jstl:otherwise>
+			</jstl:choose>
 		</display:column>
 	</security:authorize>
 	
