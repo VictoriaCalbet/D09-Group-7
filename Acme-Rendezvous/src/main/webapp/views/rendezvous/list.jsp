@@ -143,17 +143,11 @@
 	
 	<spring:message code="rendezvous.similar" var="similarHeader" />	
 	<display:column title="${similarHeader}">
-	<jstl:choose>
-		<jstl:when  test = "${fn:length(row.isLinkedTo) ==0}">	
-			<spring:message code="rendezvous.notSimilar"/>
-		</jstl:when>
-		<jstl:otherwise> 
 			<a href="rendezvous/list.do?rendezvousId=${row.id}"> 
 		<spring:message code="rendezvous.similarButton"/>
-		</a>	</jstl:otherwise>
-	</jstl:choose>
-	
+		</a>	
 	</display:column>
+	
 		<security:authorize access="hasAnyRole('ADMIN', 'MANAGER', 'USER')">
 		<spring:message code="rendezvous.services" var="servicesHeader"/>
 		<spring:message code="rendezvous.services.url" var="servicesURLMessage"/>
