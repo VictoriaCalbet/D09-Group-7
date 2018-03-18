@@ -41,7 +41,7 @@ public class RequestFormService {
 		final Request r = this.requestService.findOne(requestId);
 
 		final RequestForm requestForm = new RequestForm();
-		requestForm.setComment(r.getComment());
+		requestForm.setComments(r.getComments());
 		requestForm.setCreditCard(r.getCreditCard());
 		requestForm.setId(r.getId());
 		requestForm.setRendezvous(r.getRendezvous());
@@ -53,7 +53,7 @@ public class RequestFormService {
 
 		final Request r = this.requestService.create();
 
-		r.setComment(requestForm.getComment());
+		r.setComments(requestForm.getComments());
 		r.setCreditCard(requestForm.getCreditCard());
 		r.setId(requestForm.getId());
 		r.setRendezvous(requestForm.getRendezvous());

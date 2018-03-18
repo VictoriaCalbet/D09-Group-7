@@ -25,10 +25,6 @@ public class RequestService {
 	// Supporting services ----------------------------------------------------
 	@Autowired
 	private ServiceService		serviceService;
-	@Autowired
-	private UserService			userService;
-	@Autowired
-	private RendezvousService	RendezvousService;
 
 
 	// Constructors -----------------------------------------------------------
@@ -43,9 +39,9 @@ public class RequestService {
 		final Request result = new Request();
 		final CreditCard creditCard = new CreditCard();
 		final Rendezvous rendezvous = new Rendezvous();
-		final String comment = "";
+		final String comments = "";
 		result.setCreditCard(creditCard);
-		result.setComment(comment);
+		result.setComments(comments);
 		result.setRendezvous(rendezvous);
 		return result;
 	}

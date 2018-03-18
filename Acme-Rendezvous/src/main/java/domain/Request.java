@@ -18,7 +18,7 @@ public class Request extends DomainEntity {
 	// Attributes -------------------------------------------------------------
 
 	private CreditCard	creditCard;
-	private String		comment;
+	private String		comments;
 
 
 	@Valid
@@ -30,11 +30,11 @@ public class Request extends DomainEntity {
 	}
 
 	@SafeHtml(whitelistType = WhiteListType.NONE)
-	public String getComment() {
-		return this.comment;
+	public String getComments() {
+		return this.comments;
 	}
-	public void setComment(final String comment) {
-		this.comment = comment;
+	public void setComments(final String comments) {
+		this.comments = comments;
 	}
 
 

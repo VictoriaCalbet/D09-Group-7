@@ -18,7 +18,7 @@ public class RequestForm {
 
 	private int			id;
 	private CreditCard	creditCard;
-	private String		comment;
+	private String		comments;
 	private Service		service;
 	private Rendezvous	rendezvous;
 
@@ -40,11 +40,11 @@ public class RequestForm {
 	}
 
 	@SafeHtml(whitelistType = WhiteListType.NONE)
-	public String getComment() {
-		return this.comment;
+	public String getComments() {
+		return this.comments;
 	}
-	public void setComment(final String comment) {
-		this.comment = comment;
+	public void setComments(final String comment) {
+		this.comments = this.comments;
 	}
 	@Valid
 	@NotNull
