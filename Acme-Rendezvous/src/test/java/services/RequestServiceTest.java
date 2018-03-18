@@ -111,10 +111,8 @@ public class RequestServiceTest extends AbstractTest {
 
 			final Request request = this.requestService.create();
 
-			int serviceId = this.getEntityId(serviceBean);
-			serviceId += 1;
-			int rendezvousId = this.getEntityId(rendezvousBean);
-			rendezvousId += 1;
+			final int serviceId = this.getEntityId(serviceBean);
+			final int rendezvousId = this.getEntityId(rendezvousBean);
 			request.setCreditCard(creditCard1);
 
 			final Service service = this.serviceService.findOne(serviceId);
