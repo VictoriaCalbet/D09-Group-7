@@ -90,12 +90,35 @@
 	
 	<security:authorize access="hasRole('USER')"> 
 	
-		<spring:message code="rendezvous.isAdultOnly" var="isAdultOnlyHeader" />
-		<display:column property="isAdultOnly" title="${isAdultOnlyHeader}" style="${style}"/>
-		
-		<spring:message code="rendezvous.isDraft" var="isDraftHeader" />
-		<display:column property="isDraft" title="${isDraftHeader}" style="${style}"/>
-		
+				
+	<spring:message code="rendezvous.isAdultOnly" var="isAdultOnlyHeader"/>
+	<display:column title="${isAdultOnlyHeader}" style="${style}">
+		<jstl:choose>
+			<jstl:when test="${isAdult eq true}">
+				<spring:message code="rendezvous.yes" var="adult"/>
+				<jstl:out value="${adult}"/>
+			</jstl:when>
+			<jstl:otherwise>
+				<spring:message code="rendezvous.not" var="notAdult"/>
+				<jstl:out value="${notAdult}"/>
+			</jstl:otherwise>
+		</jstl:choose>
+	</display:column>
+				
+	<spring:message code="rendezvous.isDraft" var="isDraftHeader"/>
+	<display:column title="${isDraftHeader}" style="${style}">
+		<jstl:choose>
+			<jstl:when test="${isDraft eq true}">
+				<spring:message code="rendezvous.yes" var="draft"/>
+				<jstl:out value="${draft}"/>
+			</jstl:when>
+			<jstl:otherwise>
+				<spring:message code="rendezvous.not" var="notDraft"/>
+				<jstl:out value="${notDraft}"/>
+			</jstl:otherwise>
+		</jstl:choose>
+	</display:column>
+	
 	</security:authorize>
 	
 	<spring:message code="rendezvous.creator" var="creatorHeader" />	
