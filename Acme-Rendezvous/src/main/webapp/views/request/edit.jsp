@@ -27,18 +27,22 @@
 <security:authorize access="hasRole('USER')">
 
 
-<acme:textbox code="request.comments" path="comments" />
-<acme:textbox2 code="request.creditCard.brandName" path="creditCard.brandName" valueImput="${brandCookie}" />
-<acme:textbox2 code="request.creditCard.holderName" path="creditCard.holderName" valueImput="${holderCookie}"/>
-<acme:textbox2 code="request.creditCard.number" path="creditCard.number" valueImput="${numberCookie}"/>
-<acme:textbox2 code="request.creditCard.expirationMonth" path="creditCard.expirationMonth" valueImput="${monthCookie}"/>
-<acme:textbox2 code="request.creditCard.expirationYear" path="creditCard.expirationYear" valueImput="${yearCookie}"/>
-<acme:textbox2 code="request.creditCard.cvv" path="creditCard.cvv" valueImput="${cvvCookie}"/>
-<acme:select code="request.service" path="service" items="${availableServices}" itemLabel="name"/>
-	
+<acme:textbox code="request.comments" path="comments" /><br/>
+<acme:select code="request.service" path="service" items="${availableServices}" itemLabel="name"/><br/>
+<fieldset> 
+	<spring:message code="request.edit.creditCard.legend" var="requestCreditCardLegend"/>
+	<legend><b><jstl:out value="${requestCreditCardLegend}"/>:&nbsp;</b></legend>
+		<acme:textbox2 code="request.creditCard.brandName" path="creditCard.brandName" valueImput="${brandCookie}" />
+		<acme:textbox2 code="request.creditCard.holderName" path="creditCard.holderName" valueImput="${holderCookie}"/>
+		<acme:textbox2 code="request.creditCard.number" path="creditCard.number" valueImput="${numberCookie}"/>
+		<acme:textbox2 code="request.creditCard.expirationMonth" path="creditCard.expirationMonth" valueImput="${monthCookie}"/>
+		<acme:textbox2 code="request.creditCard.expirationYear" path="creditCard.expirationYear" valueImput="${yearCookie}"/>
+		<acme:textbox2 code="request.creditCard.cvv" path="creditCard.cvv" valueImput="${cvvCookie}"/>
+</fieldset>
 
+<br/>
 <input type="submit" name="save" value="<spring:message code="request.request"/>"/>
-<acme:cancel url="service/user/list.do" code="request.cancel" /> <br/>
+<acme:cancel url="rendezvous/list.do" code="request.cancel" /> <br/>
 
 </security:authorize>
 
