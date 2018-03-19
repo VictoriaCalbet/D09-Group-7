@@ -243,15 +243,17 @@ public class RequestUserController extends AbstractController {
 		ModelAndView result;
 		final Rendezvous rendezvous = requestForm.getRendezvous();
 		final Service service = requestForm.getService();
+		final Collection<Service> availableServices = this.serviceService.findAvailableServicesToRequest(requestForm.getRendezvous().getId());
+
 		result = new ModelAndView("request/user/edit");
 		result.addObject("requestForm", requestForm);
 		result.addObject("service", service);
+		result.addObject("availableServices", availableServices);
 		result.addObject("rendezvous", rendezvous);
 		result.addObject("message", messageCode);
 		result.addObject("requestURI", "request/user/edit.do");
 		return result;
 	}
-
 	protected ModelAndView listModelAndView(final String string) {
 		ModelAndView result;
 
