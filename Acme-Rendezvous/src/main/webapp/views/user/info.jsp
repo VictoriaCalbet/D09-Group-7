@@ -49,19 +49,19 @@
 			<jstl:set var="isAdult" value="${row.isAdultOnly}" />
 			
 			<jstl:if test="${isDeleted eq true}">
-				<jstl:set var="style" value="background-color:SlateGray ;" />
+				<jstl:set var="style" value="background-color:SlateGray; color: white;" />
 			</jstl:if>
 			
 			<jstl:if test="${(isDeleted eq false) && (isDraft eq false) && (isAdult eq false)}">
-				<jstl:set var="style" value="background-color:lightSeaGreen ;" />
+				<jstl:set var="style" value="background-color:lightSeaGreen; color: white;" />
 			</jstl:if>
 			
 			<jstl:if test="${(isDeleted eq false) && (isDraft eq false) && (isAdult eq true)}">
-				<jstl:set var="style" value="background-color:brown;" />
+				<jstl:set var="style" value="background-color:brown; color: white;" />
 			</jstl:if>
 			
 			<jstl:if test="${(isDeleted eq false) && (isDraft eq true) && (isAdult eq true)}">
-				<jstl:set var="style" value="background-color:brown;" />
+				<jstl:set var="style" value="background-color:brown; color:white;" />
 			</jstl:if>
 			
 			<jstl:if test="${(isDeleted eq false) && (isDraft eq true) && (isAdult eq false)}">
@@ -94,11 +94,12 @@
 		
 		</display:table>
 		
-		<span style="background-color:lightSeaGreen"><spring:message code="rendezvous.allPublic" /></span>
-		<span style="background-color:brown"><spring:message code="rendezvous.adult" /></span>
-		<span style="background-color:sandyBrown"><spring:message code="rendezvous.draft" /></span>
-		<span style="background-color:SlateGray"><spring:message code="rendezvous.deleted" /></span>
-		
+		<jstl:if test="${not empty rendezvouses}">
+			<span style="background-color:lightSeaGreen; color: white; border-radius: 15px 50px;">&nbsp;&nbsp;<spring:message code="rendezvous.allPublic"/>&nbsp;&nbsp;</span>
+			<span style="background-color:brown; color: white; border-radius: 15px 50px;">&nbsp;&nbsp;<spring:message code="rendezvous.adult"/>&nbsp;&nbsp;</span>
+			<span style="background-color:sandyBrown; border-radius: 15px 50px;">&nbsp;&nbsp;<spring:message code="rendezvous.draft"/>&nbsp;&nbsp;</span>
+			<span style="background-color:SlateGray; color:white; border-radius: 15px 50px;">&nbsp;&nbsp;<spring:message code="rendezvous.deleted"/>&nbsp;&nbsp;</span>
+		</jstl:if>
 	</jstl:when>
 	
 	<jstl:when test="${requestURI eq 'actor/actor/profile.do'}">
