@@ -21,8 +21,6 @@ import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
 import domain.Announcement;
-import domain.Rendezvous;
-import domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -39,182 +37,165 @@ public class AnnouncementServiceTest extends AbstractTest {
 	@Autowired
 	private RendezvousService	rendezvousService;
 
-	@Autowired
-	private UserService			userService;
-
 
 	// Tests ------------------------------------------------------------------
 
 	@Test
-	public void testCreate1() {
-		this.authenticate("user2");
+	public void testCreateAnnouncementDriver() {
+		// principal(actor), rendezvous, title, description, expected exception
+		final Object[][] testingData = {
+			{
+				// Positive test 1: creating an announcement with user
+				"user1", "rendezvous1", "title", "description", null
+			}, {
+				// Negative test 2: creating an announcement with admin
+				"admin", "rendezvous1", "title", "description", IllegalArgumentException.class
+			}, {
+				// Negative test 3: creating an announcement with manager
+				"manager1", "rendezvous1", "title", "description", IllegalArgumentException.class
+			}, {
+				// Negative test 4: creating an announcement with draft rendezvous 
+				"user1", "rendezvous3", "title", "description", IllegalArgumentException.class
+			}, {
+				// Negative test 5: creating an announcement with deleted rendezvous
+				"user1", "rendezvous2", "title", "description", IllegalArgumentException.class
+			}, {
+				// Negative test 6: creating an announcement with rendezvous that is not owner
+				"user1", "rendezvous5", "title", "description", IllegalArgumentException.class
+			}
+		};
 
-		Announcement announcementFromCreate = null;
+		for (int i = 0; i < testingData.length; i++)
+			this.testCreateAnnouncementTemplate((String) testingData[i][0], (String) testingData[i][1], (String) testingData[i][2], (String) testingData[i][3], (Class<?>) testingData[i][4]);
+	}
+	protected void testCreateAnnouncementTemplate(final String actor, final String rendezvous, final String title, final String description, final Class<?> expectedException) {
+		Class<?> caught = null;
 
-		announcementFromCreate = this.announcementService.create();
+		try {
+			this.authenticate(actor);
 
-		Assert.notNull(announcementFromCreate);
-		Assert.notNull(announcementFromCreate.getMomentMade());
-		Assert.isNull(announcementFromCreate.getTitle());
-		Assert.isNull(announcementFromCreate.getDescription());
-		Assert.isNull(announcementFromCreate.getRendezvous());
+			Announcement announcement = null;
+			Announcement result = null;
 
-		this.unauthenticate();
+			announcement = this.announcementService.create();
+
+			announcement.setTitle(title);
+			announcement.setDescription(description);
+			announcement.setRendezvous(this.rendezvousService.findOne(this.getEntityId(rendezvous)));
+
+			result = this.announcementService.saveFromCreate(announcement);
+			this.announcementService.flush();
+
+			Assert.notNull(result);
+
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
+
+		this.checkExceptions(expectedException, caught);
 	}
 
 	@Test
-	public void testSaveFromCreate() {
-		this.authenticate("user2");
+	public void testEditAnnouncementDriver() {
+		// principal(actor), announcement bean, title, description, expected exception
+		final Object[][] testingData = {
+			{
+				// Positive test 1: edit an announcement with user
+				"user1", "announcement1", "title mod", "description mod", null
+			}, {
+				// Negative test 2: edit an announcement with admin
+				"admin", "announcement1", "title mod", "description mod", IllegalArgumentException.class
+			}, {
+				// Negative test 3: edit an announcement with manager
+				"manager", "announcement1", "title mod", "description mod", IllegalArgumentException.class
+			}, {
+				// Negative test 4: edit an announcement with admin
+				"user1", "announcement1", "title mod", "description mod", IllegalArgumentException.class
+			}
+		};
 
-		Announcement announcementFromCreate = null;
-		Rendezvous rendezvous = null;
-		Rendezvous rendezvousAfterSaveFromCreate = null;
-		User user = null;
-		Announcement announcementSaveFromCreate = null;
+		for (int i = 0; i < testingData.length; i++)
+			this.testEditAnnouncementTemplate((String) testingData[i][0], (String) testingData[i][1], (String) testingData[i][2], (String) testingData[i][3], (Class<?>) testingData[i][4]);
+	}
+	protected void testEditAnnouncementTemplate(final String actor, final String announcementBean, final String title, final String description, final Class<?> expectedException) {
+		Class<?> caught = null;
 
-		announcementFromCreate = this.announcementService.create();
+		try {
+			this.authenticate(actor);
 
-		Assert.notNull(announcementFromCreate);
-		Assert.notNull(announcementFromCreate.getMomentMade());
-		Assert.isNull(announcementFromCreate.getTitle());
-		Assert.isNull(announcementFromCreate.getDescription());
-		Assert.isNull(announcementFromCreate.getRendezvous());
+			Announcement announcement = null;
+			Announcement result = null;
 
-		// Esto sería los elementos que añadimos en el formulario
-		announcementFromCreate.setTitle("Title test");
-		announcementFromCreate.setDescription("Description test");
+			announcement = this.announcementService.findOne(this.getEntityId(announcementBean));
 
-		user = this.userService.findByPrincipal();
-		rendezvous = this.rendezvousService.findAllAvailableRendezvousesCreatedByUserId(user.getId()).iterator().next();
-		announcementFromCreate.setRendezvous(rendezvous);
+			announcement.setTitle(title);
+			announcement.setDescription(description);
 
-		announcementSaveFromCreate = this.announcementService.saveFromCreate(announcementFromCreate);
+			result = this.announcementService.saveFromEdit(announcement);
+			this.announcementService.flush();
 
-		Assert.notNull(announcementSaveFromCreate);
-		Assert.isTrue(announcementSaveFromCreate.getTitle().equals(announcementFromCreate.getTitle()));
-		Assert.isTrue(announcementSaveFromCreate.getDescription().equals(announcementFromCreate.getDescription()));
-		Assert.notNull(announcementSaveFromCreate.getMomentMade());	// El momentMade es distinto en announcementFromCreate
+			Assert.notNull(result);
 
-		rendezvousAfterSaveFromCreate = this.rendezvousService.findOne(rendezvous.getId());
-		Assert.isTrue(rendezvousAfterSaveFromCreate.getAnnouncements().contains(announcementSaveFromCreate));
+			Assert.notNull(result);
+			Assert.isTrue(result.getTitle().equals(title));
+			Assert.isTrue(result.getDescription().equals(description));
 
-		this.unauthenticate();
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
+
+		this.checkExceptions(expectedException, caught);
 	}
 
 	@Test
-	public void testSaveFromEdit() {
-		this.authenticate("user2");
+	public void testDeleteAnnouncementDriver() {
+		// principal(actor), announcement bean, expected exception
+		final Object[][] testingData = {
+			{
+				// Positive test 1: delete an announcement with admin
+				"admin", "announcement1", null
+			}, {
+				// Negative test 2: delete an announcement with user
+				"user1", "announcement1", IllegalArgumentException.class
+			}, {
+				// Negative test 3: delete an announcement with manager
+				"manager", "announcement1", IllegalArgumentException.class
+			}, {
+				// Negative test 4: delete an announcement with admin
+				"user1", "announcement1", IllegalArgumentException.class
+			}
+		};
 
-		Announcement announcementFromCreate = null;
-		Rendezvous rendezvous = null;
-		Rendezvous rendezvousAfterSaveFromCreate = null;
-		User user = null;
-		Announcement announcementSaveFromCreate = null;
+		for (int i = 0; i < testingData.length; i++)
+			this.testDeleteAnnouncementTemplate((String) testingData[i][0], (String) testingData[i][1], (Class<?>) testingData[i][2]);
+	}
+	protected void testDeleteAnnouncementTemplate(final String actor, final String announcementBean, final Class<?> expectedException) {
+		Class<?> caught = null;
 
-		announcementFromCreate = this.announcementService.create();
+		try {
+			this.authenticate(actor);
 
-		Assert.notNull(announcementFromCreate);
-		Assert.notNull(announcementFromCreate.getMomentMade());
-		Assert.isNull(announcementFromCreate.getTitle());
-		Assert.isNull(announcementFromCreate.getDescription());
-		Assert.isNull(announcementFromCreate.getRendezvous());
+			Announcement announcement = null;
+			final Announcement result = null;
 
-		// Esto sería los elementos que añadimos en el formulario
+			announcement = this.announcementService.findOne(this.getEntityId(announcementBean));
+			this.announcementService.delete(announcement);
 
-		announcementFromCreate.setTitle("Title test");
-		announcementFromCreate.setDescription("Description test");
+			this.announcementService.flush();
 
-		user = this.userService.findByPrincipal();
-		rendezvous = this.rendezvousService.findAllAvailableRendezvousesCreatedByUserId(user.getId()).iterator().next();
-		announcementFromCreate.setRendezvous(rendezvous);
+			Assert.isNull(result);
 
-		announcementSaveFromCreate = this.announcementService.saveFromCreate(announcementFromCreate);
+			this.unauthenticate();
 
-		Assert.notNull(announcementSaveFromCreate);
-		Assert.isTrue(announcementSaveFromCreate.getTitle().equals(announcementFromCreate.getTitle()));
-		Assert.isTrue(announcementSaveFromCreate.getDescription().equals(announcementFromCreate.getDescription()));
-		Assert.notNull(announcementSaveFromCreate.getMomentMade());	// El momentMade es distinto en announcementFromCreate
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		}
 
-		rendezvousAfterSaveFromCreate = this.rendezvousService.findOne(rendezvous.getId());
-		Assert.isTrue(rendezvousAfterSaveFromCreate.getAnnouncements().contains(announcementSaveFromCreate));
-
-		// A partir de aquí, hacemos las comprobaciones al editar los datos
-
-		Announcement announcementSaveFromEdit = null;
-
-		announcementSaveFromCreate.setTitle("Title modified");
-		announcementSaveFromCreate.setDescription("Description modified");
-
-		announcementSaveFromEdit = this.announcementService.saveFromEdit(announcementSaveFromCreate);
-
-		Assert.notNull(announcementSaveFromEdit);
-		Assert.isTrue(announcementSaveFromEdit.getTitle().equals(announcementSaveFromCreate.getTitle()));
-		Assert.isTrue(announcementSaveFromEdit.getDescription().equals(announcementSaveFromCreate.getDescription()));
-		Assert.notNull(announcementSaveFromEdit.getMomentMade());	// El momentMade es distinto en announcementFromCreate
-
-		this.unauthenticate();
+		this.checkExceptions(expectedException, caught);
 	}
 
-	@Test
-	public void testDelete() {
-		this.authenticate("user2");
-
-		Announcement announcementFromCreate = null;
-		Rendezvous rendezvous = null;
-		Rendezvous rendezvousAfterSaveFromCreate = null;
-		User user = null;
-		Announcement announcementSaveFromCreate = null;
-
-		announcementFromCreate = this.announcementService.create();
-
-		Assert.notNull(announcementFromCreate);
-		Assert.notNull(announcementFromCreate.getMomentMade());
-		Assert.isNull(announcementFromCreate.getTitle());
-		Assert.isNull(announcementFromCreate.getDescription());
-		Assert.isNull(announcementFromCreate.getRendezvous());
-
-		// Esto sería los elementos que añadimos en el formulario
-		announcementFromCreate.setTitle("Title test");
-		announcementFromCreate.setDescription("Description test");
-
-		user = this.userService.findByPrincipal();
-		rendezvous = this.rendezvousService.findAllAvailableRendezvousesCreatedByUserId(user.getId()).iterator().next();
-		announcementFromCreate.setRendezvous(rendezvous);
-
-		announcementSaveFromCreate = this.announcementService.saveFromCreate(announcementFromCreate);
-
-		Assert.notNull(announcementSaveFromCreate);
-		Assert.isTrue(announcementSaveFromCreate.getTitle().equals(announcementFromCreate.getTitle()));
-		Assert.isTrue(announcementSaveFromCreate.getDescription().equals(announcementFromCreate.getDescription()));
-		Assert.notNull(announcementSaveFromCreate.getMomentMade());	// El momentMade es distinto en announcementFromCreate
-
-		rendezvousAfterSaveFromCreate = this.rendezvousService.findOne(rendezvous.getId());
-
-		Assert.isTrue(rendezvousAfterSaveFromCreate.getAnnouncements().contains(announcementSaveFromCreate));
-
-		this.unauthenticate();
-
-		// A partir de aquí, hacemos las comprobaciones al borrar los datos
-
-		this.authenticate("admin");
-
-		Announcement announcementPostDelete = null;
-		Rendezvous rendezvousPostDelete = null;
-
-		this.announcementService.delete(announcementSaveFromCreate);
-
-		// Paso 1: comprobamos que el announcement se borra corectamente
-
-		announcementPostDelete = this.announcementService.findOne(announcementSaveFromCreate.getId());
-
-		Assert.isNull(announcementPostDelete);
-
-		// Paso 2: comprobamos que el announcement no se encuentra en las entidades relacionadas con él (Rendezvous)
-
-		rendezvousPostDelete = this.rendezvousService.findOne(announcementSaveFromCreate.getRendezvous().getId());
-
-		Assert.isTrue(!rendezvousPostDelete.getAnnouncements().contains(announcementFromCreate));
-
-		this.unauthenticate();
-	}
 }
