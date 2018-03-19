@@ -113,7 +113,7 @@
 				<jstl:out value="${draft}"/>
 			</jstl:when>
 			<jstl:otherwise>
-				<spring:message code="rendezvous.not" var="notDraft"/>
+				<spring:message code="rendezvous.no" var="notDraft"/>
 				<jstl:out value="${notDraft}"/>
 			</jstl:otherwise>
 		</jstl:choose>
