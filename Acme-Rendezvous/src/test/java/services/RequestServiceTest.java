@@ -126,6 +126,8 @@ public class RequestServiceTest extends AbstractTest {
 			this.requestService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptions(expectedException, caught);

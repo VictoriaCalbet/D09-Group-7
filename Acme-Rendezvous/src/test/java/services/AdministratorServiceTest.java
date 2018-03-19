@@ -96,6 +96,8 @@ public class AdministratorServiceTest extends AbstractTest {
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptionsWithMessage(expectedException, caught, messageError);
