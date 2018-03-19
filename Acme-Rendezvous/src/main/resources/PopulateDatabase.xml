@@ -370,6 +370,40 @@
 		</property>
 	</bean>
 	
+	<bean id="service6" class="domain.Service">
+		<property name="name" value="service6" />
+		<property name="description" value="This is service6" />
+		<property name="pictureURL" value="https://www.atrapalo.com/common/photo/event/4/8/1/1650/475786/vertic_880_0.jpg" />
+		<property name="isInappropriate" value="false" />
+		<property name="manager" ref="manager1" />
+		<property name="requests">
+		<list>
+		</list>
+		</property>
+		<property name="categories">
+		<list>
+			<ref bean="category1"/>
+		</list>
+		</property>
+	</bean>
+	
+	<bean id="service7" class="domain.Service">
+		<property name="name" value="service7" />
+		<property name="description" value="This is service6" />
+		<property name="pictureURL" value="https://s3.amazonaws.com/www-s3-1.icij.org/uploads/2017/11/donorstory-1600-rocco.jpg" />
+		<property name="isInappropriate" value="false" />
+		<property name="manager" ref="manager1" />
+		<property name="requests">
+		<list>
+		</list>
+		</property>
+		<property name="categories">
+		<list>
+			<ref bean="category1"/>
+		</list>
+	</property>
+	</bean>
+		
 	<!-- Rendezvous #Rendezvous-->
 	
 	<bean id="rendezvous1" class="domain.Rendezvous">
