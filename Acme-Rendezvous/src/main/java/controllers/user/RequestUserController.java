@@ -79,9 +79,9 @@ public class RequestUserController extends AbstractController {
 
 		}
 
--		result.addObject("rendezvous", rendezvous);
--		result.addObject("availableServices", availableServices);
--		result.addObject("rendezvousesCreated", rendezvousesCreated);
+		result.addObject("rendezvous", rendezvous);
+		result.addObject("availableServices", availableServices);
+		result.addObject("rendezvousesCreated", rendezvousesCreated);
 		return this.readCookies(request, result);
 
 	}
