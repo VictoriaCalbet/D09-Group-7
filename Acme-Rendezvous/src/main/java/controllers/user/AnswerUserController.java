@@ -118,9 +118,9 @@ public class AnswerUserController extends AbstractController {
 		final Date yearLimit = now.getTime();
 
 		if (this.rendezvousService.findOne(rendezvousId).getIsAdultOnly() && birthDate.after(yearLimit))
-			result = new ModelAndView("redirect:/");
+			result = this.listModelAndView("redirect:/rendezvous/user/list.do", "rendezvous.commit.error");
 		else if (this.rendezvousService.findOne(rendezvousId) == null || user == null || user.getRendezvoussesCreated().contains(this.rendezvousService.findOne(rendezvousId)))
-			result = new ModelAndView("redirect:/");
+			result = this.listModelAndView("redirect:/rendezvous/user/list.do", "rendezvous.commit.error");
 		else {
 			final List<QuestionAndAnswerForm> questionsAndAnswers;
 			questionsAndAnswers = new ArrayList<QuestionAndAnswerForm>();
@@ -379,6 +379,23 @@ public class AnswerUserController extends AbstractController {
 		if (nSpace == (length - 1))
 			isBlank = true;
 		return isBlank;
+	}
+
+	protected ModelAndView listModelAndView(final String string) {
+		ModelAndView result;
+
+		result = this.listModelAndView(string, null);
+
+		return result;
+	}
+
+	protected ModelAndView listModelAndView(final String string, final String messageCode) {
+		ModelAndView result;
+
+		result = new ModelAndView("redirect:/rendezvous/user/list.do");
+		result.addObject("string", string);
+		result.addObject("message", messageCode);
+		return result;
 	}
 
 }

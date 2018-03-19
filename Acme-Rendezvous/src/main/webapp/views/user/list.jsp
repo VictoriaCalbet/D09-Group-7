@@ -16,7 +16,7 @@
 <%@taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
 <%@taglib prefix="display" uri="http://displaytag.sf.net"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <display:table name="users" id="row" requestURI="${requestURI}" pagesize="5">
 
 	<spring:message code="user.profile" var="profileHeader" />	
@@ -59,9 +59,15 @@
 				<jstl:otherwise>
 					<spring:message code="user.answers" var="answers"/>
 					<display:column sortable="false" title="${answers}">
-					<a href="answer/list.do?rendezvousId=${rendezvousId}&userId=${row.id}">
-					<spring:message code="user.show" />
-					</a>
+						<jstl:when test="${fn:length(answers)> 0}">
+							<a href="answer/list.do?rendezvousId=${rendezvousId}&userId=${row.id}">
+								<spring:message code="user.show" />
+							</a>
+						</jstl:when>
+						<jstl:otherwise>
+						<spring:message code="user.noAnswers"/>
+						</jstl:otherwise>
+						
 					</display:column>
 				</jstl:otherwise>
 			

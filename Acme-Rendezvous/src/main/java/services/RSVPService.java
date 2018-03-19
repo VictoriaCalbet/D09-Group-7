@@ -54,8 +54,10 @@ public class RSVPService {
 		final RSVP rsvp = new RSVP();
 		final User u = this.userService.findByPrincipal();
 		rsvp.setUser(u);
+
 		rsvp.setIsCancelled(false);
 		rsvp.setRendezvous(result);
+		Assert.isTrue(!rsvp.getIsCancelled());
 
 		return rsvp;
 	}
