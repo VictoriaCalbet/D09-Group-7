@@ -39,7 +39,7 @@
 <display:column property="rendezvous.name" title="${rendezvousHeader}" sortable="false" />
 
 
-<spring:message code="rsvp.isCancelled" />		
+<spring:message code="rsvp.isCancelled" var="cancelHeader"/>		
 <display:column title="${cancelHeader}">			
 			<jstl:choose>
 	<jstl:when test="${row.isCancelled==false }">
@@ -50,6 +50,22 @@
 	</jstl:when>
 	<jstl:otherwise>
 		<spring:message code="rsvp.isCancelled" />
+		</jstl:otherwise>
+		</jstl:choose>
+	</display:column>
+	
+	
+	<spring:message code="rsvp.unCancel" var ="unCancelHeader"/>		
+<display:column title="${unCancelHeader}">			
+			<jstl:choose>
+	<jstl:when test="${row.isCancelled==true }">
+	
+		<a href="RSVP/user/unCancelRSVP.do?rendezvousToUnCancelId=${row.rendezvous.id}">
+			 	<spring:message code="RSVP.unCancelButton" />
+	</a>
+	</jstl:when>
+	<jstl:otherwise>
+		<spring:message code="rsvp.unCancelled" />
 		</jstl:otherwise>
 		</jstl:choose>
 	</display:column>

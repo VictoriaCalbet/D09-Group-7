@@ -188,7 +188,7 @@ public class RSVPUserController extends AbstractController {
 		ModelAndView result;
 		try {
 			this.RSVPService.cancelRSVP(rendezvousToCancelId);
-			result = new ModelAndView("redirect:/rendezvous/list.do");
+			result = new ModelAndView("redirect:/RSVP/user/listRSVPs.do");
 		} catch (final Throwable oops) {
 			String messageError = "RSVP.cancel.error";
 			if (oops.getMessage().contains("message.error"))
@@ -210,6 +210,33 @@ public class RSVPUserController extends AbstractController {
 		return result;
 	}
 	// Ancillaty methods
+
+	@RequestMapping(value = "/unCancelRSVP", method = RequestMethod.GET)
+	public ModelAndView unCancel(@RequestParam final int rendezvousToUnCancelId) {
+		ModelAndView result;
+		try {
+			this.RSVPService.unCancelRSVP(rendezvousToUnCancelId);
+			result = new ModelAndView("redirect:/RSVP/user/listRSVPs.do");
+		} catch (final Throwable oops) {
+			String messageError = "RSVP.cancel.error";
+			if (oops.getMessage().contains("message.error"))
+				messageError = oops.getMessage();
+			result = new ModelAndView("redirect:/rendezvous/list.do");
+			result.addObject("message", messageError);
+		}
+
+		final User principal = this.userService.findByPrincipal();
+		RSVP rsvpToCancel = null;
+		final Collection<RSVP> principalRSVPs = principal.getRsvps();
+		for (final RSVP rsvp : principalRSVPs)
+			if (rsvp.getRendezvous() == this.rendezvousService.findOne(rendezvousToUnCancelId))
+				rsvpToCancel = rsvp;
+
+		result.addObject("rsvpToCancel", rsvpToCancel);
+
+		result.addObject("rendezvousToCancelId", rendezvousToUnCancelId);
+		return result;
+	}
 
 	protected final ModelAndView createEditModelAndView(final Rendezvous rv) {
 

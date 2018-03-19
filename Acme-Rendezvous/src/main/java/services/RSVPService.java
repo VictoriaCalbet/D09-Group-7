@@ -102,6 +102,22 @@ public class RSVPService {
 		this.save(newRsvp);
 	}
 
+	public void unCancelRSVP(final int rvId) {
+		final Rendezvous rv = this.rendezvousService.findOne(rvId);
+		Assert.notNull(rv, "message.error.rsvp.rendezvous.null");
+		final User principal = this.userService.findByPrincipal();
+		Assert.notNull(principal, "message.error.rsvp.principal.null");
+		final RSVP rsvp = this.rsvpRepository.findRSVPByRendezvousAndUserId(rv.getId(), principal.getId());
+		Assert.notNull(rsvp, "message.error.rsvp.null");
+
+		final RSVP newRsvp = rsvp;
+		newRsvp.setIsCancelled(false);
+		principal.getRsvps().remove(rsvp);
+		principal.getRsvps().add(newRsvp);
+
+		this.save(newRsvp);
+	}
+
 	public void RSVPaRendezvous(final int rvId) {
 		final Rendezvous rendezvousToRSVP = this.rendezvousService.findOne(rvId);
 		final User creator = rendezvousToRSVP.getCreator();
