@@ -253,6 +253,8 @@ public class RendezvousService {
 		Assert.notNull(r2, "message.error.rendezvous.null");
 		Assert.isTrue(r1.getCreator().equals(u), "message.error.rendezvous.user");
 		Assert.isTrue(r2.getCreator().equals(u), "message.error.rendezvous.user");
+		Assert.isTrue(!r1.getIsLinkedTo().contains(r2));
+		Assert.isTrue(!r2.getIsLinkedTo().contains(r1));
 
 		r1.getIsLinkedTo().add(r2);
 		r2.getIsLinkedTo().add(r1);
