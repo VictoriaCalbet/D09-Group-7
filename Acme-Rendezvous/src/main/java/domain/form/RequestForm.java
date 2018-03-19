@@ -43,9 +43,10 @@ public class RequestForm {
 	public String getComments() {
 		return this.comments;
 	}
-	public void setComments(final String comment) {
-		this.comments = this.comments;
+	public void setComments(final String comments) {
+		this.comments = comments;
 	}
+
 	@Valid
 	@NotNull
 	@ManyToOne(optional = false)
