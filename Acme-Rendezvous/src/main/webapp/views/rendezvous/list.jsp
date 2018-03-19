@@ -99,7 +99,7 @@
 				<jstl:out value="${adult}"/>
 			</jstl:when>
 			<jstl:otherwise>
-				<spring:message code="rendezvous.not" var="notAdult"/>
+				<spring:message code="rendezvous.no" var="notAdult"/>
 				<jstl:out value="${notAdult}"/>
 			</jstl:otherwise>
 		</jstl:choose>
