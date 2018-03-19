@@ -54,6 +54,7 @@ public class CategoryFormService {
 		result.setCategoryId(category.getId());
 		result.setName(category.getName());
 		result.setDescription(category.getDescription());
+		result.setParent(category.getParent());
 
 		return result;
 	}
