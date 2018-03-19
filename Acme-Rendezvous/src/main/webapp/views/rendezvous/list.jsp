@@ -168,16 +168,20 @@
 	<security:authorize access="hasRole('USER')">
 	<spring:message code="rendezvous.request" var="rendezvousRequestHeader"/>
 		<display:column title="${rendezvousRequestHeader}">
-				<jstl:choose>
-					 <jstl:when test="${(fn:contains(principalRendezvouses, row))}">
-						<spring:message code="service.requestThisService" var="serviceRequestThisServiceLink"/>
-						<a href="request/user/create.do?rendezvousId=${row.id}"><jstl:out value="${serviceRequestThisServiceLink}"/></a>
-					 </jstl:when> 
-				 	<jstl:otherwise>
-						<spring:message code= "rendezvous.notOwner" var="rendezvousNotOwner"/>
-						<jstl:out value="${rendezvousNotOwner}"/> 
-					</jstl:otherwise>
-				</jstl:choose>
+			<jstl:choose>
+				<jstl:when test="${row.isDraft eq true}">
+					<spring:message code= "rendezvous.request.isDraft" var="rendezvousRequestIsDraftMessage"/>
+					<jstl:out value="${rendezvousRequestIsDraftMessage}"/> 
+				</jstl:when>
+				<jstl:when test="${(fn:contains(principalRendezvouses, row))}">
+					<spring:message code="service.requestThisService" var="serviceRequestThisServiceLink"/>
+					<a href="request/user/create.do?rendezvousId=${row.id}"><jstl:out value="${serviceRequestThisServiceLink}"/></a>
+				</jstl:when> 
+			 	<jstl:otherwise>
+					<spring:message code= "rendezvous.notOwner" var="rendezvousNotOwner"/>
+					<jstl:out value="${rendezvousNotOwner}"/> 
+				</jstl:otherwise>
+			</jstl:choose>
 		</display:column>
 	</security:authorize>
 	
