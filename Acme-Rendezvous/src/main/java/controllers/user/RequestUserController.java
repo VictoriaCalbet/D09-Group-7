@@ -282,8 +282,9 @@ public class RequestUserController extends AbstractController {
 		randomGenerator = new Random(userId);
 		for (int i = 0; i < bytes.length; i++)
 			encrypted[i] = (byte) (bytes[i] + randomGenerator.nextInt(27));
-		strData = new String(Base64.encode(encrypted));
+
 		try {
+			strData = new String(Base64.encode(encrypted));
 			strData = URLEncoder.encode(strData, "UTF-8");
 		} catch (final UnsupportedEncodingException e) {
 			e.printStackTrace();
