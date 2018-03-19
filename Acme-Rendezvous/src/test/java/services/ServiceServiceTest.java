@@ -186,7 +186,6 @@ public class ServiceServiceTest extends AbstractTest {
 		this.checkExceptions(expectedException, caught);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testDeleteServiceDriver() {
 		// principal(actor), service name, expected
