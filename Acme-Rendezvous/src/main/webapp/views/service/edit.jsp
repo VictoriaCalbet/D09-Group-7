@@ -30,6 +30,9 @@
 			<jstl:choose>
 				<jstl:when test="${not empty categories}">
 					<acme:selectMultiple items="${categories}" itemLabel="name" code="service.categories" path="categories"/>
+					<spring:message code="service.edit.category.selectMult.information" var="serviceSelectMultipleInformation"/>
+					<jstl:out value="${serviceSelectMultipleInformation}"/>
+					<br/>
 					<br/>
 				</jstl:when>
 				<jstl:otherwise>
