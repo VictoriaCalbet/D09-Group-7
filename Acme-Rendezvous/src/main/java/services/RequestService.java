@@ -1,7 +1,9 @@
 
 package services;
 
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,6 +69,7 @@ public class RequestService {
 		Assert.isTrue(request.getRendezvous().getIsDraft() == false);
 		Assert.isTrue(request.getRendezvous().getIsDeleted() == false);
 		Assert.isTrue(request.getService().getIsInappropriate() == false);
+		Assert.isTrue(this.checkCreditCard(request.getCreditCard()));
 		Assert.isTrue(!request.getRendezvous().getRequests().contains(request));
 		final User principal = this.userService.findByPrincipal();
 		Assert.isTrue(principal.getRendezvoussesCreated().contains(request.getRendezvous()));
@@ -99,4 +102,34 @@ public class RequestService {
 		this.requestRepository.flush();
 	}
 
+	private boolean checkCreditCard(final CreditCard creditCard) {
+		Assert.notNull(creditCard);
+		Assert.notNull(creditCard.getHolderName());
+		Assert.notNull(creditCard.getBrandName());
+		Assert.notNull(creditCard.getNumber());
+		Assert.notNull(creditCard.getExpirationMonth());
+		Assert.notNull(creditCard.getExpirationYear());
+		Assert.notNull(creditCard.getCvv());
+
+		boolean result = false;
+		Date now = null;
+
+		now = new Date();
+		final Calendar cal = Calendar.getInstance();
+		cal.setTime(now);
+		final int year = cal.get(Calendar.YEAR);
+		final int month = cal.get(Calendar.MONTH) + 1;
+
+		if (creditCard.getExpirationYear() > year)
+			result = true;
+		else if (creditCard.getExpirationYear() == year) {
+			if (creditCard.getExpirationMonth() >= month)
+				result = true;
+			else
+				result = false;
+		} else
+			result = false;
+
+		return result;
+	}
 }
