@@ -1,0 +1,107 @@
+Emepzamos
+
+Nos registramos como usuario > no deja guardar si se incumplen las restricciones. Prueba con una fecha invalida -> no deja.
+Lo rellena correctamente -> funciona
+
+Lista usuarios, ver perfiles, sus rendezvouses -> funciona bien, peor hay que ocultar la leyenda de rendesvouses al mostrar info del usuario
+
+Solo salen rendezvouses no adultos si estas deslogueado -> si
+
+Se puede ver al creador -> SI
+
+se puede ver los asistentes -> si
+
+Se loguea y se puede ver todo lo que un usuario no autenticado puede hacer menos listar actegorias
+
+Crea un rendezvous draft con fallos -> falla correctamente
+
+Crea uno correcto en modo draft y este no aparece en la lista de rendezvouses disponibles -> bien
+
+Edita el rendezvous y lo hace no draft -> funciona y se ve en la lista
+
+Crea un rendezvous en modo draft para borrarlo -> se marca como borrado y no sale en la lista de rendezvouses disponibles
+
+Reservar un rendezvous o cancelarlo (tras crear un user nuevo) -> funciona y le parece bien. CUANDO CANCELAS UN RSVP NO SE QUITA DE LA LISTA DE ASISTENTES; REVISAR ESTO
+
+Listar comentarios y comentar en redezvouses a los que vaya a asistir -> funciona
+
+Publicar una reply a un comentario -> funciona y le parece bien
+
+Loguearse como admin, borrar comentario tanto sin respuesta como con respuesta -> funciona bien
+
+Borrar un rendezvous como admin -> se borra
+
+Dashboard -> lo ve y no pone pegas
+
+Ve bien los requisitos no funcionales del nivel C
+
+Listar announcements -> bien
+
+Linkar rendezvouses similares -> arreglar el Populate para que el link de rendezvouses de usuarios menores de edad funcione bien (si eres menor de edad, no puedes ver rendezvouses linkados para mayores de edad)
+
+Crear announcement -> bien
+
+Linkar rendezvouses similares -> bien
+
+Intentar linkar rendezvouses sin poder hacerlo -> muestra un error por pantalla correctamente
+
+Si un rendezvous tiene rsvp cancelado, no le llega al usuario el feed de los announcement aunque esten linkados -> correcto
+
+Cambiar color del mensaje de "se ha borrado el announcement" para que no parezca un error.
+
+Responder a preguntar de un rendezvous antes de hacer rsvp -> bien
+
+Crear y editar preguntas -> bien
+
+Intentar reservar sin responder -> falla
+
+Editar una pregunta que ya tiene respuestas -> no lo permite (correcto)
+
+Borrar una respuesta que ya tiene respuestas -> no lo permite (correcto)
+
+Creat preguntas con un rendezvous que ya tiene respuestas -> lo permite (hay que corregirlo para que no ocurra)
+
+
+Rendezvous 2.0
+
+Crear un manager sin rellenar los datos -> no lo permite (correcto)
+
+Sobre el VAT -> dejarlo como está, o bien poner una expresión regular muy grande para controlarlo por cada país
+
+Listar los servicios disponibles como usuario -> no funciona correctamente. Además, los usuarios no pueden crear servicios; son los managers quienes lo hacen.
+
+Asignar servicio a un rendezvous mediante un request -> permite crear un rendezvous con una tarjeta caducada; corregir eso
+
+No permite asignar servicios ya asignados -> correcto
+
+Cuando ocurre un fallo de validacion al hacer un request, no se recarga la lista de servicios.
+
+Listar los servicios existentes como manager -> funciona
+
+Cookies encriptadas de la tarjeta de credito -> le parece bien. Hacer un comentario en el que se explica que las cookies estan encriptadas para mayor seguridad
+
+Si intentas hacer un request cuando no puedes pedir mas servicios para un rendezvous, no debe dejarte -> correcto
+
+Crear un servicio sin categorias -> bien
+
+Editarlo poniendole una categoria -> bien. Le parece bien la eleccion multiple, aunque hay que añadir un mensaje informando sobre como elegir varias categorias. checkbox?
+
+Borrar servicio -> bien
+
+Marcar como inapropiado -> funciona
+
+Quitar lo inapropiado -> funciona
+
+Listar servicios -> corregir leyenda
+
+Listar rendezvouses como usuario no autenticado -> bien
+
+Listar categorias -> bien
+
+Editar categoria -> bien, PERO haz que salga el padre que tiene la categoría por defecto
+
+Borrar categoria -> bien
+
+Requisitos no funcionales -> En el about us, poner el nombre del negocio
+
+Sobre los test -> arreglar los que fallan. Cerrar cada authenticate con un unauthenticate SIEMPRE. Poner un unauthenticate en un bloque finally o al incio de cada test
