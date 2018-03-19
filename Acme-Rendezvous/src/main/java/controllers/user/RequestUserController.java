@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
@@ -281,7 +282,7 @@ public class RequestUserController extends AbstractController {
 		randomGenerator = new Random(userId);
 		for (int i = 0; i < bytes.length; i++)
 			encrypted[i] = (byte) (bytes[i] + randomGenerator.nextInt(27));
-		strData = new String(encrypted);
+		strData = new String(Base64.encode(encrypted));
 		try {
 			strData = URLEncoder.encode(strData, "UTF-8");
 		} catch (final UnsupportedEncodingException e) {
@@ -298,7 +299,8 @@ public class RequestUserController extends AbstractController {
 		try {
 			decode = URLDecoder.decode(strCodeText, "UTF-8");
 			byte[] encrypted;
-			encrypted = decode.getBytes();
+
+			encrypted = Base64.decode(decode.getBytes());
 			byte[] decrypted;
 			decrypted = new byte[encrypted.length];
 			Random randomGenerator;
@@ -310,6 +312,7 @@ public class RequestUserController extends AbstractController {
 		} catch (final UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+
 		return strData;
 
 	}
