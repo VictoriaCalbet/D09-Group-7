@@ -12,10 +12,10 @@ import domain.Service;
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Integer> {
 
-	@Query("select r.service from Request r join r.rendezvous rq join rq.creator s where s.id = ?1 and r.service.isInappropriate = false")
+	@Query("select distinct r.service from Request r join r.rendezvous rq join rq.creator s where s.id = ?1 and r.service.isInappropriate = false")
 	public Collection<Service> findAvailableServicesByUserId(int userId);
 
-	@Query("select req.service from Rendezvous rvs join rvs.requests req where rvs.id = ?1")
+	@Query("select distinct req.service from Rendezvous rvs join rvs.requests req where rvs.id = ?1")
 	public Collection<Service> findServicesByRendezvousId(int rendezvousId);
 
 	@Query("select srv from Service srv where srv.isInappropriate = false")
