@@ -79,60 +79,7 @@ public class RequestUserController extends AbstractController {
 
 		}
 
-		User user;
-		user = this.userService.findByPrincipal();
-		Cookie[] cookies;
-		cookies = request.getCookies();
-		String brandCookie;
-		brandCookie = "";
-		String holderCookie;
-		holderCookie = "";
-		String numberCookie;
-		numberCookie = "";
-		String monthCookie;
-		monthCookie = "";
-		String yearCookie;
-		yearCookie = "";
-		String cvvCookie;
-		cvvCookie = "";
-		String userCookie;
-		userCookie = "";
-		for (final Cookie c : cookies) {
-			if (c.getName().equals("brandCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				brandCookie = c.getValue();
-			if (c.getName().equals("userCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				userCookie = c.getValue();
-			if (c.getName().equals("holderCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				holderCookie = c.getValue();
-			if (c.getName().equals("numberCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				numberCookie = c.getValue();
-			if (c.getName().equals("monthCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				monthCookie = c.getValue();
-			if (c.getName().equals("yearCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				yearCookie = c.getValue();
-			if (c.getName().equals("cvvCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				cvvCookie = c.getValue();
-		}
-		if (userCookie != "" && new Integer(this.decrypt(userCookie, user.getId())).equals(new Integer(user.getId()))) {
-			result.addObject("brandCookie", this.decrypt(brandCookie, user.getId()));
-			result.addObject("holderCookie", this.decrypt(holderCookie, user.getId()));
-			result.addObject("numberCookie", this.decrypt(numberCookie, user.getId()));
-			result.addObject("monthCookie", this.decrypt(monthCookie, user.getId()));
-			result.addObject("yearCookie", this.decrypt(yearCookie, user.getId()));
-			result.addObject("cvvCookie", this.decrypt(cvvCookie, user.getId()));
-		} else {
-			result.addObject("brandCookie", "");
-			result.addObject("holderCookie", "");
-			result.addObject("numberCookie", "");
-			result.addObject("monthCookie", "");
-			result.addObject("yearCookie", "");
-			result.addObject("cvvCookie", "");
-		}
-
-		result.addObject("rendezvous", rendezvous);
-		result.addObject("availableServices", availableServices);
-		result.addObject("rendezvousesCreated", rendezvousesCreated);
-		return result;
+		return this.readCookies(request, result);
 
 	}
 	//EDITIONS
@@ -146,57 +93,7 @@ public class RequestUserController extends AbstractController {
 		result = this.createEditModelAndView(requestForm);
 		result.addObject(requestId);
 
-		User user;
-		user = this.userService.findByPrincipal();
-		Cookie[] cookies;
-		cookies = request.getCookies();
-		String brandCookie;
-		brandCookie = "";
-		String holderCookie;
-		holderCookie = "";
-		String numberCookie;
-		numberCookie = "";
-		String monthCookie;
-		monthCookie = "";
-		String yearCookie;
-		yearCookie = "";
-		String cvvCookie;
-		cvvCookie = "";
-		String userCookie;
-		userCookie = "";
-		for (final Cookie c : cookies) {
-			if (c.getName().equals("brandCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				brandCookie = c.getValue();
-			if (c.getName().equals("userCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				userCookie = c.getValue();
-			if (c.getName().equals("holderCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				holderCookie = c.getValue();
-			if (c.getName().equals("numberCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				numberCookie = c.getValue();
-			if (c.getName().equals("monthCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				monthCookie = c.getValue();
-			if (c.getName().equals("yearCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				yearCookie = c.getValue();
-			if (c.getName().equals("cvvCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
-				cvvCookie = c.getValue();
-		}
-		if (userCookie != "" && new Integer(this.decrypt(userCookie, user.getId())).equals(new Integer(user.getId()))) {
-			result.addObject("brandCookie", this.decrypt(brandCookie, user.getId()));
-			result.addObject("holderCookie", this.decrypt(holderCookie, user.getId()));
-			result.addObject("numberCookie", this.decrypt(numberCookie, user.getId()));
-			result.addObject("monthCookie", this.decrypt(monthCookie, user.getId()));
-			result.addObject("yearCookie", this.decrypt(yearCookie, user.getId()));
-			result.addObject("cvvCookie", this.decrypt(cvvCookie, user.getId()));
-		} else {
-			result.addObject("brandCookie", "");
-			result.addObject("holderCookie", "");
-			result.addObject("numberCookie", "");
-			result.addObject("monthCookie", "");
-			result.addObject("yearCookie", "");
-			result.addObject("cvvCookie", "");
-		}
-
-		return result;
+		return this.readCookies(request, result);
 	}
 
 	//Saving
@@ -273,6 +170,58 @@ public class RequestUserController extends AbstractController {
 		return result;
 	}
 
+	private ModelAndView readCookies(final HttpServletRequest request, final ModelAndView result) {
+		User user;
+		user = this.userService.findByPrincipal();
+		Cookie[] cookies;
+		cookies = request.getCookies();
+		String brandCookie;
+		brandCookie = "";
+		String holderCookie;
+		holderCookie = "";
+		String numberCookie;
+		numberCookie = "";
+		String monthCookie;
+		monthCookie = "";
+		String yearCookie;
+		yearCookie = "";
+		String cvvCookie;
+		cvvCookie = "";
+		String userCookie;
+		userCookie = "";
+		for (final Cookie c : cookies) {
+			if (c.getName().equals("brandCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				brandCookie = c.getValue();
+			if (c.getName().equals("userCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				userCookie = c.getValue();
+			if (c.getName().equals("holderCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				holderCookie = c.getValue();
+			if (c.getName().equals("numberCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				numberCookie = c.getValue();
+			if (c.getName().equals("monthCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				monthCookie = c.getValue();
+			if (c.getName().equals("yearCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				yearCookie = c.getValue();
+			if (c.getName().equals("cvvCookie" + this.encrypt(new Integer(user.getId()).toString(), user.getId())))
+				cvvCookie = c.getValue();
+		}
+		if (userCookie != "" && new Integer(this.decrypt(userCookie, user.getId())).equals(new Integer(user.getId()))) {
+			result.addObject("brandCookie", this.decrypt(brandCookie, user.getId()));
+			result.addObject("holderCookie", this.decrypt(holderCookie, user.getId()));
+			result.addObject("numberCookie", this.decrypt(numberCookie, user.getId()));
+			result.addObject("monthCookie", this.decrypt(monthCookie, user.getId()));
+			result.addObject("yearCookie", this.decrypt(yearCookie, user.getId()));
+			result.addObject("cvvCookie", this.decrypt(cvvCookie, user.getId()));
+		} else {
+			result.addObject("brandCookie", "");
+			result.addObject("holderCookie", "");
+			result.addObject("numberCookie", "");
+			result.addObject("monthCookie", "");
+			result.addObject("yearCookie", "");
+			result.addObject("cvvCookie", "");
+		}
+		return result;
+	}
 	private String encrypt(final String strClearText, final int userId) {
 
 		String strData = "";
