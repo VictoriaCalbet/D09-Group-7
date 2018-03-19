@@ -70,7 +70,7 @@ Sobre el VAT -> dejarlo como está, o bien poner una expresión regular muy grande
 
 Listar los servicios disponibles como usuario -> no funciona correctamente. Además, los usuarios no pueden crear servicios; son los managers quienes lo hacen.
 
-Asignar servicio a un rendezvous mediante un request -> permite crear un rendezvous con una tarjeta caducada; corregir eso
+Asignar servicio a un rendezvous mediante un request -> permite crear un request con una tarjeta caducada; corregir eso
 
 No permite asignar servicios ya asignados -> correcto
 
