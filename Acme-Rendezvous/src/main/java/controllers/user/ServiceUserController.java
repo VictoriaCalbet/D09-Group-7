@@ -50,7 +50,7 @@ public class ServiceUserController extends AbstractController {
 		if (rendezvousId == null)
 			services = this.serviceService.findServicesByUserId(user.getId());
 		else
-			services = this.serviceService.findServicesByRendezvousId(rendezvosId);
+			services = this.serviceService.findServicesByRendezvousId(rendezvousId);
 
 		requestURI = "service/user/list.do";
 		displayURI = "service/user/display.do?serviceId=";
