@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,8 @@ import org.springframework.util.Assert;
 
 import repositories.RSVPRepository;
 import repositories.RendezvousRepository;
+import domain.Answer;
+import domain.Question;
 import domain.RSVP;
 import domain.Rendezvous;
 import domain.User;
@@ -33,6 +36,12 @@ public class RSVPService {
 
 	@Autowired
 	private UserService				userService;
+
+	@Autowired
+	private AnswerService			answerService;
+
+	@Autowired
+	private RendezvousService		rendezvousService;
 
 
 	// Constructors -----------------------------------------------------------
@@ -135,6 +144,33 @@ public class RSVPService {
 
 	public Collection<RSVP> findRSVPsCancelled(final int userId) {
 		return this.rsvpRepository.findRSVPsCancelled(userId);
+	}
+	//Auxiliar methods
+
+	private Boolean allAnswersAreRespondedByPrincipal(final RSVP rsvp) {
+		Boolean allAnswersAreRespondedByPrincipal;
+		allAnswersAreRespondedByPrincipal = false;
+		Rendezvous rendezvousInDB;
+		rendezvousInDB = this.rendezvousService.findOne(rsvp.getRendezvous().getId());
+		Assert.notNull(rendezvousInDB);
+		User userInDB;
+		userInDB = this.userService.findOne(rsvp.getId());
+		List<Question> questions;
+		questions = new ArrayList<Question>();
+		questions.addAll(rendezvousInDB.getQuestions());
+		List<Answer> answersInDB;
+		answersInDB = new ArrayList<Answer>();
+		for (final Question q : questions) {
+			Answer answer;
+			answer = null;
+			if (userInDB != null)
+				answer = this.answerService.findAnswerByQuestionIdAndUserId(q.getId(), userInDB.getId());
+			if (answer != null)
+				answersInDB.add(answer);
+		}
+		if (questions.size() == answersInDB.size())
+			allAnswersAreRespondedByPrincipal = true;
+		return allAnswersAreRespondedByPrincipal;
 	}
 
 }
