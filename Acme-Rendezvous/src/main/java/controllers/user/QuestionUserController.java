@@ -147,7 +147,9 @@ public class QuestionUserController extends AbstractController {
 			result = new ModelAndView("redirect:/question/user/list.do?rendezvousId=" + questionForm.getRendezvousId());
 
 		} catch (final Throwable oops) {
-			final String error = "question.commit.error";
+			String error = "question.commit.error";
+			if (oops.getMessage().contains("message.error"))
+				error = oops.getMessage();
 			result = this.createEditModelAndView(questionForm, error);
 			result.addObject("requestURI", "question/user/edit.do");
 		}

@@ -171,7 +171,7 @@ public class AnswerUserController extends AbstractController {
 		try {
 			user = this.userService.findByPrincipal();
 		} catch (final Throwable oops) {
-			result = new ModelAndView("redirect:/");
+
 		}
 		final Date birthDate = user.getBirthDate();
 		final Calendar now = Calendar.getInstance();
@@ -179,6 +179,8 @@ public class AnswerUserController extends AbstractController {
 		final Date yearLimit = now.getTime();
 
 		if (this.rendezvousService.findOne(new Integer(request.getParameter("rendezvousId"))).getIsAdultOnly() && birthDate.after(yearLimit))
+			result = new ModelAndView("redirect:/");
+		else if (user == null || user.getRendezvoussesCreated().contains(this.rendezvousService.findOne(new Integer(request.getParameter("rendezvousId")))))
 			result = new ModelAndView("redirect:/");
 		else {
 			List<QuestionAndAnswerForm> questionsAndAnswers;

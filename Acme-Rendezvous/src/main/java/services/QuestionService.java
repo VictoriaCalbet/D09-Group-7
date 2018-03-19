@@ -87,13 +87,14 @@ public class QuestionService {
 		return savedQuestion;
 	}
 	public Question saveFromEdit(final Question question) {
+
 		Assert.notNull(question, "message.error.question.null");
 		Assert.isTrue(question.getId() != 0);
 		Assert.notNull(question.getRendezvous());
 		Assert.notNull(this.rendezvousService.findOne(question.getRendezvous().getId()));
 		Assert.isTrue(this.isCorrectString(question.getText()));
 		this.isCorrectUser(question.getRendezvous().getId());
-
+		Assert.isTrue(this.questionRepository.findOne(question.getId()).getAnswers().isEmpty(), "question.message.error.answers");
 		Question savedQuestion;
 		savedQuestion = this.questionRepository.save(question);
 		final List<Question> questions;
@@ -133,6 +134,7 @@ public class QuestionService {
 		Question questionInDB;
 		questionInDB = this.questionRepository.findOne(question.getId());
 		Assert.notNull(questionInDB);
+		Assert.isTrue(questionInDB.getAnswers().isEmpty(), "question.message.error.answers");
 		this.isCorrectUser(questionInDB.getRendezvous().getId());
 		Rendezvous rendezvous;
 		rendezvous = questionInDB.getRendezvous();
