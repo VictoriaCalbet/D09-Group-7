@@ -100,9 +100,9 @@
 	</display:column>
 </display:table>
 
-<jstl:if test="${not empty rendezvouses}">
-<span style="background-color:#F95734; color:white;"> <spring:message code="service.list.thisServiceIsInappropriate"/> </span>
-<span style="background-color:#6FD6FF;"> <spring:message code="service.list.thisServiceNotIsInappropriate"/> </span>
+<jstl:if test="${not empty services}">
+	<span style="background-color:#F95734; color:white; border-radius: 15px 50px;">&nbsp;&nbsp;<spring:message code="service.list.thisServiceIsInappropriate"/>&nbsp;&nbsp;</span>
+	<span style="background-color:#6FD6FF; border-radius: 15px 50px;">&nbsp;&nbsp;<spring:message code="service.list.thisServiceNotIsInappropriate"/>&nbsp;&nbsp;</span>
 </jstl:if>
 <br/>
 <security:authorize access="hasRole('MANAGER')">
