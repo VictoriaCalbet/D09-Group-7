@@ -42,7 +42,7 @@
 
 
 	<!-- Action buttons -->
-	<input type="submit" name="save" value="save" />
-	
+	<input type="submit" name="save" value="<spring:message code="questionsAnswersForm.RSVP"/>" />
+	<input type="button" value="<spring:message code="questionsAnswersForm.cancel"/>" onClick="relativeRedir('/')"/>	
 
 </form>

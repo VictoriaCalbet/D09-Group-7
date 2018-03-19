@@ -129,32 +129,35 @@ public class AnswerUserController extends AbstractController {
 			Rendezvous rendezvousInDB;
 			rendezvousInDB = this.rendezvousService.findOne(rendezvousId);
 			questions.addAll(rendezvousInDB.getQuestions());
-			List<Answer> answersInDB;
-			answersInDB = new ArrayList<Answer>();
-			for (final Question q : questions) {
-				QuestionAndAnswerForm qaa;
-				qaa = new QuestionAndAnswerForm();
-				qaa.setQuestionId(q.getId());
-				qaa.setQuestionText(q.getText());
-				qaa.setIsBlank(false);
-				Answer answer;
-				answer = null;
-				if (user != null)
-					answer = this.answerService.findAnswerByQuestionIdAndUserId(q.getId(), user.getId());
-				if (answer != null) {
-					qaa.setAnswerText(answer.getText());
-					qaa.setAnswerId(answer.getId());
-					answersInDB.add(answer);
-				} else {
-					qaa.setAnswerText("");
-					qaa.setAnswerId(0);
+			if (!questions.isEmpty()) {
+				List<Answer> answersInDB;
+				answersInDB = new ArrayList<Answer>();
+				for (final Question q : questions) {
+					QuestionAndAnswerForm qaa;
+					qaa = new QuestionAndAnswerForm();
+					qaa.setQuestionId(q.getId());
+					qaa.setQuestionText(q.getText());
+					qaa.setIsBlank(false);
+					Answer answer;
+					answer = null;
+					if (user != null)
+						answer = this.answerService.findAnswerByQuestionIdAndUserId(q.getId(), user.getId());
+					if (answer != null) {
+						qaa.setAnswerText(answer.getText());
+						qaa.setAnswerId(answer.getId());
+						answersInDB.add(answer);
+					} else {
+						qaa.setAnswerText("");
+						qaa.setAnswerId(0);
+					}
+					questionsAndAnswers.add(qaa);
 				}
-				questionsAndAnswers.add(qaa);
-			}
-			result = new ModelAndView("questionsAnswersForm");
-			result.addObject("questionsAndAnswers", questionsAndAnswers);
-			result.addObject("requestURI", "answer/user/respond.do?rendezvousId=" + rendezvousId);
-			result.addObject("rendezvousId", rendezvousId);
+				result = new ModelAndView("questionsAnswersForm");
+				result.addObject("questionsAndAnswers", questionsAndAnswers);
+				result.addObject("requestURI", "answer/user/respond.do?rendezvousId=" + rendezvousId);
+				result.addObject("rendezvousId", rendezvousId);
+			} else
+				result = new ModelAndView("redirect:/RSVP/user/RSVP.do?rendezvousId=" + rendezvousId);
 
 		}
 		return result;
