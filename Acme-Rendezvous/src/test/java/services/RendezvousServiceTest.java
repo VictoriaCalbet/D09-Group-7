@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
+import domain.Category;
 import domain.GPSPoint;
 import domain.Rendezvous;
 
@@ -30,6 +31,9 @@ public class RendezvousServiceTest extends AbstractTest {
 
 	@Autowired
 	private ActorService		actorService;
+
+	@Autowired
+	private CategoryService		categoryService;
 
 
 	// Tests ------------------------------------------------------------------
@@ -96,31 +100,34 @@ public class RendezvousServiceTest extends AbstractTest {
 	 */
 	@Test
 	public void testEditRendezvous() {
+
+		final Rendezvous r2 = this.rendezvousService.findOne(this.getEntityId("rendezvous2"));
+		final Rendezvous r3 = this.rendezvousService.findOne(this.getEntityId("rendezvous3"));
+
 		final Object[][] testingData = {
 			// principal, name, description, meetingMoment, picture,latitude, longitude, isAdult, isDraft, expected exception
 			{
-				"user1", "rendezvous1", new DateTime().plusHours(1).toDate(), false, 82, null
+				"user1", "rendezvous1", new DateTime().plusHours(1).toDate(), false, r3, null
 			}, {
-				"user1", "rendezvous1", new DateTime().plusDays(-10).toDate(), false, 82, IllegalArgumentException.class
+				"user1", "rendezvous1", new DateTime().plusDays(-10).toDate(), false, r3, IllegalArgumentException.class
 			}, {
-				"user1", "rendezvous1", new DateTime().plusDays(10).toDate(), false, 81, IllegalArgumentException.class
+				"user1", "rendezvous1", new DateTime().plusDays(10).toDate(), false, r2, IllegalArgumentException.class
 			}, {
-				"admin", "rendezvous1", new DateTime().plusDays(10).toDate(), false, 83, IllegalArgumentException.class
+				"admin", "rendezvous1", new DateTime().plusDays(10).toDate(), false, r3, IllegalArgumentException.class
 			}, {
-				"user3", "rendezvous1", new DateTime().plusDays(2).toDate(), false, 82, IllegalArgumentException.class
+				"user3", "rendezvous1", new DateTime().plusDays(2).toDate(), false, r3, IllegalArgumentException.class
 			}
 		};
 
 		for (int i = 0; i < testingData.length; i++)
-			this.editRendezvousTemplated((String) testingData[i][0], (String) testingData[i][1], (Date) testingData[i][2], (boolean) testingData[i][3], (int) testingData[i][4], (Class<?>) testingData[i][5]);
+			this.editRendezvousTemplated((String) testingData[i][0], (String) testingData[i][1], (Date) testingData[i][2], (boolean) testingData[i][3], (Rendezvous) testingData[i][4], (Class<?>) testingData[i][5]);
 	}
 
-	protected void editRendezvousTemplated(final String principal, final String name, final Date meetingMoment, final boolean isAdult, final int rendezvousId, final Class<?> expectedException) {
+	protected void editRendezvousTemplated(final String principal, final String name, final Date meetingMoment, final boolean isAdult, final Rendezvous r, final Class<?> expectedException) {
 		Class<?> caught = null;
 
 		try {
 			this.authenticate(principal);
-			final Rendezvous r = this.rendezvousService.findOne(rendezvousId);
 			r.setName(name);
 			r.setIsAdultOnly(isAdult);
 			r.setMeetingMoment(meetingMoment);
@@ -148,31 +155,36 @@ public class RendezvousServiceTest extends AbstractTest {
 	 */
 	@Test
 	public void testDeleteRendezvous() {
+
+		final Rendezvous r1 = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
+		final Rendezvous r2 = this.rendezvousService.findOne(this.getEntityId("rendezvous2"));
+		final Rendezvous r3 = this.rendezvousService.findOne(this.getEntityId("rendezvous3"));
+
 		final Object[][] testingData = {
 			//actor, rendezvousId, expected exception
 			{
-				"user1", 82, null
+				"user1", r3, null
 			}, {
-				"user1", 80, IllegalArgumentException.class
+				"user1", r1, IllegalArgumentException.class
 			}, {
-				"user1", 81, IllegalArgumentException.class
+				"user1", r2, IllegalArgumentException.class
 			}, {
-				"manager1", 82, IllegalArgumentException.class
+				"manager1", r3, IllegalArgumentException.class
 			}, {
-				"user3", 82, IllegalArgumentException.class
+				"user3", r3, IllegalArgumentException.class
 			}
 		};
 
 		for (int i = 0; i < testingData.length; i++)
-			this.deleteRendezvousTemplated((String) testingData[i][0], (int) testingData[i][1], (Class<?>) testingData[i][2]);
+			this.deleteRendezvousTemplated((String) testingData[i][0], (Rendezvous) testingData[i][1], (Class<?>) testingData[i][2]);
 	}
 
-	protected void deleteRendezvousTemplated(final String principal, final int rendezvousId, final Class<?> expectedException) {
+	protected void deleteRendezvousTemplated(final String principal, final Rendezvous r, final Class<?> expectedException) {
 		Class<?> caught = null;
 
 		try {
 			this.authenticate(principal);
-			this.rendezvousService.delete(rendezvousId);
+			this.rendezvousService.delete(r.getId());
 			this.unauthenticate();
 			this.rendezvousService.flush();
 		} catch (final Throwable oops) {
@@ -191,25 +203,27 @@ public class RendezvousServiceTest extends AbstractTest {
 	 */
 	@Test
 	public void testDeleteRendezvousAdmin() {
+		final Rendezvous r1 = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
+
 		final Object[][] testingData = {
 			//actor, rendezvousId, expected exception
 			{
-				"admin", 80, null
+				"admin", r1, null
 			}, {
-				"user1", 80, IllegalArgumentException.class
+				"user1", r1, IllegalArgumentException.class
 			}
 		};
 
 		for (int i = 0; i < testingData.length; i++)
-			this.deleteRendezvousAdminTemplated((String) testingData[i][0], (int) testingData[i][1], (Class<?>) testingData[i][2]);
+			this.deleteRendezvousAdminTemplated((String) testingData[i][0], (Rendezvous) testingData[i][1], (Class<?>) testingData[i][2]);
 	}
 
-	protected void deleteRendezvousAdminTemplated(final String principal, final int rendezvousId, final Class<?> expectedException) {
+	protected void deleteRendezvousAdminTemplated(final String principal, final Rendezvous r, final Class<?> expectedException) {
 		Class<?> caught = null;
 
 		try {
 			this.authenticate(principal);
-			this.rendezvousService.deleteAdmin(rendezvousId);
+			this.rendezvousService.deleteAdmin(r.getId());
 			this.unauthenticate();
 			this.rendezvousService.flush();
 		} catch (final Throwable oops) {
@@ -228,26 +242,29 @@ public class RendezvousServiceTest extends AbstractTest {
 	 */
 	@Test
 	public void testLinkRendezvous() {
+		final Rendezvous r1 = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
+		final Rendezvous r3 = this.rendezvousService.findOne(this.getEntityId("rendezvous3"));
+		final Rendezvous r2 = this.rendezvousService.findOne(this.getEntityId("rendezvous2"));
+		final Rendezvous r4 = this.rendezvousService.findOne(this.getEntityId("rendezvous4"));
+
 		final Object[][] testingData = {
 			//actor, rendezvousId, rendezvousId, expected exception
 			{
-				"user1", 80, 82, null
+				"user1", r1, r3, null
 			}, {
-				"user1", 80, 84, IllegalArgumentException.class
+				"user1", r2, r4, IllegalArgumentException.class
 			}
 		};
 
 		for (int i = 0; i < testingData.length; i++)
-			this.linkRendezvousTemplated((String) testingData[i][0], (int) testingData[i][1], (int) testingData[i][2], (Class<?>) testingData[i][3]);
+			this.linkRendezvousTemplated((String) testingData[i][0], (Rendezvous) testingData[i][1], (Rendezvous) testingData[i][2], (Class<?>) testingData[i][3]);
 	}
 
-	protected void linkRendezvousTemplated(final String principal, final int rendezvousId, final int rendezvousLinkedToId, final Class<?> expectedException) {
+	protected void linkRendezvousTemplated(final String principal, final Rendezvous r1, final Rendezvous r2, final Class<?> expectedException) {
 		Class<?> caught = null;
 
 		try {
 			this.authenticate(principal);
-			final Rendezvous r1 = this.rendezvousService.findOne(rendezvousId);
-			final Rendezvous r2 = this.rendezvousService.findOne(rendezvousLinkedToId);
 			this.rendezvousService.linked(r1, r2);
 			this.unauthenticate();
 			this.rendezvousService.flush();
@@ -310,24 +327,26 @@ public class RendezvousServiceTest extends AbstractTest {
 	@Test
 	public void listLinkedRendezvous() {
 
+		final Rendezvous r1 = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
+
 		final Object testingData[][] = {
 			//principal expected exception
 			{
-				"user1", 80, null
+				"user1", r1, null
 			}
 		};
 
 		for (int i = 0; i < testingData.length; i++)
-			this.listLinkedRendezvous((String) testingData[i][0], (int) testingData[i][1], (Class<?>) testingData[i][2]);
+			this.listLinkedRendezvous((String) testingData[i][0], (Rendezvous) testingData[i][1], (Class<?>) testingData[i][2]);
 	}
 
-	protected void listLinkedRendezvous(final String principal, final int rendezvousId, final Class<?> expectedException) {
+	protected void listLinkedRendezvous(final String principal, final Rendezvous r, final Class<?> expectedException) {
 		Class<?> caught = null;
 
 		try {
 			this.authenticate(principal);
 
-			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousSimilarLogged(rendezvousId);
+			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousSimilarLogged(r.getId());
 
 			Assert.notNull(rendezvouses);
 
@@ -351,24 +370,26 @@ public class RendezvousServiceTest extends AbstractTest {
 	@Test
 	public void listCategoryRendezvous() {
 
+		final Category c1 = this.categoryService.findOne(this.getEntityId("category1"));
+
 		final Object testingData[][] = {
 			//principal expected exception
 			{
-				"user1", 90, null
+				"user1", c1, null
 			}
 		};
 
 		for (int i = 0; i < testingData.length; i++)
-			this.listCategoryRendezvous((String) testingData[i][0], (int) testingData[i][1], (Class<?>) testingData[i][2]);
+			this.listCategoryRendezvous((String) testingData[i][0], (Category) testingData[i][1], (Class<?>) testingData[i][2]);
 	}
 
-	protected void listCategoryRendezvous(final String principal, final int categoryId, final Class<?> expectedException) {
+	protected void listCategoryRendezvous(final String principal, final Category c, final Class<?> expectedException) {
 		Class<?> caught = null;
 
 		try {
 			this.authenticate(principal);
 
-			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousByCategories(categoryId);
+			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousByCategories(c.getId());
 
 			Assert.notNull(rendezvouses);
 
