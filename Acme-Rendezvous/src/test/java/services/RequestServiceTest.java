@@ -120,9 +120,6 @@ public class RequestServiceTest extends AbstractTest {
 			request.setService(service);
 			request.setRendezvous(rendezvous);
 
-			//Changing service5 to inappropriate
-			if (serviceBean.equals("service5"))
-				request.getService().setIsInappropriate(true);
 			this.requestService.saveFromCreate(request);
 
 			this.unauthenticate();
