@@ -15,6 +15,9 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
 	@Query("select distinct r.service from Request r join r.rendezvous rq join rq.creator s where s.id = ?1 and r.service.isInappropriate = false")
 	public Collection<Service> findAvailableServicesByUserId(int userId);
 
+	@Query("select distinct req.service from Rendezvous rvs join rvs.requests req where rvs.creator.id = ?1")
+	public Collection<Service> findServicesByUserId(int userId);
+
 	@Query("select distinct req.service from Rendezvous rvs join rvs.requests req where rvs.id = ?1")
 	public Collection<Service> findServicesByRendezvousId(int rendezvousId);
 

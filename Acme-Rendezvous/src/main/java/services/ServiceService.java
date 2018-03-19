@@ -191,6 +191,10 @@ public class ServiceService {
 		return this.serviceRepository.findAvailableServicesByUserId(userId);
 	}
 
+	public Collection<Service> findServicesByUserId(final int userId) {
+		return this.serviceRepository.findServicesByUserId(userId);
+	}
+
 	public Collection<Service> findServicesByRendezvousId(final int rendezvousId) {
 		return this.serviceRepository.findServicesByRendezvousId(rendezvousId);
 	}
