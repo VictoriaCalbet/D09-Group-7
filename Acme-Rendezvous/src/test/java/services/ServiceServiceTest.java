@@ -111,6 +111,8 @@ public class ServiceServiceTest extends AbstractTest {
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptions(expectedException, caught);
@@ -181,6 +183,8 @@ public class ServiceServiceTest extends AbstractTest {
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptions(expectedException, caught);
@@ -236,6 +240,8 @@ public class ServiceServiceTest extends AbstractTest {
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptions(expectedException, caught);

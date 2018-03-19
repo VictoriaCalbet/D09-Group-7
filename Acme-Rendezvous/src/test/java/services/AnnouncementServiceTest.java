@@ -92,11 +92,12 @@ public class AnnouncementServiceTest extends AbstractTest {
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptions(expectedException, caught);
 	}
-
 	@Test
 	public void testEditAnnouncementDriver() {
 		// principal(actor), announcement bean, title, description, expected exception
@@ -146,6 +147,8 @@ public class AnnouncementServiceTest extends AbstractTest {
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptions(expectedException, caught);
@@ -193,6 +196,8 @@ public class AnnouncementServiceTest extends AbstractTest {
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptions(expectedException, caught);

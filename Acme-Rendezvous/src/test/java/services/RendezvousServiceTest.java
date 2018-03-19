@@ -80,7 +80,10 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.rendezvousService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
+
 		this.checkExceptions(expectedException, caught);
 	}
 	/***
@@ -128,7 +131,10 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.rendezvousService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
+
 		this.checkExceptions(expectedException, caught);
 	}
 
@@ -171,7 +177,10 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.rendezvousService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
+
 		this.checkExceptions(expectedException, caught);
 	}
 
@@ -205,7 +214,10 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.rendezvousService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
+
 		this.checkExceptions(expectedException, caught);
 	}
 
@@ -241,7 +253,10 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.rendezvousService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
+
 		this.checkExceptions(expectedException, caught);
 	}
 
@@ -279,6 +294,8 @@ public class RendezvousServiceTest extends AbstractTest {
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptions(expectedException, caught);
@@ -318,6 +335,8 @@ public class RendezvousServiceTest extends AbstractTest {
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptions(expectedException, caught);
@@ -357,6 +376,8 @@ public class RendezvousServiceTest extends AbstractTest {
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
 		}
 
 		this.checkExceptions(expectedException, caught);
