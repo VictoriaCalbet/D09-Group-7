@@ -30,7 +30,7 @@ public class RSVPService {
 	private RSVPRepository			rsvpRepository;
 
 	@Autowired
-	private RendezvousRepository	rendezvousRepository;
+	private RendezvousRepository	rendezvousService;
 
 	// Supporting services ----------------------------------------------------
 
@@ -39,9 +39,6 @@ public class RSVPService {
 
 	@Autowired
 	private AnswerService			answerService;
-
-	@Autowired
-	private RendezvousService		rendezvousService;
 
 
 	// Constructors -----------------------------------------------------------
@@ -88,19 +85,23 @@ public class RSVPService {
 	}
 
 	public void cancelRSVP(final int rvId) {
-		final Rendezvous rv = this.rendezvousRepository.findOne(rvId);
+		final Rendezvous rv = this.rendezvousService.findOne(rvId);
 		Assert.notNull(rv, "message.error.rsvp.rendezvous.null");
 		final User principal = this.userService.findByPrincipal();
 		Assert.notNull(principal, "message.error.rsvp.principal.null");
 		final RSVP rsvp = this.rsvpRepository.findRSVPByRendezvousAndUserId(rv.getId(), principal.getId());
 		Assert.notNull(rsvp, "message.error.rsvp.null");
-		this.rsvpRepository.save(rsvp);
-		rsvp.setIsCancelled(true);
 
+		final RSVP newRsvp = rsvp;
+		newRsvp.setIsCancelled(true);
+		principal.getRsvps().remove(rsvp);
+		principal.getRsvps().add(newRsvp);
+
+		this.save(newRsvp);
 	}
 
 	public void RSVPaRendezvous(final int rvId) {
-		final Rendezvous rendezvousToRSVP = this.rendezvousRepository.findOne(rvId);
+		final Rendezvous rendezvousToRSVP = this.rendezvousService.findOne(rvId);
 		final User creator = rendezvousToRSVP.getCreator();
 
 		final User principal = this.userService.findByPrincipal();

@@ -125,9 +125,7 @@
 		<property name="rsvps">
 			<list>
 				<ref bean="rsvp3"/>
-				<ref bean="rsvp5"/>
 				<ref bean="rsvp6"/>
-				<ref bean="rsvp7"/>
 				<ref bean="rsvp8"/>
 			</list>
 		</property>
@@ -557,7 +555,7 @@
 		<property name="rsvps">
 			<list>
 				<ref bean="rsvp4"/>
-				<ref bean="rsvp5"/>
+
 			</list>
 		</property>
 		<property name="creator" ref="user1" />
@@ -817,23 +815,13 @@
 		<property name="rendezvous" ref="rendezvous1"/>
 	</bean>
 	
-	<bean id="rsvp5" class="domain.RSVP">
-		<property name="isCancelled" value="false"/>
-		<property name="user" ref="user1"/>
-		<property name="rendezvous" ref="rendezvous1"/>
-	</bean>
-	
 	<bean id="rsvp6" class="domain.RSVP">
 		<property name="isCancelled" value="false"/>
 		<property name="user" ref="user1"/>
 		<property name="rendezvous" ref="rendezvous2"/>
 	</bean>
 
-	<bean id="rsvp7" class="domain.RSVP">
-		<property name="isCancelled" value="false"/>
-		<property name="user" ref="user1"/>
-		<property name="rendezvous" ref="rendezvous3"/>
-	</bean>
+	
 
 	<bean id="rsvp8" class="domain.RSVP">
 		<property name="isCancelled" value="false"/>

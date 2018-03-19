@@ -48,7 +48,7 @@ public class ServiceUserController extends AbstractController {
 		user = this.userService.findByPrincipal();
 
 		if (rendezvousId == null)
-			services = this.serviceService.findServicesByUserId(user.getId());
+			services = this.serviceService.findAvailableServices();
 		else
 			services = this.serviceService.findServicesByRendezvousId(rendezvousId);
 

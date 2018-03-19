@@ -259,8 +259,15 @@
 		<spring:message code="rendezvous.RSVPButton" var="rsvpHeader" />
 		<display:column title="${rsvpHeader}">
 			<jstl:choose>
-				<jstl:when test="${!principalRendezvouses.contains(row) and (row.isDraft==false) }">
+				<jstl:when test="${!principalRendezvouses.contains(row) and (row.isDraft eq false) and (row.isDeleted eq false)}">
 					<a href="answer/user/respond.do?rendezvousId=${row.id}"> <spring:message code="rendezvous.RSVPButton" /></a>
+				</jstl:when>
+				
+				<jstl:when test="${!principalRendezvouses.contains(row) and (row.isDraft eq true)}">
+					<spring:message code="rendezvous.request.isDraft" />
+				</jstl:when>
+				<jstl:when test="${!principalRendezvouses.contains(row) and (row.isDeleted eq true)}">
+					<spring:message code="rendezvous.request.isDeleted" />
 				</jstl:when>
 				<jstl:otherwise>
 					<spring:message code="rendezvous.AlreadyRSVPed" />

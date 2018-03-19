@@ -77,10 +77,11 @@ public class RSVPUserController extends AbstractController {
 		final ModelAndView result;
 
 		final User principal = this.userService.findByPrincipal();
-		final Collection<RSVP> RSVPs = principal.getRsvps();
+		final Collection<RSVP> rsvps = principal.getRsvps();
 
 		result = new ModelAndView("RSVP/user/listRSVPs");
-		result.addObject("RSVPs", RSVPs);
+		result.addObject("principal", principal);
+		result.addObject("rsvps", rsvps);
 		result.addObject("message", message);
 		result.addObject("requestURI", "RSVP/user/listRSVPs.do");
 

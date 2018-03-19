@@ -19,7 +19,7 @@
 
 <security:authentication property="principal" var="loggedactor"/>
 
-<display:table name="RSVPs" id="row" requestURI="${requestURI}" pagesize="5">
+<display:table name="rsvps" id="row" requestURI="${requestURI}" pagesize="5">
 
 <spring:message code="rsvp.isCancelled" var="rsvpCancelledHeader"/>
 <display:column title="${rsvpCancelledHeader}">
