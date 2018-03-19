@@ -286,7 +286,9 @@
 	</security:authorize>
 </display:table>
 
-<span style="background-color:lightSeaGreen"><spring:message code="rendezvous.allPublic" /></span>
-<span style="background-color:brown"><spring:message code="rendezvous.adult" /></span>
-<span style="background-color:sandyBrown"><spring:message code="rendezvous.draft" /></span>
-<span style="background-color:SlateGray"><spring:message code="rendezvous.deleted" /></span>
+<jstl:if test="${not empty rendezvouses}">
+	<span style="background-color:lightSeaGreen"><spring:message code="rendezvous.allPublic" /></span>
+	<span style="background-color:brown"><spring:message code="rendezvous.adult" /></span>
+	<span style="background-color:sandyBrown"><spring:message code="rendezvous.draft" /></span>
+	<span style="background-color:SlateGray"><spring:message code="rendezvous.deleted" /></span>
+</jstl:if>
