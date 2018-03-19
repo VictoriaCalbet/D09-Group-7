@@ -133,6 +133,10 @@ public class AnnouncementService {
 		return result;
 	}
 
+	public void flush() {
+		this.announcementRepository.flush();
+	}
+
 	public void delete(final Announcement announcement) {
 		Administrator administrator = null;
 		Rendezvous rendezvous = null;
