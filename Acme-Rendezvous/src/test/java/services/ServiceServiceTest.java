@@ -207,7 +207,7 @@ public class ServiceServiceTest extends AbstractTest {
 				// Negative test 5: delete a service that it has some requests
 				"manager1", "service1", IllegalArgumentException.class
 			}, {
-				// Negative test 5: delete a service that it's inappropriate
+				// Negative test 6: delete a service that it's inappropriate
 				"manager1", "service2", IllegalArgumentException.class
 			}
 		};
