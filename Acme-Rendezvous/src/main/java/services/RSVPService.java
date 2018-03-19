@@ -147,11 +147,13 @@ public class RSVPService {
 	}
 	//Auxiliar methods
 
+	//If return true, you can RSVP.
 	private Boolean allAnswersAreRespondedByPrincipal(final RSVP rsvp) {
 		Boolean allAnswersAreRespondedByPrincipal;
 		allAnswersAreRespondedByPrincipal = false;
 		Rendezvous rendezvousInDB;
 		rendezvousInDB = this.rendezvousService.findOne(rsvp.getRendezvous().getId());
+		//An assert, be careful.
 		Assert.notNull(rendezvousInDB);
 		User userInDB;
 		userInDB = this.userService.findOne(rsvp.getId());
