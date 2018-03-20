@@ -33,20 +33,17 @@ public class RSVPServiceTest extends AbstractTest {
 	@Autowired
 	private RSVPService			rsvpService;
 
-	@Autowired
-	private UserService			userService;
-
 
 	// Tests ------------------------------------------------------------------
-
 	/**
-	 * Create and save a new service
-	 * Test 1: Positive case --> expected: Request a services Successful
-	 * Test 2: Negative case. Fail requesting a service
+	 * Requirement 5.4 Acme-Rendezvous
+	 * RSVP a rendezvous or cancel it.
+	 * 1st Test--> RSVP
+	 * 2nd Test--> Cancel rsvp
+	 * When a user RSVPs a rendezvous, he or she is assumed to attend it
 	 */
-
 	@Test
-	public void testCreateRsvpDriver() {
+	public void testRsvpDriver() {
 
 		final Rendezvous r1 = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
 		final Rendezvous r2 = this.rendezvousService.findOne(this.getEntityId("rendezvous2"));
@@ -67,19 +64,13 @@ public class RSVPServiceTest extends AbstractTest {
 			}, {
 				//Positive test4: An adult rsvp a rendezvous only for adults
 				"user2", r2, new DateTime().plusHours(1).toDate(), true, false, false, null
-			},
-
-			{
+			}, {
 				//Negative test5: A young user rsvp a rendezvous only for adults
 				"user3", r2, new DateTime().plusHours(1).toDate(), true, false, false, IllegalArgumentException.class
-			},
-
-			{
+			}, {
 				//Negative test6: A user rsvp a draft rendezvous
 				"user3", r2, new DateTime().plusHours(1).toDate(), false, true, false, IllegalArgumentException.class
-			},
-
-			{
+			}, {
 				//Negative test7: A user rsvp a deleted rendezvous
 				"user3", r2, new DateTime().plusHours(1).toDate(), false, false, true, IllegalArgumentException.class
 			}, {
@@ -94,9 +85,7 @@ public class RSVPServiceTest extends AbstractTest {
 			}, {
 				//Negative test11: A user(not the creator) try to rsvp a rendezvous already rsvped
 				"user2", r4, new DateTime().plusHours(1).toDate(), false, false, false, IllegalArgumentException.class
-			}
-
-			, {
+			}, {
 				//Negative test12: A user try to rsvp a past rendezvous
 				"user2", r4, new DateTime(2017, 8, 21, 0, 0).toDate(), false, false, false, IllegalArgumentException.class
 			}
@@ -120,6 +109,51 @@ public class RSVPServiceTest extends AbstractTest {
 			rendezvousToRsvp.setIsDeleted(isDeleted);
 			this.rendezvousService.save(rendezvousToRsvp);
 			this.rsvpService.RSVPaRendezvous(rendezvousToRsvp.getId());
+			this.unauthenticate();
+			this.requestService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptions(expectedException, caught);
+	}
+
+	@Test
+	public void testCancelRsvpDriver() {
+
+		final Rendezvous r2 = this.rendezvousService.findOne(this.getEntityId("rendezvous2"));
+		final Rendezvous r6 = this.rendezvousService.findOne(this.getEntityId("rendezvous6"));
+
+		final Object testingData[][] = {
+
+			//userPrincipal, rendezvous, exception
+
+			{
+				//Positive test1: A user cancel a rsvp he has rsvped
+
+				"user1", r2, null
+			}, {
+				//Negative test2: n user cancel a rsvp he has not rsvped
+
+				"user1", r6, IllegalArgumentException.class
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testCancelRsvpTemplate((String) testingData[i][0], (Rendezvous) testingData[i][1], (Class<?>) testingData[i][2]);
+	}
+	protected void testCancelRsvpTemplate(final String username, final Rendezvous rendezvous, final Class<?> expectedException) {
+		Class<?> caught;
+		caught = null;
+
+		try {
+			this.authenticate(username);
+
+			final Rendezvous rendezvousToCancelRsvp = rendezvous;
+
+			this.rsvpService.cancelRSVP(rendezvousToCancelRsvp.getId());
 			this.unauthenticate();
 			this.requestService.flush();
 		} catch (final Throwable oops) {

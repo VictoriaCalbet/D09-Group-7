@@ -38,9 +38,11 @@ public class RequestServiceTest extends AbstractTest {
 	// Tests ------------------------------------------------------------------
 
 	/**
-	 * Create and save a new service
-	 * Test 1: Positive case --> expected: Request a services Successful
-	 * Test 2: Negative case. Fail requesting a service
+	 * 
+	 * Requirement 4.3.
+	 * Request a service for one of the rendezvouses that he or she’s created.
+	 * He or she must specify a valid credit card in every request for a service.
+	 * Optionally, he or she can provide some comments in the request.
 	 */
 
 	@Test
