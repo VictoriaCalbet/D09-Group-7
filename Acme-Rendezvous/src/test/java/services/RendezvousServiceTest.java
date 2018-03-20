@@ -39,7 +39,14 @@ public class RendezvousServiceTest extends AbstractTest {
 	// Tests ------------------------------------------------------------------
 
 	/***
-	 * Create rendezvous
+	 * 
+	 * Requirement 5.2:
+	 * 
+	 * Create a rendezvous, which he's implicitly assumed to attend.
+	 * Note that a user may edit his or her rendezvouses as long as
+	 * they aren't saved them in final mode. Once a rendezvous is saved
+	 * in final mode, it cannot be edited or deleted by the creator.
+	 * 
 	 * 1º Good test -> expected: rendezvous created
 	 * 2º Bad test -> cannot create rendezvous with past date
 	 * 3º Bad test -> an user not adult cannot create rendezvous with isAdult = true
@@ -91,7 +98,15 @@ public class RendezvousServiceTest extends AbstractTest {
 		this.checkExceptions(expectedException, caught);
 	}
 	/***
-	 * Edit rendezvous
+	 * 
+	 * 
+	 * Requirement 5.3 to Acme-Rendezvous
+	 * 
+	 * Update or delete the rendezvouses that he or she's created.
+	 * Deletion is virtual, that is: the information is not removed
+	 * from the database, but the rendezvous cannot be updated.
+	 * Deleted rendezvouses are flagged as such when they are displayed.
+	 * 
 	 * 1º Good test -> expected: rendezvous edited
 	 * 2º Bad test -> cannot edit a rendezvous with past date
 	 * 3º Bad test -> cannot edit a deleted rendezvous
@@ -146,7 +161,15 @@ public class RendezvousServiceTest extends AbstractTest {
 	}
 
 	/***
-	 * Delete rendezvous
+	 * 
+	 * 
+	 * Requirement 5.3 to Acme-Rendezvous
+	 * 
+	 * Update or delete the rendezvouses that he or she's created.
+	 * Deletion is virtual, that is: the information is not removed
+	 * from the database, but the rendezvous cannot be updated.
+	 * Deleted rendezvouses are flagged as such when they are displayed.
+	 * 
 	 * 1º Good test -> expected: rendezvous deleted
 	 * 2º Bad test -> cannot delete a rendezvous with mode final
 	 * 3º Bad test -> cannot delete a rendezvous deleted
@@ -197,7 +220,11 @@ public class RendezvousServiceTest extends AbstractTest {
 	}
 
 	/***
-	 * Delete rendezvousAdmin
+	 * 
+	 * Requirement 6.2 to Acme-Rendezvous
+	 * 
+	 * Remove a rendezvous that he or she thinks is inappropriate.
+	 * 
 	 * 1º Good test -> expected: rendezvous deleted from database
 	 * 2º Bad test -> an user cannot delete a rendezvous from database
 	 */
@@ -236,7 +263,11 @@ public class RendezvousServiceTest extends AbstractTest {
 	}
 
 	/***
-	 * Link rendezvous
+	 * Requirement 16.4 to Acme-Rendezvous
+	 * 
+	 * Link one of the rendezvouses that he or
+	 * she's created to other similar rendezvouses.
+	 * 
 	 * 1º Good test -> expected: rendezvous linked
 	 * 2º Bad test -> cannot linked the rendezvous because it's already linked
 	 */
@@ -278,7 +309,12 @@ public class RendezvousServiceTest extends AbstractTest {
 	}
 
 	/***
-	 * List rendezvous
+	 * 
+	 * Requirement 4.3 to Acme-Rendezvous
+	 * 
+	 * List the rendezvouses in the system and navigate to the
+	 * profiles of the corresponding creators and attendants.
+	 * 
 	 * Testing cases:
 	 * 1º Good test -> expected: results shown
 	 */
@@ -319,7 +355,12 @@ public class RendezvousServiceTest extends AbstractTest {
 	}
 
 	/***
-	 * List linked rendezvous
+	 * 
+	 * Requirement 15.2 to Acme-Rendezvous
+	 * 
+	 * Navigate from a rendezvous to the rendezvouses
+	 * that are similar to it.
+	 * 
 	 * Testing cases:
 	 * 1º Good test -> expected: results shown
 	 */
@@ -362,7 +403,11 @@ public class RendezvousServiceTest extends AbstractTest {
 	}
 
 	/***
-	 * List rendezvous by category
+	 * 
+	 * Requirement 10.1 to Acme-Rendezvous 2.0
+	 * 
+	 * List the rendezvouses in the system grouped by category.
+	 * 
 	 * Testing cases:
 	 * 1º Good test -> expected: results shown
 	 */
