@@ -1,32 +1,19 @@
-/*
- * AdministratorServiceTest.java
- * 
- * Copyright (C) 2017 Universidad de Sevilla
- * 
- * The use of this project is hereby constrained to the conditions of the
- * TDG Licence, a copy of which you may download from
- * http://www.tdg-seville.info/License.html
- */
 
 package services;
 
-import java.util.Calendar;
-import java.util.Collection;
+import java.util.Date;
 
 import javax.transaction.Transactional;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.Assert;
 
-import security.UserAccount;
 import utilities.AbstractTest;
-import domain.RSVP;
 import domain.Rendezvous;
-import domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -35,7 +22,11 @@ import domain.User;
 @Transactional
 public class RSVPServiceTest extends AbstractTest {
 
-	// System under test ------------------------------------------------------
+	// The SUT (Service Under Test) -------------------------------------------
+
+	@Autowired
+	private RequestService		requestService;
+
 	@Autowired
 	private RendezvousService	rendezvousService;
 
@@ -48,57 +39,95 @@ public class RSVPServiceTest extends AbstractTest {
 
 	// Tests ------------------------------------------------------------------
 
+	/**
+	 * Create and save a new service
+	 * Test 1: Positive case --> expected: Request a services Successful
+	 * Test 2: Negative case. Fail requesting a service
+	 */
+
 	@Test
-	public void testCreate1() {
-		this.authenticate("user1");
-		final Rendezvous rendezvous = this.rendezvousService.findAll().iterator().next();
+	public void testCreateRsvpDriver() {
 
-		final RSVP createdRSVP = this.rsvpService.create(rendezvous);
+		final Rendezvous r1 = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
+		final Rendezvous r2 = this.rendezvousService.findOne(this.getEntityId("rendezvous2"));
+		final Rendezvous r4 = this.rendezvousService.findOne(this.getEntityId("rendezvous4"));
 
-		Assert.notNull(createdRSVP);
-		this.unauthenticate();
+		//The creator of r1 is user1
+		// User1 and user2 are adults, user3 is not adult
+		final Object testingData[][] = {
+
+			//userPrincipal, rendezvous, meetingMoment, isAdult, isDraft, isDeleted, exception
+
+			{
+				//Positive test1: An user(not the creator) rsvp a rendezvous
+				//Positive test2: An user rsvp a rendezvous still not rsvped
+				//Positive test3: An young user rsvp a rendezvous not for adults,not draft and not deleted
+
+				"user3", r2, new DateTime().plusHours(1).toDate(), false, false, false, null
+			}, {
+				//Positive test4: An adult rsvp a rendezvous only for adults
+				"user2", r2, new DateTime().plusHours(1).toDate(), true, false, false, null
+			},
+
+			{
+				//Negative test5: A young user rsvp a rendezvous only for adults
+				"user3", r2, new DateTime().plusHours(1).toDate(), true, false, false, IllegalArgumentException.class
+			},
+
+			{
+				//Negative test6: A user rsvp a draft rendezvous
+				"user3", r2, new DateTime().plusHours(1).toDate(), false, true, false, IllegalArgumentException.class
+			},
+
+			{
+				//Negative test7: A user rsvp a deleted rendezvous
+				"user3", r2, new DateTime().plusHours(1).toDate(), false, false, true, IllegalArgumentException.class
+			}, {
+				//Negative test8: An adult user rsvp an adult rendezvous but deleted
+				"user3", r2, new DateTime().plusHours(1).toDate(), true, false, true, IllegalArgumentException.class
+			}, {
+				//Negative test9: An adult user rsvp an adult rendezvous but draft
+				"user3", r2, new DateTime().plusHours(1).toDate(), true, true, false, IllegalArgumentException.class
+			}, {
+				//Negative test10: The creator of the rendezvous try to rsvp his own rendezvous again
+				"user1", r1, new DateTime().plusHours(1).toDate(), false, false, false, IllegalArgumentException.class
+			}, {
+				//Negative test11: A user(not the creator) try to rsvp a rendezvous already rsvped
+				"user2", r4, new DateTime().plusHours(1).toDate(), false, false, false, IllegalArgumentException.class
+			}
+
+			, {
+				//Negative test12: A user try to rsvp a past rendezvous
+				"user2", r4, new DateTime(2017, 8, 21, 0, 0).toDate(), false, false, false, IllegalArgumentException.class
+			}
+
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testCreateRsvpTemplate((String) testingData[i][0], (Rendezvous) testingData[i][1], (Date) testingData[i][2], (boolean) testingData[i][3], (boolean) testingData[i][4], (boolean) testingData[i][5], (Class<?>) testingData[i][6]);
 	}
-	@Test
-	public void testRSVPaRendezvous() {
+	protected void testCreateRsvpTemplate(final String username, final Rendezvous rendezvous, final Date meetingMoment, final boolean isAdult, final boolean isDraft, final boolean isDeleted, final Class<?> expectedException) {
+		Class<?> caught;
+		caught = null;
 
-		final User savedUser;
-		final User createdUser = this.userService.create();
+		try {
+			this.authenticate(username);
 
-		UserAccount savedUserAccount;
+			final Rendezvous rendezvousToRsvp = rendezvous;
+			rendezvousToRsvp.setIsAdultOnly(isAdult);
+			rendezvousToRsvp.setIsDraft(isDraft);
+			rendezvousToRsvp.setMeetingMoment(meetingMoment);
+			rendezvousToRsvp.setIsDeleted(isDeleted);
+			this.rendezvousService.save(rendezvousToRsvp);
+			this.rsvpService.RSVPaRendezvous(rendezvousToRsvp.getId());
+			this.unauthenticate();
+			this.requestService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
+		}
 
-		createdUser.setName("Example name");
-		createdUser.setSurname("Example surname");
-		createdUser.setEmail("example@example.com");
-
-		savedUserAccount = createdUser.getUserAccount();
-		savedUserAccount.setUsername("Example");
-		savedUserAccount.setPassword("Example");
-
-		createdUser.setUserAccount(savedUserAccount);
-
-		savedUser = this.userService.saveFromCreate(createdUser);
-
-		Assert.isTrue(savedUser.getName().equals(createdUser.getName()));
-		Assert.isTrue(savedUser.getSurname().equals(createdUser.getSurname()));
-		Assert.isTrue(savedUser.getEmail().equals(createdUser.getEmail()));
-
-		final Rendezvous rendezvous = this.rendezvousService.findAll().iterator().next();
-		this.authenticate("user2");
-		final User principal = this.userService.findByPrincipal();
-		final Calendar calendar = Calendar.getInstance();
-		calendar.set(1990, 12, 12);
-		principal.setBirthDate(calendar.getTime());
-		rendezvous.setCreator(savedUser);
-		final RSVP createdRSVP = this.rsvpService.create(rendezvous);
-		Assert.notNull(createdRSVP);
-
-		Collection<RSVP> principalRSVPS = savedUser.getRsvps();
-		this.rsvpService.save(createdRSVP);
-		principalRSVPS = principal.getRsvps();
-
-		this.rsvpService.RSVPaRendezvous(createdRSVP.getRendezvous().getId());
-
-		Assert.isTrue(!principalRSVPS.contains(createdRSVP));
-		this.unauthenticate();
+		this.checkExceptions(expectedException, caught);
 	}
 }
