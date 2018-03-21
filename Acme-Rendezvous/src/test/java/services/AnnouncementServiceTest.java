@@ -40,27 +40,31 @@ public class AnnouncementServiceTest extends AbstractTest {
 
 	// Tests ------------------------------------------------------------------
 
+	/**
+	 * Create a new announcement:
+	 * Positive test 1: creating an announcement with user
+	 * Negative test 2: creating an announcement with admin
+	 * Negative test 3: creating an announcement with manager
+	 * Negative test 4: creating an announcement with draft rendezvous
+	 * Negative test 5: creating an announcement with deleted rendezvous
+	 * Negative test 6: creating an announcement with rendezvous that is not owner
+	 */
+
 	@Test
 	public void testCreateAnnouncementDriver() {
 		// principal(actor), rendezvous, title, description, expected exception
 		final Object[][] testingData = {
 			{
-				// Positive test 1: creating an announcement with user
 				"user1", "rendezvous1", "title", "description", null
 			}, {
-				// Negative test 2: creating an announcement with admin
 				"admin", "rendezvous1", "title", "description", IllegalArgumentException.class
 			}, {
-				// Negative test 3: creating an announcement with manager
 				"manager1", "rendezvous1", "title", "description", IllegalArgumentException.class
 			}, {
-				// Negative test 4: creating an announcement with draft rendezvous 
 				"user1", "rendezvous3", "title", "description", IllegalArgumentException.class
 			}, {
-				// Negative test 5: creating an announcement with deleted rendezvous
 				"user1", "rendezvous2", "title", "description", IllegalArgumentException.class
 			}, {
-				// Negative test 6: creating an announcement with rendezvous that is not owner
 				"user1", "rendezvous5", "title", "description", IllegalArgumentException.class
 			}
 		};
@@ -98,22 +102,27 @@ public class AnnouncementServiceTest extends AbstractTest {
 
 		this.checkExceptions(expectedException, caught);
 	}
+
+	/**
+	 * Edit an announcement:
+	 * Positive test 1: edit an announcement with user
+	 * Negative test 2: edit an announcement with admin
+	 * Negative test 3: edit an announcement with manager
+	 * Negative test 4: edit an announcement with user that it's not owner
+	 */
+
 	@Test
 	public void testEditAnnouncementDriver() {
 		// principal(actor), announcement bean, title, description, expected exception
 		final Object[][] testingData = {
 			{
-				// Positive test 1: edit an announcement with user
 				"user1", "announcement1", "title mod", "description mod", null
 			}, {
-				// Negative test 2: edit an announcement with admin
 				"admin", "announcement1", "title mod", "description mod", IllegalArgumentException.class
 			}, {
-				// Negative test 3: edit an announcement with manager
 				"manager", "announcement1", "title mod", "description mod", IllegalArgumentException.class
 			}, {
-				// Negative test 4: edit an announcement with admin
-				"user1", "announcement1", "title mod", "description mod", IllegalArgumentException.class
+				"user1", "announcement4", "title mod", "description mod", IllegalArgumentException.class
 			}
 		};
 
@@ -154,6 +163,13 @@ public class AnnouncementServiceTest extends AbstractTest {
 		this.checkExceptions(expectedException, caught);
 	}
 
+	/**
+	 * Delete an announcement:
+	 * Positive test 1: delete an announcement with admin
+	 * Negative test 2: delete an announcement with user
+	 * Negative test 3: delete an announcement with manager
+	 */
+
 	@Test
 	public void testDeleteAnnouncementDriver() {
 		// principal(actor), announcement bean, expected exception
@@ -167,9 +183,6 @@ public class AnnouncementServiceTest extends AbstractTest {
 			}, {
 				// Negative test 3: delete an announcement with manager
 				"manager", "announcement1", IllegalArgumentException.class
-			}, {
-				// Negative test 4: delete an announcement with admin
-				"user1", "announcement1", IllegalArgumentException.class
 			}
 		};
 
@@ -183,14 +196,11 @@ public class AnnouncementServiceTest extends AbstractTest {
 			this.authenticate(actor);
 
 			Announcement announcement = null;
-			final Announcement result = null;
 
 			announcement = this.announcementService.findOne(this.getEntityId(announcementBean));
 			this.announcementService.delete(announcement);
 
 			this.announcementService.flush();
-
-			Assert.isNull(result);
 
 			this.unauthenticate();
 
