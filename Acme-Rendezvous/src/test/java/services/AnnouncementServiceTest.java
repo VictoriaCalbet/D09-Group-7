@@ -92,8 +92,6 @@ public class AnnouncementServiceTest extends AbstractTest {
 
 			Assert.notNull(result);
 
-			this.unauthenticate();
-
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 		} finally {
@@ -152,8 +150,6 @@ public class AnnouncementServiceTest extends AbstractTest {
 			Assert.isTrue(result.getTitle().equals(title));
 			Assert.isTrue(result.getDescription().equals(description));
 
-			this.unauthenticate();
-
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 		} finally {
@@ -201,8 +197,6 @@ public class AnnouncementServiceTest extends AbstractTest {
 			this.announcementService.delete(announcement);
 
 			this.announcementService.flush();
-
-			this.unauthenticate();
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
