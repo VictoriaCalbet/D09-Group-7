@@ -21,7 +21,7 @@
 
 <security:authentication property="principal" var="loggedactor"/>
 
-<display:table name="services" id="row" requestURI="${requestURI}" pagesize="10">
+<display:table name="services" id="row" requestURI="${requestURI}" pagesize="5">
 	
 	<jstl:choose>
 		<jstl:when test="${row.isInappropriate eq true}">
