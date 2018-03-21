@@ -23,9 +23,23 @@ public class CategoryServiceTest extends AbstractTest {
 	private CategoryService	categoryService;
 
 
+	/**
+	 * 
+	 * Acme-Rendezvous 2.0: Requirement 11.1
+	 * 
+	 * An actor who is authenticated as an administrator must be able to:
+	 * -Manage the categories of services, which includes listing, creating, updating, 
+	 * deleting, and re-organising them in the category hierarchies.
+	 * 
+	 * These tests check that a category is deleted from the dabatase properly
+	 * 
+	 * Test 1: Positive case.
+	 * Test 2: Negative case. The category is null
+	 */
+	
 	@Test
 	public void testDeleteCategory() {
-		// Comment: text, optional URL picture,rendezvous, expectedException
+		// Category, expectedException
 		final Category category = this.categoryService.findOne(this.getEntityId("category2"));
 
 		final Object[][] testingData = {
@@ -67,10 +81,27 @@ public class CategoryServiceTest extends AbstractTest {
 		this.checkExceptionsWithMessage(expectedException, caught, messageError);
 
 	}
+	
+	/**
+	 * 
+	 * Acme-Rendezvous 2.0: Requirement 11.1
+	 * 
+	 * An actor who is authenticated as an administrator must be able to:
+	 * -Manage the categories of services, which includes listing, creating, updating, 
+	 * deleting, and re-organising them in the category hierarchies.
+	 * 
+	 * These tests check that the creation of a category from scratch works properly.
+	 * 
+	 * Test 1: Positive case, linked to a parent.
+	 * Test 2: Negative case. The name of the category is null
+	 * Test 3: Negative case. The description of the category is null
+	 * Test 4: Positive case, not linked to a parent.
+	 * Test 5: Negative case. All required fields are blank
+	 */
 
 	@Test
 	public void testSaveFromCreateCategory() {
-
+		//Category: name, description, optional parent, expectedException
 		final Category parent = this.categoryService.findOne(this.getEntityId("category2"));
 
 		final Object[][] testingData = {
@@ -82,7 +113,7 @@ public class CategoryServiceTest extends AbstractTest {
 			}, {
 				"testText3", null, parent, IllegalArgumentException.class
 			}, {
-				"testText4", "Lalala", null, null
+				"testText4", "Description", null, null
 			}, {
 				null, null, null, IllegalArgumentException.class
 			}
@@ -124,10 +155,26 @@ public class CategoryServiceTest extends AbstractTest {
 		this.checkExceptionsWithMessage(expectedException, caught, messageError);
 
 	}
-
+	
+	/**
+	 * 
+	 * Acme-Rendezvous 2.0: Requirement 11.1
+	 * 
+	 * An actor who is authenticated as an administrator must be able to:
+	 * -Manage the categories of services, which includes listing, creating, updating, 
+	 * deleting, and re-organising them in the category hierarchies.
+	 * 
+	 * These test check that the edition of an existing category from scratch works properly.
+	 * 
+	 * Test 1: Positive case, linked to a parent.
+	 * Test 2: Negative case. The name of the category is null
+	 * Test 3: Negative case. The description of the category is null
+	 * Test 4: Positive case, not linked to a parent.
+	 * Test 5: Negative case. All required fields are blank
+	 */
 	@Test
 	public void testSaveFromEditCategory() {
-
+		//Category: name, description, parent, categoryToEdit, expectedException
 		final Category category = this.categoryService.findOne(this.getEntityId("category1"));
 		final Category parent = this.categoryService.findOne(this.getEntityId("category2"));
 
@@ -140,7 +187,7 @@ public class CategoryServiceTest extends AbstractTest {
 			}, {
 				"testText3", null, parent, category, IllegalArgumentException.class
 			}, {
-				"testText4", "Lalala", null, category, null
+				"testText4", "Description", null, category, null
 			}, {
 				null, null, null, category, IllegalArgumentException.class
 			}

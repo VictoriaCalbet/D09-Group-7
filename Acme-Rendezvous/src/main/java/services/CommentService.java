@@ -118,7 +118,7 @@ public class CommentService {
 
 		Assert.notNull(user, "message.error.comment.user");
 		Assert.notNull(r, "message.error.comment.null");
-
+		Assert.notNull(c, "message.error.reply.originalCommentNull");
 		Assert.notNull(r, "message.error.comment.null");
 		Assert.notNull(r.getText(), "message.error.comment.text");
 		Assert.notNull(r.getMomentWritten(), "message.error.comment.momentWritten");

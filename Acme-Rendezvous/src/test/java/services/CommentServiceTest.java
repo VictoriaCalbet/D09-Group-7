@@ -32,60 +32,29 @@ public class CommentServiceTest extends AbstractTest {
 	@Autowired
 	private RendezvousService	rendezvousService;
 
-
+	
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 4.6
+	 * 
+	 * An actor who is authenticated as a user must be able to:
+	 * - Comment on the rendezvouses that he or she has RSVPd.
+	 * 
+	 * Test 1: Positive case, without a picture URL.
+	 * Test 2: Positive case, with a picture URL.
+	 * Test 3: Negative case. The text of the comment is null.
+	 * Test 4: Negative case. The URL pattern is invalid. 
+	 * Test 5: Negative case. The rendezvous is null
+	 */
+	
 	//Begin tests
 
 	@Test
-	public void testDeleteComment() {
-		// Comment: text, optional URL picture,rendezvous, expectedException
-		final Comment comment = this.commentService.findOne(this.getEntityId("comment1"));
-
-		final Object[][] testingData = {
-
-			{
-				comment, null
-			}, {
-				null, NullPointerException.class
-			}
-		};
-
-		for (int i = 0; i < testingData.length; i++)
-			this.testDeleteCommentTemplate((Comment) testingData[i][0], (Class<?>) testingData[i][1]);
-
-	}
-
-	protected void testDeleteCommentTemplate(final Comment comment, final Class<?> expectedException) {
-
-		Class<?> caught;
-		String messageError;
-
-		caught = null;
-		messageError = null;
-
-		try {
-			this.authenticate("admin");
-
-			this.commentService.delete(comment.getId());
-
-			this.unauthenticate();
-			this.commentService.flush();
-		} catch (final Throwable oops) {
-			caught = oops.getClass();
-			messageError = oops.getMessage();
-		} finally {
-			this.unauthenticate();
-		}
-
-		this.checkExceptionsWithMessage(expectedException, caught, messageError);
-
-	}
-
-	@Test
 	public void testSaveFromCreateComment() {
-		// Comment: text, optional URL picture,rendezvous, expectedException
+		// Comment: text, optional URL picture,rendezvous, user, originalComment, expectedException
 		final Rendezvous rendezvous = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
 		final User user = this.userService.findOne(this.getEntityId("user1"));
-		//Comment comment = this.commentService.findOne(this.getEntityId("comment3"));
+		
 
 		final Object[][] testingData = {
 
@@ -96,9 +65,9 @@ public class CommentServiceTest extends AbstractTest {
 			}, {
 				null, "http://images.nationalgeographic.com.es/medio/2015/12/21/bf63ef82rio_narcea_tineo_720x480.jpg", rendezvous, user, null, IllegalArgumentException.class
 			}, {
-				"testText4", "Lalala", rendezvous, user, null, ConstraintViolationException.class
+				"testText4", "DefinitelyNotAnURL", rendezvous, user, null, ConstraintViolationException.class
 			}, {
-				null, null, null, null, null, IllegalArgumentException.class
+				"testText5", "http://images.nationalgeographic.com.es/medio/2015/12/21/bf63ef82rio_narcea_tineo_720x480.jpg", null, user, null, IllegalArgumentException.class
 			}
 		};
 
@@ -141,9 +110,24 @@ public class CommentServiceTest extends AbstractTest {
 
 	}
 
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 19
+	 * 
+	 * In addition to writing a comment from scratch, a user may reply to a comment.
+	 * 
+	 * Therefore, an actor authenticated as a user must be able to write a reply to a comment.
+	 * 
+	 * Test 1: Positive case, without a picture URL.
+	 * Test 2: Positive case, with a picture URL.
+	 * Test 3: Negative case. The text of the comment is null.
+	 * Test 4: Negative case. The URL pattern is invalid. 
+	 * Test 5: Negative case. The rendezvous is null
+	 */
+	
 	@Test
 	public void testSaveReplyComment() {
-		// Comment: text, optional URL picture,rendezvous, expectedException
+		// Comment: text, optional URL picture,rendezvous, user, originalComment, expectedException
 		final Rendezvous rendezvous = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
 		final User user = this.userService.findOne(this.getEntityId("user2"));
 		final Comment comment = this.commentService.findOne(this.getEntityId("comment2"));
@@ -157,9 +141,9 @@ public class CommentServiceTest extends AbstractTest {
 			}, {
 				null, "http://images.nationalgeographic.com.es/medio/2015/12/21/bf63ef82rio_narcea_tineo_720x480.jpg", rendezvous, user, comment, IllegalArgumentException.class
 			}, {
-				"testText4", "Lalala", rendezvous, user, comment, ConstraintViolationException.class
+				"testText4", "TotallyNotAValidURL", rendezvous, user, comment, ConstraintViolationException.class
 			}, {
-				null, null, null, null, comment, IllegalArgumentException.class
+				"textTest5", null, null, user, comment, IllegalArgumentException.class
 			}
 		};
 
@@ -180,12 +164,70 @@ public class CommentServiceTest extends AbstractTest {
 			this.authenticate("user1");
 
 			final Comment comment = this.commentService.create();
-
+			
+			if(url!=null){
 			comment.setPicture(url);
+			}
 			comment.setUser(user);
 			comment.setText(text);
 
 			this.commentService.saveReply(originalComment, comment);
+
+			this.unauthenticate();
+			this.commentService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
+	}
+	
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 6.1
+	 * 
+	 * An actor who is authenticated as an administrator must be able to:
+	 * -Delete a comment that he or she thinks is inappropriate
+	 * 
+	 * Test 1: Positive case, without a picture URL.
+	 * Test 2: Negative case. The comment to delete is null
+	 */
+	
+	@Test
+	public void testDeleteComment() {
+		// Comment, expectedException
+		final Comment comment = this.commentService.findOne(this.getEntityId("comment1"));
+
+		final Object[][] testingData = {
+
+			{
+				comment, null
+			}, {
+				null, NullPointerException.class
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testDeleteCommentTemplate((Comment) testingData[i][0], (Class<?>) testingData[i][1]);
+
+	}
+
+	protected void testDeleteCommentTemplate(final Comment comment, final Class<?> expectedException) {
+
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			this.authenticate("admin");
+
+			this.commentService.delete(comment.getId());
 
 			this.unauthenticate();
 			this.commentService.flush();
