@@ -54,39 +54,36 @@ public class RequestServiceTest extends AbstractTest {
 				//Positive test1: Requesting a service for a rendezvous created by the user and a valid credit card
 				//Positive test2: Requesting a service for a valid rendezvous and a valid credit card
 				//Positive test3: Requesting a service not requested yet for a valid rendezvous
-				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 18, 502, null
-			}, {
-				//Positive test4: Requesting the same service, from another user and different rendezvous 
-				"user2", "service4", "rendezvous5", "David Romero", "Visa", "4716228108990601", 9, 18, 502, null
+				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, null
 			}, {
 				//Negative test1: Requesting a service for a rendezvous that the user has not created
-				"user2", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 18, 502, IllegalArgumentException.class
+				"user2", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, IllegalArgumentException.class
 			}, {
 				//Negative test2: Requesting a null service
-				"user1", null, "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 18, 502, NullPointerException.class
+				"user1", null, "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, NullPointerException.class
 			}, {
 				//Negative test3: Requesting a service with null rendezvous
-				"user1", "service4", null, "David Romero", "Visa", "4716228108990601", 9, 18, 502, NullPointerException.class
+				"user1", "service4", null, "David Romero", "Visa", "4716228108990601", 9, 2018, 502, NullPointerException.class
 			}, {
 				//Negative test4: Requesting an available service for an available rendezvous but invalid CreditCard number
-				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990444", 9, 18, 502, ConstraintViolationException.class
+				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990444", 9, 2018, 502, ConstraintViolationException.class
 
 			}, {
 				//Negative test5: Requesting an available service for an available rendezvous but null creditCard number
-				"user1", "service4", "rendezvous1", "David Romero", "Visa", null, 9, 18, 502, ConstraintViolationException.class
+				"user1", "service4", "rendezvous1", "David Romero", "Visa", null, 9, 2018, 502, IllegalArgumentException.class
 			}, {
 
 				//Negative test6: Requesting an inappropriate service
-				"user1", "service5", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 18, 502, IllegalArgumentException.class
+				"user1", "service5", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, IllegalArgumentException.class
 			}, {
 				//Negative test7: Requesting an appropriate service, but the user is not the creator of the rendezvous
-				"user1", "service1", "rendezvous5", "David Romero", "Visa", "4716228108990601", 9, 18, 502, IllegalArgumentException.class
+				"user1", "service1", "rendezvous5", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, IllegalArgumentException.class
 			}, {
 				//Negative test8: Requesting an appropriate service, the user is the creator,but the rendezvous is in draft mode
-				"user1", "service1", "rendezvous3", "David Romero", "Visa", "4716228108990601", 9, 18, 502, IllegalArgumentException.class
+				"user1", "service1", "rendezvous3", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, IllegalArgumentException.class
 			}, {
 				//Negative test9: Requesting an appropriate service, but already requested for that rendezvous
-				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 18, 502, ConstraintViolationException.class
+				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, ConstraintViolationException.class
 			}
 
 		};
@@ -99,7 +96,7 @@ public class RequestServiceTest extends AbstractTest {
 		final Class<?> expectedException) {
 		Class<?> caught;
 		caught = null;
-
+		String messageError = null;
 		try {
 			this.authenticate(username);
 
@@ -128,10 +125,12 @@ public class RequestServiceTest extends AbstractTest {
 			this.requestService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
+			messageError = oops.getMessage();
 		} finally {
 			this.unauthenticate();
 		}
 
-		this.checkExceptions(expectedException, caught);
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
 	}
 }
