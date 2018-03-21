@@ -72,6 +72,7 @@ public class UserController extends AbstractController {
 		result.addObject("users", users);
 		result.addObject("message", message);
 		result.addObject("requestURI", "user/listAttendant.do");
+
 		//Needed for answers
 		int creatorUserId;
 		creatorUserId = this.rendezvousService.findOne(rendezvousId).getCreator().getId();
