@@ -40,7 +40,12 @@ public class UserServiceTest extends AbstractTest {
 	// Tests ------------------------------------------------------------------
 
 	/**
-	 * Create and save a new user
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 4.1
+	 * 
+	 * An actor who is not authenticated must be able to:
+	 * - Register to the system as a user.
+	 * 
 	 * Test 1: Positive case.
 	 * Test 2: Negative case. Future birth date.
 	 */

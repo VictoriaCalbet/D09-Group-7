@@ -33,7 +33,12 @@ public class ManagerServiceTest extends AbstractTest {
 	// Tests ------------------------------------------------------------------
 
 	/**
-	 * Create and save a new manager
+	 * 
+	 * Acme-Rendezvous 2.0: Requirement 3.1
+	 * 
+	 * An actor who is not authenticated must be able to:
+	 * - Register to the system as a manager.
+	 * 
 	 * Test 1: Positive case.
 	 * Test 2: Negative case. Wrong VAT pattern.
 	 * Test 3: Negative case. Future birth date.

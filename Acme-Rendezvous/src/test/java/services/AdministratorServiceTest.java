@@ -40,7 +40,11 @@ public class AdministratorServiceTest extends AbstractTest {
 	// Tests ------------------------------------------------------------------
 
 	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement not listed
+	 * 
 	 * Create and save a new administrator
+	 * 
 	 * Test 1: Positive case.
 	 * Test 2: Negative case. Future birth date.
 	 */
