@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,7 +57,11 @@ public class QuestionUserController extends AbstractController {
 			} catch (final Throwable oops) {
 
 			}
+			int isRSVP = 0;
+			if (this.answerIsResponded(rendezvousId))
+				isRSVP = 1;
 			result.addObject("canEdit", canEdit);
+			result.addObject("isRSVP", isRSVP);
 		}
 		return result;
 
@@ -173,5 +178,25 @@ public class QuestionUserController extends AbstractController {
 		result.addObject("message", message);
 
 		return result;
+	}
+	private Boolean answerIsResponded(final int rendezvousId) {
+		Boolean answerIsResponded;
+		answerIsResponded = false;
+		Rendezvous rendezvousInDB;
+		rendezvousInDB = this.rendezvousService.findOne(rendezvousId);
+		//An assert, be careful.
+		Assert.notNull(rendezvousInDB);
+		List<Question> questions;
+		questions = new ArrayList<Question>();
+		questions.addAll(rendezvousInDB.getQuestions());
+
+		for (final Question q : questions)
+			if (!q.getAnswers().isEmpty()) {
+				answerIsResponded = true;
+				break;
+			}
+		if (rendezvousInDB.getRsvps().size() > 1)
+			answerIsResponded = true;
+		return answerIsResponded;
 	}
 }

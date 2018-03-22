@@ -29,7 +29,6 @@
 		
 		<value>/views/administrator/messages</value>
 		<value>/views/announcement/messages</value>
-		<value>/views/answer/messages</value>
 		<value>/views/category/messages</value>
 		<value>/views/comment/messages</value>
 		<value>/views/manager/messages</value>

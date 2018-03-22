@@ -73,7 +73,7 @@ public class QuestionService {
 		Assert.notNull(this.rendezvousService.findOne(question.getRendezvous().getId()));
 		Assert.isTrue(this.isCorrectString(question.getText()));
 		this.isUserAuthenticate();
-
+		Assert.isTrue(!this.answerIsResponded(question.getRendezvous().getId()), "question.message.error.attendants");
 		Question savedQuestion;
 		savedQuestion = this.questionRepository.save(question);
 		final List<Question> questions;
@@ -203,5 +203,25 @@ public class QuestionService {
 		result = this.questionRepository.findStdNoQuestionsPerRendezvous();
 		return result;
 	}
+	//Auxiliar method
+	private Boolean answerIsResponded(final int rendezvousId) {
+		Boolean answerIsResponded;
+		answerIsResponded = false;
+		Rendezvous rendezvousInDB;
+		rendezvousInDB = this.rendezvousService.findOne(rendezvousId);
+		//An assert, be careful.
+		Assert.notNull(rendezvousInDB);
+		List<Question> questions;
+		questions = new ArrayList<Question>();
+		questions.addAll(rendezvousInDB.getQuestions());
 
+		for (final Question q : questions)
+			if (!q.getAnswers().isEmpty()) {
+				answerIsResponded = true;
+				break;
+			}
+		if (rendezvousInDB.getRsvps().size() > 1)
+			answerIsResponded = true;
+		return answerIsResponded;
+	}
 }

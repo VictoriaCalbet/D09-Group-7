@@ -19,7 +19,7 @@
 
 	<display:table name="questions" id="row" requestURI="${requestURI}" pagesize="5" class="displaytag" >
 		<jstl:choose>
-			<jstl:when test="${canEdit==1}">
+			<jstl:when test="${canEdit==1 && isRSVP==0}">
 				<spring:message code="question.edit" var="edit"/>
 				<display:column sortable="false" title="${edit}">
 					<a href="question/user/edit.do?questionId=${row.id}">
@@ -36,7 +36,14 @@
 	
 	<jstl:choose>
 		<jstl:when test="${canEdit==1}">
-			<spring:message code="question.create" var="create"/>
-			<a href="question/user/create.do?rendezvousId=${rendezvousId}">${create}</a>
+				<jstl:choose>
+					<jstl:when test="${isRSVP==0}">
+						<spring:message code="question.create" var="create"/>
+						<a href="question/user/create.do?rendezvousId=${rendezvousId}">${create}</a>
+					</jstl:when>
+					<jstl:otherwise>
+						<spring:message code="question.isRSVP"/>
+					</jstl:otherwise>
+				</jstl:choose>
 		</jstl:when>
 	</jstl:choose>	
