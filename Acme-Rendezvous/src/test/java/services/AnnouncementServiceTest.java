@@ -10,6 +10,8 @@
 
 package services;
 
+import java.util.Collection;
+
 import javax.transaction.Transactional;
 
 import org.junit.Test;
@@ -21,6 +23,7 @@ import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
 import domain.Announcement;
+import domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -37,11 +40,19 @@ public class AnnouncementServiceTest extends AbstractTest {
 	@Autowired
 	private RendezvousService	rendezvousService;
 
+	@Autowired
+	private UserService			userService;
+
 
 	// Tests ------------------------------------------------------------------
 
 	/**
-	 * Create a new announcement:
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 16.3
+	 * 
+	 * An actor who is authenticated as a user must be able to:
+	 * - Create an announcement regarding one of the rendezvouses that he or she's created previously.
+	 * 
 	 * Positive test 1: creating an announcement with user
 	 * Negative test 2: creating an announcement with admin
 	 * Negative test 3: creating an announcement with manager
@@ -79,7 +90,6 @@ public class AnnouncementServiceTest extends AbstractTest {
 			this.authenticate(actor);
 
 			Announcement announcement = null;
-			Announcement result = null;
 
 			announcement = this.announcementService.create();
 
@@ -87,10 +97,8 @@ public class AnnouncementServiceTest extends AbstractTest {
 			announcement.setDescription(description);
 			announcement.setRendezvous(this.rendezvousService.findOne(this.getEntityId(rendezvous)));
 
-			result = this.announcementService.saveFromCreate(announcement);
+			this.announcementService.saveFromCreate(announcement);
 			this.announcementService.flush();
-
-			Assert.notNull(result);
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -134,21 +142,14 @@ public class AnnouncementServiceTest extends AbstractTest {
 			this.authenticate(actor);
 
 			Announcement announcement = null;
-			Announcement result = null;
 
 			announcement = this.announcementService.findOne(this.getEntityId(announcementBean));
 
 			announcement.setTitle(title);
 			announcement.setDescription(description);
 
-			result = this.announcementService.saveFromEdit(announcement);
+			this.announcementService.saveFromEdit(announcement);
 			this.announcementService.flush();
-
-			Assert.notNull(result);
-
-			Assert.notNull(result);
-			Assert.isTrue(result.getTitle().equals(title));
-			Assert.isTrue(result.getDescription().equals(description));
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -160,24 +161,25 @@ public class AnnouncementServiceTest extends AbstractTest {
 	}
 
 	/**
-	 * Delete an announcement:
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 17.1
+	 * 
+	 * An actor who is authenticated as an administrator must be able to:
+	 * - Remove an announcement that he or she thinks is inappropriate.
+	 * 
 	 * Positive test 1: delete an announcement with admin
 	 * Negative test 2: delete an announcement with user
 	 * Negative test 3: delete an announcement with manager
 	 */
-
 	@Test
 	public void testDeleteAnnouncementDriver() {
 		// principal(actor), announcement bean, expected exception
 		final Object[][] testingData = {
 			{
-				// Positive test 1: delete an announcement with admin
 				"admin", "announcement1", null
 			}, {
-				// Negative test 2: delete an announcement with user
 				"user1", "announcement1", IllegalArgumentException.class
 			}, {
-				// Negative test 3: delete an announcement with manager
 				"manager", "announcement1", IllegalArgumentException.class
 			}
 		};
@@ -207,4 +209,89 @@ public class AnnouncementServiceTest extends AbstractTest {
 		this.checkExceptions(expectedException, caught);
 	}
 
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 15.1
+	 * 
+	 * An actor who is not authenticated must be able to:
+	 * - List the announcements that are associated with each rendezvous
+	 * 
+	 * Note: this requirements has been development on controllers.
+	 * 
+	 * Positive test 1: Anyone can list announcements
+	 */
+
+	@Test
+	public void testListAnnouncementsAssociatedWithEachRendezvousDriver() {
+		// rendezvous bean, expected exception
+		final Object[][] testingData = {
+			{
+				"rendezvous1", null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testListAnnouncementsAssociatedWithEachRendezvousTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+	}
+
+	public void testListAnnouncementsAssociatedWithEachRendezvousTemplate(final String rendezvous, final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			Assert.notNull(this.rendezvousService.findOne(this.getEntityId(rendezvous)).getAnnouncements());
+
+			//Assert.isTrue(services.size() == XX);
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptions(expectedException, caught);
+	}
+
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 16.5
+	 * 
+	 * An actor who is authenticated as a user must be able to:
+	 * - Display a stream of announcements that have been posted to the rendezvouses that he or she's
+	 * RSVPd. The announcements must be listed chronologically in descending order.
+	 * 
+	 * Positive test 1: an user get a stream of announcements
+	 */
+	@Test
+	public void testListStreamAnnouncementsDriver() {
+		// rendezvous bean, expected exception
+		final Object[][] testingData = {
+			{
+				"user1", null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testListStreamAnnouncementsTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+	}
+
+	public void testListStreamAnnouncementsTemplate(final String user, final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(user);
+			User usr = null;
+			Collection<Announcement> announcements = null;
+
+			usr = this.userService.findByPrincipal();
+			announcements = this.announcementService.getAnnouncementsPostedAndAcceptedByUser(usr.getId());
+
+			Assert.notNull(announcements);
+			//Assert.isTrue(services.size() == XX);
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptions(expectedException, caught);
+	}
 }
