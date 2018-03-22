@@ -1,6 +1,7 @@
 
 package services;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.transaction.Transactional;
@@ -11,9 +12,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
+import domain.RSVP;
 import domain.Rendezvous;
+import domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -32,6 +36,9 @@ public class RSVPServiceTest extends AbstractTest {
 
 	@Autowired
 	private RSVPService			rsvpService;
+
+	@Autowired
+	private UserService			userService;
 
 
 	// Tests ------------------------------------------------------------------
@@ -156,6 +163,39 @@ public class RSVPServiceTest extends AbstractTest {
 			final Rendezvous rendezvousToCancelRsvp = rendezvous;
 
 			this.rsvpService.cancelRSVP(rendezvousToCancelRsvp.getId());
+			this.requestService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptions(expectedException, caught);
+	}
+
+	@Test
+	public void testListRsvpDriver() {
+
+		final Object testingData[][] = {
+
+			/** userPrincipal */
+			{
+				"user1", null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testListRsvpTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+	}
+	protected void testListRsvpTemplate(final String username, final Class<?> expectedException) {
+		Class<?> caught;
+		caught = null;
+
+		try {
+			this.authenticate(username);
+			final User principal = this.userService.findOne(this.getEntityId(username));
+			final Collection<RSVP> rsvps = principal.getRsvps();
+			Assert.isTrue(rsvps.size() == 4);
 			this.requestService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
