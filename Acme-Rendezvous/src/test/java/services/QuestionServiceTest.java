@@ -36,8 +36,8 @@ public class QuestionServiceTest extends AbstractTest {
 	 * The creator of a rendezvous may associate a number of questions with it, each of which
 	 * must be answered when a user RSVPs that rendezvous.
 	 * 
-	 * Test 1: Positive case.
-	 * Test 2: Negative case.Incorrect user.
+	 * Positive test 1: Create question by correct user.
+	 * Negative test 2: Create question by incorrect user.
 	 */
 	@Test
 	public void testSaveFromCreateQuestion() {
@@ -92,8 +92,8 @@ public class QuestionServiceTest extends AbstractTest {
 	 * Manage the questions that are associated with a rendezvous that he or she’s created
 	 * previously.
 	 * 
-	 * Test 1: Positive case.
-	 * Test 2: Negative case.Incorrect user.
+	 * Positive test 1: Edit question by correct user.
+	 * Negative test 2: Edit question by incorrect user.
 	 */
 
 	@Test
@@ -154,8 +154,8 @@ public class QuestionServiceTest extends AbstractTest {
 	 * Manage the questions that are associated with a rendezvous that he or she’s created
 	 * previously.
 	 * 
-	 * Test 1: Positive case.
-	 * Test 2: Negative case.Incorrect user.
+	 * Positive test 1: Delete question by correct user.
+	 * Negative test 2: Delete question by incorrect user.
 	 */
 	@Test
 	public void testDeleteQuestion() {
@@ -213,8 +213,8 @@ public class QuestionServiceTest extends AbstractTest {
 	 * Manage the questions that are associated with a rendezvous that he or she’s created
 	 * previously.
 	 * 
-	 * Test 1: Positive case.
-	 * Cannot test negative case of list.
+	 * Positive test 1: List questions.
+	 * Note: this requirements has been development on controllers.
 	 */
 	@Test
 	public void testListQuestion() {

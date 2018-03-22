@@ -1,0 +1,7 @@
+Sobre el test de listado: SI, HAY QUE PROBARLAS.
+Lanzan los test -> Todos los test funcionan. Le parece bien los comentarios de los test. 
+Sobre los assert de los test -> minimizarlos tanto como se pueda. Usarlos solo con test que devuelven cosas.
+Le muestra los CRUD de administrador -> bien
+Muestra el test de service y habla sobre el finally { unauthenticate } -> le parece bien, aunque también se puede hacer transactional con rollback. Probar esto para el próximo proyecto. también se puede usar ¿entityManager.clear? 
+Se muestra el modelo con los form -> tener una traza de como se hace la reconstrucción de ese formulario. Un UML donde se hace mapping de los form al objeto que sea, PERO NO SE PIDE. Escribir en un archivo que hemos obviado la slineas que unen los mapping en el modelo de dominio.
+Sobre el validator: hacer una traza de lo que pasa ahí. Se usa el validator para evitar contradicciones en el modelo de dominio y los form. Pero si todo funciona bien, no hace falta ponerlo.
