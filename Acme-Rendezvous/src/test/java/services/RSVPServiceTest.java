@@ -37,10 +37,23 @@ public class RSVPServiceTest extends AbstractTest {
 	// Tests ------------------------------------------------------------------
 	/**
 	 * Requirement 5.4 Acme-Rendezvous
-	 * RSVP a rendezvous or cancel it.
-	 * 1st Test--> RSVP
-	 * 2nd Test--> Cancel rsvp
-	 * When a user RSVPs a rendezvous, he or she is assumed to attend it
+	 * 
+	 * RSVP a rendezvous.
+	 * 
+	 * Notes: The creator of r1 is user1. User1 and user2 are adults, user3 is not adult
+	 * 
+	 * Positive test1: An user(not the creator) rsvp a rendezvous
+	 * Positive test2: An user rsvp a rendezvous still not rsvped
+	 * Positive test3: An young user rsvp a rendezvous not for adults,not draft and not deleted
+	 * Positive test4: An adult rsvp a rendezvous only for adults
+	 * Negative test1: A young user rsvp a rendezvous only for adults
+	 * Negative test2: A user rsvp a draft rendezvous
+	 * Negative test3: A user rsvp a deleted rendezvous
+	 * Negative test4: An adult user rsvp an adult rendezvous but deleted
+	 * Negative test5: An adult user rsvp an adult rendezvous but draft
+	 * Negative test6: The creator of the rendezvous try to rsvp his own rendezvous again
+	 * Negative test7: A user(not the creator) try to rsvp a rendezvous already rsvped
+	 * Negative test8: A user try to rsvp a past rendezvous
 	 */
 	@Test
 	public void testRsvpDriver() {
@@ -49,44 +62,28 @@ public class RSVPServiceTest extends AbstractTest {
 		final Rendezvous r2 = this.rendezvousService.findOne(this.getEntityId("rendezvous2"));
 		final Rendezvous r4 = this.rendezvousService.findOne(this.getEntityId("rendezvous4"));
 
-		//The creator of r1 is user1
-		// User1 and user2 are adults, user3 is not adult
 		final Object testingData[][] = {
 
-			//userPrincipal, rendezvous, meetingMoment, isAdult, isDraft, isDeleted, exception
-
+			/** userPrincipal, rendezvous, meetingMoment, isAdult, isDraft, isDeleted, exception */
 			{
-				//Positive test1: An user(not the creator) rsvp a rendezvous
-				//Positive test2: An user rsvp a rendezvous still not rsvped
-				//Positive test3: An young user rsvp a rendezvous not for adults,not draft and not deleted
-
 				"user3", r2, new DateTime().plusHours(1).toDate(), false, false, false, null
 			}, {
-				//Positive test4: An adult rsvp a rendezvous only for adults
 				"user2", r2, new DateTime().plusHours(1).toDate(), true, false, false, null
 			}, {
-				//Negative test5: A young user rsvp a rendezvous only for adults
 				"user3", r2, new DateTime().plusHours(1).toDate(), true, false, false, IllegalArgumentException.class
 			}, {
-				//Negative test6: A user rsvp a draft rendezvous
 				"user3", r2, new DateTime().plusHours(1).toDate(), false, true, false, IllegalArgumentException.class
 			}, {
-				//Negative test7: A user rsvp a deleted rendezvous
 				"user3", r2, new DateTime().plusHours(1).toDate(), false, false, true, IllegalArgumentException.class
 			}, {
-				//Negative test8: An adult user rsvp an adult rendezvous but deleted
 				"user3", r2, new DateTime().plusHours(1).toDate(), true, false, true, IllegalArgumentException.class
 			}, {
-				//Negative test9: An adult user rsvp an adult rendezvous but draft
 				"user3", r2, new DateTime().plusHours(1).toDate(), true, true, false, IllegalArgumentException.class
 			}, {
-				//Negative test10: The creator of the rendezvous try to rsvp his own rendezvous again
 				"user1", r1, new DateTime().plusHours(1).toDate(), false, false, false, IllegalArgumentException.class
 			}, {
-				//Negative test11: A user(not the creator) try to rsvp a rendezvous already rsvped
 				"user2", r4, new DateTime().plusHours(1).toDate(), false, false, false, IllegalArgumentException.class
 			}, {
-				//Negative test12: A user try to rsvp a past rendezvous
 				"user2", r4, new DateTime(2017, 8, 21, 0, 0).toDate(), false, false, false, IllegalArgumentException.class
 			}
 
@@ -120,6 +117,15 @@ public class RSVPServiceTest extends AbstractTest {
 		this.checkExceptions(expectedException, caught);
 	}
 
+	/**
+	 * Requirement 5.4 Acme-Rendezvous
+	 * 
+	 * Cancel a rendezvous
+	 * 
+	 * Positive test1: A user cancels a rsvp he already rsvped
+	 * Negative test1: A user cancels a rsvp he has not rsvped
+	 */
+
 	@Test
 	public void testCancelRsvpDriver() {
 
@@ -128,14 +134,10 @@ public class RSVPServiceTest extends AbstractTest {
 
 		final Object testingData[][] = {
 
-			//userPrincipal, rendezvous, exception
-
+			/** userPrincipal, rendezvous, exception */
 			{
-				//Positive test1: A user cancel a rsvp he has rsvped
-
 				"user1", r2, null
 			}, {
-				//Negative test2: n user cancel a rsvp he has not rsvped
 
 				"user1", r6, IllegalArgumentException.class
 			}
@@ -154,7 +156,6 @@ public class RSVPServiceTest extends AbstractTest {
 			final Rendezvous rendezvousToCancelRsvp = rendezvous;
 
 			this.rsvpService.cancelRSVP(rendezvousToCancelRsvp.getId());
-			this.unauthenticate();
 			this.requestService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();

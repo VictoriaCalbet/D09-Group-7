@@ -38,51 +38,53 @@ public class RequestServiceTest extends AbstractTest {
 	// Tests ------------------------------------------------------------------
 
 	/**
-	 * 
 	 * Requirement 4.3.
 	 * Request a service for one of the rendezvouses that he or she’s created.
 	 * He or she must specify a valid credit card in every request for a service.
 	 * Optionally, he or she can provide some comments in the request.
+	 * 
+	 * Note: the service 5 will be always inappropriate in these tests
+	 * 
+	 * Positive test1: Requesting a service for a rendezvous created by the user and a valid credit card
+	 * Positive test2: Requesting a service for a valid rendezvous and a valid credit card
+	 * Positive test3: Requesting a service not requested yet for a valid rendezvous
+	 * Negative test1: Requesting a service for a rendezvous that the user has not created
+	 * Negative test2: Requesting a null service
+	 * Negative test3: Requesting a service with null rendezvous
+	 * Negative test4: Requesting an available service for an available rendezvous but invalid CreditCard number
+	 * Negative test5: Requesting an available service for an available rendezvous but null creditCard number
+	 * Negative test6: Requesting an inappropriate service
+	 * Negative test7: Requesting an appropriate service, but the user is not the creator of the rendezvous
+	 * Negative test8: Requesting an appropriate service, the user is the creator,but the rendezvous is in draft mode
+	 * Negative test9: Requesting an appropriate service, but already requested for that rendezvous
 	 */
 
 	@Test
 	public void testCreateRequestDriver() {
 		final Object testingData[][] = {
 
-			//Note: the service 5 will be always inappropriate in these tests
 			{
-				//Positive test1: Requesting a service for a rendezvous created by the user and a valid credit card
-				//Positive test2: Requesting a service for a valid rendezvous and a valid credit card
-				//Positive test3: Requesting a service not requested yet for a valid rendezvous
 				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, null
 			}, {
-				//Negative test1: Requesting a service for a rendezvous that the user has not created
+
 				"user2", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, IllegalArgumentException.class
 			}, {
-				//Negative test2: Requesting a null service
+
 				"user1", null, "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, NullPointerException.class
 			}, {
-				//Negative test3: Requesting a service with null rendezvous
+
 				"user1", "service4", null, "David Romero", "Visa", "4716228108990601", 9, 2018, 502, NullPointerException.class
 			}, {
-				//Negative test4: Requesting an available service for an available rendezvous but invalid CreditCard number
 				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990444", 9, 2018, 502, ConstraintViolationException.class
-
 			}, {
-				//Negative test5: Requesting an available service for an available rendezvous but null creditCard number
 				"user1", "service4", "rendezvous1", "David Romero", "Visa", null, 9, 2018, 502, IllegalArgumentException.class
 			}, {
-
-				//Negative test6: Requesting an inappropriate service
 				"user1", "service5", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, IllegalArgumentException.class
 			}, {
-				//Negative test7: Requesting an appropriate service, but the user is not the creator of the rendezvous
 				"user1", "service1", "rendezvous5", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, IllegalArgumentException.class
 			}, {
-				//Negative test8: Requesting an appropriate service, the user is the creator,but the rendezvous is in draft mode
 				"user1", "service1", "rendezvous3", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, IllegalArgumentException.class
 			}, {
-				//Negative test9: Requesting an appropriate service, but already requested for that rendezvous
 				"user1", "service4", "rendezvous1", "David Romero", "Visa", "4716228108990601", 9, 2018, 502, ConstraintViolationException.class
 			}
 
@@ -121,7 +123,6 @@ public class RequestServiceTest extends AbstractTest {
 
 			this.requestService.saveFromCreate(request);
 
-			this.unauthenticate();
 			this.requestService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
