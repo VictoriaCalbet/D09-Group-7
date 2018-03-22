@@ -46,8 +46,8 @@ public class AnswerServiceTest extends AbstractTest {
 	 * Answer the questions that are associated with a rendezvous that he or
 	 * she’s RSVPing now.
 	 * 
-	 * Test 1: Positive case.
-	 * Test 2: Negative case.Blank answer.
+	 * Positive test 1: Create answer with not blank text.
+	 * Negative test 2: Create answer with blank text
 	 */
 	@Test
 	public void testSaveFromCreateAnswer() {
@@ -110,15 +110,15 @@ public class AnswerServiceTest extends AbstractTest {
 	 * Display information about the users who have RSVPd a rendezvous, which, in turn,
 	 * must show their answers to the questions that the creator has registered.
 	 * 
-	 * Test 1: Positive case.
-	 * Cannot test negative case of list.
+	 * Positive test 1: List answers.
+	 * Note: this requirements has been development on controllers.
 	 */
 	@Test
 	public void testListAnswer() {
 
 		final Object[][] testingData = {
 			{
-				//Create with not blank text
+
 				"user2", null
 			}
 		};
