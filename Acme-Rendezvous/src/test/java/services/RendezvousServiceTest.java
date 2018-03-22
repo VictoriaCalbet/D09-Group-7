@@ -39,8 +39,7 @@ public class RendezvousServiceTest extends AbstractTest {
 	// Tests ------------------------------------------------------------------
 
 	/***
-	 * 
-	 * Requirement 5.2:
+	 * Acme-Rendezvous 1.0: Requirement 5.2
 	 * 
 	 * Create a rendezvous, which he's implicitly assumed to attend.
 	 * Note that a user may edit his or her rendezvouses as long as

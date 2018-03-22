@@ -38,7 +38,9 @@ public class RequestServiceTest extends AbstractTest {
 	// Tests ------------------------------------------------------------------
 
 	/**
-	 * Requirement 4.3.
+	 * 
+	 * Acme-Rendezvous 2.0: Requirement 4.3
+	 * 
 	 * Request a service for one of the rendezvouses that he or she’s created.
 	 * He or she must specify a valid credit card in every request for a service.
 	 * Optionally, he or she can provide some comments in the request.
