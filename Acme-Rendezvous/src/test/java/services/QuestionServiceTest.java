@@ -248,7 +248,6 @@ public class QuestionServiceTest extends AbstractTest {
 			Rendezvous rendezvousInDB;
 			rendezvousInDB = this.rendezvousService.findOne(this.getEntityId("rendezvous6"));
 			Assert.isTrue(rendezvousInDB.getQuestions().size() == 1);
-			this.unauthenticate();
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();

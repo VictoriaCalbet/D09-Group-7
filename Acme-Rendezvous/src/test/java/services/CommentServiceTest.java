@@ -32,7 +32,7 @@ public class CommentServiceTest extends AbstractTest {
 	@Autowired
 	private RendezvousService	rendezvousService;
 
-	
+
 	/**
 	 * 
 	 * Acme-Rendezvous 1.0: Requirement 4.6
@@ -43,10 +43,10 @@ public class CommentServiceTest extends AbstractTest {
 	 * Test 1: Positive case, without a picture URL.
 	 * Test 2: Positive case, with a picture URL.
 	 * Test 3: Negative case. The text of the comment is null.
-	 * Test 4: Negative case. The URL pattern is invalid. 
+	 * Test 4: Negative case. The URL pattern is invalid.
 	 * Test 5: Negative case. The rendezvous is null
 	 */
-	
+
 	//Begin tests
 
 	@Test
@@ -54,7 +54,6 @@ public class CommentServiceTest extends AbstractTest {
 		// Comment: text, optional URL picture,rendezvous, user, originalComment, expectedException
 		final Rendezvous rendezvous = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
 		final User user = this.userService.findOne(this.getEntityId("user1"));
-		
 
 		final Object[][] testingData = {
 
@@ -121,10 +120,10 @@ public class CommentServiceTest extends AbstractTest {
 	 * Test 1: Positive case, without a picture URL.
 	 * Test 2: Positive case, with a picture URL.
 	 * Test 3: Negative case. The text of the comment is null.
-	 * Test 4: Negative case. The URL pattern is invalid. 
+	 * Test 4: Negative case. The URL pattern is invalid.
 	 * Test 5: Negative case. The rendezvous is null
 	 */
-	
+
 	@Test
 	public void testSaveReplyComment() {
 		// Comment: text, optional URL picture,rendezvous, user, originalComment, expectedException
@@ -164,10 +163,9 @@ public class CommentServiceTest extends AbstractTest {
 			this.authenticate("user1");
 
 			final Comment comment = this.commentService.create();
-			
-			if(url!=null){
-			comment.setPicture(url);
-			}
+
+			if (url != null)
+				comment.setPicture(url);
 			comment.setUser(user);
 			comment.setText(text);
 
@@ -185,7 +183,7 @@ public class CommentServiceTest extends AbstractTest {
 		this.checkExceptionsWithMessage(expectedException, caught, messageError);
 
 	}
-	
+
 	/**
 	 * 
 	 * Acme-Rendezvous 1.0: Requirement 6.1
@@ -196,7 +194,7 @@ public class CommentServiceTest extends AbstractTest {
 	 * Test 1: Positive case, without a picture URL.
 	 * Test 2: Negative case. The comment to delete is null
 	 */
-	
+
 	@Test
 	public void testDeleteComment() {
 		// Comment, expectedException
@@ -229,7 +227,6 @@ public class CommentServiceTest extends AbstractTest {
 
 			this.commentService.delete(comment.getId());
 
-			this.unauthenticate();
 			this.commentService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();

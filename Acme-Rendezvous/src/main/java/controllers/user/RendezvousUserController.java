@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import services.RendezvousService;
-import services.ServiceService;
 import services.UserService;
 import services.form.RendezvousFormService;
 import services.form.RendezvousLinkedFormService;
@@ -39,9 +38,6 @@ public class RendezvousUserController extends AbstractController {
 
 	@Autowired
 	private UserService					userService;
-
-	@Autowired
-	private ServiceService				serviceService;
 
 	@Autowired
 	private RendezvousLinkedFormService	rendezvousLinkedFormService;

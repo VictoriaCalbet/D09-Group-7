@@ -438,8 +438,6 @@ public class RendezvousServiceTest extends AbstractTest {
 
 			Assert.notNull(rendezvouses);
 
-			this.unauthenticate();
-
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 		} finally {

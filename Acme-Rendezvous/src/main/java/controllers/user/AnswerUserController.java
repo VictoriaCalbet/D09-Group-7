@@ -163,6 +163,7 @@ public class AnswerUserController extends AbstractController {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/respond", method = RequestMethod.POST, params = "save")
 	public ModelAndView answerQuestions(final HttpServletRequest request) {
 		ModelAndView result = null;

@@ -173,7 +173,6 @@ public class AnswerServiceTest extends AbstractTest {
 					answersInDB.add(answer2);
 			}
 			Assert.isTrue(answersInDB.size() == 1);
-			this.unauthenticate();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 			messageError = oops.getMessage();

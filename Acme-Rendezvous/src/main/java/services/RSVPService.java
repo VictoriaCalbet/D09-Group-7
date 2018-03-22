@@ -167,6 +167,7 @@ public class RSVPService {
 	//Auxiliar methods
 
 	//If return true, you can RSVP.
+	@SuppressWarnings("unused")
 	private Boolean allAnswersAreRespondedByPrincipal(final RSVP rsvp) {
 		Boolean allAnswersAreRespondedByPrincipal;
 		allAnswersAreRespondedByPrincipal = false;

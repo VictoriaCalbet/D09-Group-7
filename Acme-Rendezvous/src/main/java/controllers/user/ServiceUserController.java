@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import services.ServiceService;
-import services.UserService;
 import controllers.AbstractController;
 import domain.Service;
-import domain.User;
 
 @Controller
 @RequestMapping("/service/user")
@@ -24,9 +22,6 @@ public class ServiceUserController extends AbstractController {
 
 	@Autowired
 	private ServiceService	serviceService;
-
-	@Autowired
-	private UserService		userService;
 
 
 	// Constructors ---------------------------------------------------------
@@ -43,9 +38,6 @@ public class ServiceUserController extends AbstractController {
 		Collection<Service> services = null;
 		String requestURI = null;
 		String displayURI = null;
-		User user = null;
-
-		user = this.userService.findByPrincipal();
 
 		if (rendezvousId == null)
 			services = this.serviceService.findAvailableServices();
