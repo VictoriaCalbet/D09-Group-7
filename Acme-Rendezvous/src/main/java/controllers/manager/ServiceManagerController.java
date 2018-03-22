@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,17 @@ public class ServiceManagerController extends AbstractController {
 	@Autowired
 	private CategoryService		categoryService;
 
+
+	@Autowired
+	public void setServiceService(final ServiceService serviceService) {
+		this.serviceService = serviceService;
+	}
+
+	@RequestMapping("/services")
+	public String getAllServices(final ModelMap modelMap) {
+		modelMap.put("services", this.serviceService.findAll());
+		return "services";
+	}
 
 	// Constructors ---------------------------------------------------------
 
