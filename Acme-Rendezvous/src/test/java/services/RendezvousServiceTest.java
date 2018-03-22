@@ -339,8 +339,7 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.authenticate(principal);
 
 			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousesLogged(this.actorService.findByPrincipal());
-
-			Assert.notNull(rendezvouses);
+			Assert.isTrue(rendezvouses.size() == 4);
 
 			this.unauthenticate();
 
@@ -387,8 +386,7 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.authenticate(principal);
 
 			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousSimilarLogged(r.getId());
-
-			Assert.notNull(rendezvouses);
+			Assert.isTrue(rendezvouses.size() == 1);
 
 			this.unauthenticate();
 
@@ -434,8 +432,7 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.authenticate(principal);
 
 			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousByCategories(c.getId());
-
-			Assert.notNull(rendezvouses);
+			Assert.isTrue(rendezvouses.size() == 2);
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
