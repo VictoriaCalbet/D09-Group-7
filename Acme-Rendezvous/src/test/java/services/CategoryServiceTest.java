@@ -1,6 +1,8 @@
 
 package services;
 
+import java.util.Collection;
+
 import javax.transaction.Transactional;
 
 import org.junit.Test;
@@ -8,8 +10,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
+import domain.Administrator;
 import domain.Category;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -23,6 +27,62 @@ public class CategoryServiceTest extends AbstractTest {
 	private CategoryService	categoryService;
 
 
+	/**
+	 * 
+	 * Acme-Rendezvous 2.0: Requirement 11.1
+	 * 
+	 * An actor who is authenticated as an administrator must be able to:
+	 * -Manage the categories of services, which includes listing, creating, updating,
+	 * deleting, and re-organising them in the category hierarchies.
+	 * 
+	 * These tests check that a category is deleted from the dabatase properly
+	 * 
+	 * Test 1: Positive case.
+	 * Test 2: Negative case. The category is null
+	 */
+
+	@Test
+	public void testListCategories() {
+		// Category, expectedException
+		final Object[][] testingData = {
+
+			{
+				"admin", null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testListCategoriesTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+
+	}
+
+	protected void testListCategoriesTemplate(final String admin, final Class<?> expectedException) {
+
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			this.authenticate(admin);
+
+			Collection<Category> categories = this.categoryService.findAll();
+
+			Assert.isTrue(categories.size()==4);
+			
+			this.categoryService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
+	}
+	
 	/**
 	 * 
 	 * Acme-Rendezvous 2.0: Requirement 11.1
@@ -69,7 +129,7 @@ public class CategoryServiceTest extends AbstractTest {
 
 			this.categoryService.delete(category);
 
-			this.unauthenticate();
+			
 			this.categoryService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -143,7 +203,7 @@ public class CategoryServiceTest extends AbstractTest {
 
 			this.categoryService.saveFromCreate(category);
 
-			this.unauthenticate();
+			
 			this.categoryService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
