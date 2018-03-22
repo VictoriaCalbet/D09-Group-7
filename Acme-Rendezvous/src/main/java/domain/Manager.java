@@ -24,7 +24,7 @@ public class Manager extends Actor {
 
 
 	@NotBlank
-	@Pattern(regexp = "^[A-Za-z1-9-]+")
+	@Pattern(regexp = "^[A-Za-z0-9-]+")
 	@SafeHtml(whitelistType = WhiteListType.NONE)
 	public String getVAT() {
 		return this.VAT;
