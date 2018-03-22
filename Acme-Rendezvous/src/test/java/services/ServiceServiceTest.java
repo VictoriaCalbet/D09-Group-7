@@ -344,9 +344,7 @@ public class ServiceServiceTest extends AbstractTest {
 
 			services = this.serviceService.findAvailableServices();
 
-			Assert.notNull(services);
-
-			//Assert.isTrue(services.size() == 6);
+			Assert.isTrue(services.size() == 6);
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 		} finally {

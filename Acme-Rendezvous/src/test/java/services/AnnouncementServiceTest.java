@@ -23,6 +23,7 @@ import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
 import domain.Announcement;
+import domain.Rendezvous;
 import domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -238,9 +239,14 @@ public class AnnouncementServiceTest extends AbstractTest {
 		Class<?> caught = null;
 
 		try {
-			Assert.notNull(this.rendezvousService.findOne(this.getEntityId(rendezvous)).getAnnouncements());
+			Rendezvous rvs = null;
+			Collection<Announcement> announcements = null;
 
-			//Assert.isTrue(services.size() == XX);
+			rvs = this.rendezvousService.findOne(this.getEntityId(rendezvous));
+			announcements = rvs.getAnnouncements();
+
+			Assert.isTrue(announcements.size() == 2);
+
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 		} finally {
@@ -284,8 +290,7 @@ public class AnnouncementServiceTest extends AbstractTest {
 			usr = this.userService.findByPrincipal();
 			announcements = this.announcementService.getAnnouncementsPostedAndAcceptedByUser(usr.getId());
 
-			Assert.notNull(announcements);
-			//Assert.isTrue(services.size() == XX);
+			Assert.isTrue(announcements.size() == 3);
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 		} finally {
