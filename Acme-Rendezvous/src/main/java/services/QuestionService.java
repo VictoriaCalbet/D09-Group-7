@@ -73,6 +73,7 @@ public class QuestionService {
 		Assert.notNull(this.rendezvousService.findOne(question.getRendezvous().getId()));
 		Assert.isTrue(this.isCorrectString(question.getText()));
 		this.isUserAuthenticate();
+		this.isCorrectUser(question.getRendezvous().getId());
 		Assert.isTrue(!this.answerIsResponded(question.getRendezvous().getId()), "question.message.error.attendants");
 		Question savedQuestion;
 		savedQuestion = this.questionRepository.save(question);
@@ -160,6 +161,9 @@ public class QuestionService {
 		this.questionRepository.delete(question);
 		this.rendezvousService.saveWithoutConstraints(rendezvous);
 
+	}
+	public void flush() {
+		this.questionRepository.flush();
 	}
 	// Other business methods -------------------------------------------------
 	//Auxiliares

@@ -13,7 +13,6 @@ import org.springframework.util.Assert;
 import utilities.AbstractTest;
 import domain.Question;
 import domain.Rendezvous;
-import domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -22,142 +21,243 @@ import domain.User;
 @Transactional
 public class QuestionServiceTest extends AbstractTest {
 
+	//The SUT ----------------------------------------
 	@Autowired
 	private QuestionService		questionService;
 
 	@Autowired
-	private UserService			userService;
-	@Autowired
 	private RendezvousService	rendezvousService;
 
 
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 18
+	 * 
+	 * The creator of a rendezvous may associate a number of questions with it, each of which
+	 * must be answered when a user RSVPs that rendezvous.
+	 * 
+	 * Test 1: Positive case.
+	 * Test 2: Negative case.Incorrect user.
+	 */
 	@Test
-	public void testCreate() {
-		Question question;
-		Rendezvous rendezvouSInDB;
-		rendezvouSInDB = null;
-		for (final Rendezvous r : this.rendezvousService.findAll())
-			rendezvouSInDB = r;
-		if (rendezvouSInDB != null) {
-			question = this.questionService.create(rendezvouSInDB);
-			Assert.notNull(question.getAnswers());
-			Assert.notNull(question.getRendezvous());
-			Assert.isNull(question.getText());
-			Assert.isTrue(question.getAnswers().isEmpty());
-		}
-	}
-	@Test
-	public void testSavedFromCreate() {
-		this.authenticate("user1");
-		Question question;
-		Rendezvous rendezvousInDB;
-		rendezvousInDB = null;
-		for (final User u : this.userService.findAll())
-			if (u.getUserAccount().getUsername().equals("user1"))
-				for (final Rendezvous r : u.getRendezvoussesCreated())
-					if (r.getName().equals("This is rendezvous1")) {
-						rendezvousInDB = r;
-						break;
-					}
-		if (rendezvousInDB != null) {
-			question = this.questionService.create(rendezvousInDB);
-			question.setText("What?");
-			Question questionSaved;
-			questionSaved = this.questionService.saveFromCreate(question);
-			Question questionInDB;
-			questionInDB = this.questionService.findOne(questionSaved.getId());
-			Assert.notNull(questionInDB.getAnswers());
-			Assert.isTrue(questionInDB.getAnswers().equals(questionSaved.getAnswers()));
+	public void testSaveFromCreateQuestion() {
 
-		}
-		this.unauthenticate();
+		final Object[][] testingData = {
+			{
+				//Create by correct user.
+				"user3", null
+			}, {
+				//Create by incorrect user.
+				"user1", IllegalArgumentException.class
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testSaveFromCreateQuestionTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
 
 	}
-	@Test
-	public void testSavedFromEdit() {
-		this.authenticate("user1");
-		Question question;
-		Rendezvous rendezvousInDB;
-		rendezvousInDB = null;
 
-		for (final User u : this.userService.findAll())
-			if (u.getUserAccount().getUsername().equals("user1"))
-				for (final Rendezvous r : u.getRendezvoussesCreated())
-					if (r.getName().equals("This is rendezvous1")) {
-						rendezvousInDB = r;
-						break;
-					}
+	protected void testSaveFromCreateQuestionTemplate(final String user, final Class<?> expectedException) {
 
-		if (rendezvousInDB != null) {
-			question = this.questionService.create(rendezvousInDB);
-			question.setText("What?");
-			Question questionSaved;
-			questionSaved = this.questionService.saveFromCreate(question);
-			Question questionInDB;
-			questionInDB = this.questionService.findOne(questionSaved.getId());
-			Assert.notNull(questionInDB.getAnswers());
-			Assert.isTrue(questionInDB.getAnswers().equals(questionSaved.getAnswers()));
-			questionInDB.setText("Who?");
-			this.questionService.saveFromEdit(questionInDB);
-			Question questionInDB2;
-			questionInDB2 = this.questionService.findOne(questionInDB.getId());
-			Assert.isTrue(questionInDB2.getText().equals("Who?"));
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			this.authenticate(user);
+			Question question;
+			question = this.questionService.create(this.rendezvousService.findOne(this.getEntityId("rendezvous6")));
+			question.setText("question text1");
+			this.questionService.saveFromCreate(question);
+			this.questionService.flush();
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
 		}
-		this.unauthenticate();
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
 	}
 
-	@Test
-	public void testSaveByOtherUser() {
-		Question question;
-		Rendezvous rendezvousInDB;
-		rendezvousInDB = null;
-		for (final User u : this.userService.findAll())
-			if (u.getUserAccount().getUsername().equals("user1"))
-				for (final Rendezvous r : u.getRendezvoussesCreated())
-					if (r.getName().equals("This is rendezvous1")) {
-						rendezvousInDB = r;
-						break;
-					}
-		if (rendezvousInDB != null) {
-			question = this.questionService.create(rendezvousInDB);
-			question.setText("What?");
-			Question questionSaved;
-			questionSaved = this.questionService.saveByOtherUser(question);
-			Question questionInDB;
-			questionInDB = this.questionService.findOne(questionSaved.getId());
-			Assert.notNull(questionInDB.getAnswers());
-			Assert.isTrue(questionInDB.getAnswers().equals(questionSaved.getAnswers()));
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 21.1
+	 * 
+	 * Manage the questions that are associated with a rendezvous that he or she’s created
+	 * previously.
+	 * 
+	 * Test 1: Positive case.
+	 * Test 2: Negative case.Incorrect user.
+	 */
 
+	@Test
+	public void testSaveFromEditQuestion() {
+
+		final Object[][] testingData = {
+			{
+				//Edit by correct user.
+				"user3", null
+			}, {
+				//Edit by incorrect user.
+				"user2", IllegalArgumentException.class
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testSaveFromEditQuestionTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+
+	}
+	protected void testSaveFromEditQuestionTemplate(final String user, final Class<?> expectedException) {
+
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			this.authenticate("user3");
+			Question question;
+			question = this.questionService.create(this.rendezvousService.findOne(this.getEntityId("rendezvous6")));
+			question.setText("question text1");
+			Question questionInDB;
+			questionInDB = this.questionService.saveFromCreate(question);
+			this.questionService.flush();
+			this.unauthenticate();
+			this.authenticate(user);
+			questionInDB.setText("question text1");
+			questionInDB = this.questionService.saveFromEdit(questionInDB);
+			this.questionService.flush();
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
 		}
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
 	}
 
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 21.1
+	 * 
+	 * Manage the questions that are associated with a rendezvous that he or she’s created
+	 * previously.
+	 * 
+	 * Test 1: Positive case.
+	 * Test 2: Negative case.Incorrect user.
+	 */
 	@Test
-	public void testDelete() {
-		this.authenticate("user1");
-		Question question;
-		Rendezvous rendezvousInDB;
-		rendezvousInDB = null;
-		for (final User u : this.userService.findAll())
-			if (u.getUserAccount().getUsername().equals("user1"))
-				for (final Rendezvous r : u.getRendezvoussesCreated())
-					if (r.getName().equals("This is rendezvous1")) {
-						rendezvousInDB = r;
-						break;
-					}
-		if (rendezvousInDB != null) {
-			question = this.questionService.create(rendezvousInDB);
-			question.setText("What?");
-			Question questionSaved;
-			questionSaved = this.questionService.saveFromCreate(question);
+	public void testDeleteQuestion() {
+
+		final Object[][] testingData = {
+			{
+				//Delete by correct user.
+				"user3", null
+			}, {
+				//Delete by incorrect user.
+				"user2", IllegalArgumentException.class
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testDeleteQuestionTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+
+	}
+	protected void testDeleteQuestionTemplate(final String user, final Class<?> expectedException) {
+
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			this.authenticate("user3");
+			Question question;
+			question = this.questionService.create(this.rendezvousService.findOne(this.getEntityId("rendezvous6")));
+			question.setText("question text1");
 			Question questionInDB;
-			questionInDB = this.questionService.findOne(questionSaved.getId());
-			Assert.notNull(questionInDB.getAnswers());
-			Assert.isTrue(questionInDB.getAnswers().equals(questionSaved.getAnswers()));
+			questionInDB = this.questionService.saveFromCreate(question);
+			this.questionService.flush();
+			this.unauthenticate();
+			this.authenticate(user);
 			this.questionService.delete(questionInDB);
-			Assert.isNull(this.questionService.findOne(questionInDB.getId()));
+			this.questionService.flush();
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
 		}
-		this.unauthenticate();
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
 
 	}
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 21.1
+	 * 
+	 * Manage the questions that are associated with a rendezvous that he or she’s created
+	 * previously.
+	 * 
+	 * Test 1: Positive case.
+	 * Cannot test negative case of list.
+	 */
+	@Test
+	public void testListQuestion() {
 
+		final Object[][] testingData = {
+			{
+				//List one question.
+				"user3", null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testDeleteQuestionTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+
+	}
+	protected void testListQuestionTemplate(final String user, final Class<?> expectedException) {
+
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			this.authenticate(user);
+			Question question;
+			question = this.questionService.create(this.rendezvousService.findOne(this.getEntityId("rendezvous6")));
+			question.setText("question text1");
+			this.questionService.saveFromCreate(question);
+			this.questionService.flush();
+			Rendezvous rendezvousInDB;
+			rendezvousInDB = this.rendezvousService.findOne(this.getEntityId("rendezvous6"));
+			Assert.isTrue(rendezvousInDB.getQuestions().size() == 1);
+			this.unauthenticate();
+
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
+	}
 }

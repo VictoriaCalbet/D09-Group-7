@@ -1,6 +1,9 @@
 
 package services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.junit.Test;
@@ -14,7 +17,7 @@ import utilities.AbstractTest;
 import domain.Answer;
 import domain.Question;
 import domain.Rendezvous;
-import domain.User;
+import domain.form.QuestionAndAnswerForm;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -24,167 +27,162 @@ import domain.User;
 public class AnswerServiceTest extends AbstractTest {
 
 	@Autowired
-	private UserService		userService;
+	private AnswerService		answerService;
 
 	@Autowired
-	private AnswerService	answerService;
+	private QuestionService		questionService;
+
+	@Autowired
+	private RendezvousService	rendezvousService;
+
+	@Autowired
+	private UserService			userService;
 
 
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 21.2
+	 * 
+	 * Answer the questions that are associated with a rendezvous that he or
+	 * she’s RSVPing now.
+	 * 
+	 * Test 1: Positive case.
+	 * Test 2: Negative case.Blank answer.
+	 */
 	@Test
-	public void testCreate() {
-		Answer answer;
-		answer = this.answerService.create();
-		Assert.isNull(answer.getQuestion());
-		Assert.isNull(answer.getUser());
-		Assert.isNull(answer.getText());
-	}
+	public void testSaveFromCreateAnswer() {
 
-	@Test
-	public void testSavedFromCreate() {
-		this.authenticate("user1");
-		Answer answer;
-		answer = this.answerService.create();
-		User userInDB;
-		userInDB = null;
-		Question questionInDB;
-		questionInDB = null;
-		for (final User u : this.userService.findAll())
-			if (u.getUserAccount().getUsername().equals("user1")) {
-				userInDB = u;
-				for (final Rendezvous r : u.getRendezvoussesCreated())
-					if (r.getName().equals("This is rendezvous1"))
-						for (final Question q : r.getQuestions())
-							if (q.getText().equals("Question 1 of rendezvous1")) {
-								questionInDB = q;
-								break;
-							}
+		final Object[][] testingData = {
+			{
+				//Create with not blank text
+				"text answer", null
+			}, {
+				//Create with blank text
+				"", IllegalArgumentException.class
 			}
-		if (questionInDB != null && userInDB != null) {
-			answer.setQuestion(questionInDB);
-			answer.setUser(userInDB);
-			answer.setText("Yes");
-			Answer savedAnswer;
-			savedAnswer = this.answerService.saveFromCreate(answer);
-			Answer answerInDB;
-			answerInDB = this.answerService.findOne(savedAnswer.getId());
-			Assert.notNull(answerInDB);
-			Assert.notNull(answerInDB.getText());
-			Assert.isTrue(answerInDB.getText().equals("Yes"));
-		}
-		this.unauthenticate();
-	}
-	@Test
-	public void testSavedFromEdit() {
-		this.authenticate("user1");
-		Answer answer;
-		answer = this.answerService.create();
-		User userInDB;
-		userInDB = null;
-		Question questionInDB;
-		questionInDB = null;
-		for (final User u : this.userService.findAll())
-			if (u.getUserAccount().getUsername().equals("user1")) {
-				userInDB = u;
-				for (final Rendezvous r : u.getRendezvoussesCreated())
-					if (r.getName().equals("This is rendezvous1"))
-						for (final Question q : r.getQuestions())
-							if (q.getText().equals("Question 1 of rendezvous1")) {
-								questionInDB = q;
-								break;
-							}
-			}
-		if (questionInDB != null && userInDB != null) {
-			answer.setQuestion(questionInDB);
-			answer.setUser(userInDB);
-			answer.setText("Yes");
-			Answer savedAnswer;
-			savedAnswer = this.answerService.saveFromCreate(answer);
-			Answer answerInDB;
-			answerInDB = this.answerService.findOne(savedAnswer.getId());
-			Assert.notNull(answerInDB);
-			Assert.notNull(answerInDB.getText());
-			Assert.isTrue(answerInDB.getText().equals("Yes"));
-			answerInDB.setText("No");
-			this.answerService.saveFromEdit(answerInDB);
-			Answer answerInDB2;
-			answerInDB2 = this.answerService.findOne(answerInDB.getId());
-			Assert.isTrue(answerInDB2.getText().equals("No"));
-		}
-		this.unauthenticate();
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testSaveFromCreateAnswerTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+
 	}
 
-	@Test
-	public void testDelete() {
-		this.authenticate("user1");
-		Answer answer;
-		answer = this.answerService.create();
-		User userInDB;
-		userInDB = null;
-		Question questionInDB;
-		questionInDB = null;
-		for (final User u : this.userService.findAll())
-			if (u.getUserAccount().getUsername().equals("user1")) {
-				userInDB = u;
-				for (final Rendezvous r : u.getRendezvoussesCreated())
-					if (r.getName().equals("This is rendezvous1"))
-						for (final Question q : r.getQuestions())
-							if (q.getText().equals("Question 1 of rendezvous1")) {
-								questionInDB = q;
-								break;
-							}
-			}
-		if (questionInDB != null && userInDB != null) {
-			answer.setQuestion(questionInDB);
-			answer.setUser(userInDB);
-			answer.setText("Yes");
-			Answer savedAnswer;
-			savedAnswer = this.answerService.saveFromCreate(answer);
-			Answer answerInDB;
-			answerInDB = this.answerService.findOne(savedAnswer.getId());
-			Assert.notNull(answerInDB);
-			Assert.notNull(answerInDB.getText());
-			this.answerService.delete(answerInDB);
-			Assert.isNull(this.answerService.findOne(answerInDB.getId()));
+	protected void testSaveFromCreateAnswerTemplate(final String answerText, final Class<?> expectedException) {
 
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			this.authenticate("user3");
+			Question question;
+			question = this.questionService.create(this.rendezvousService.findOne(this.getEntityId("rendezvous6")));
+			question.setText("question text1");
+			Question questionInDB;
+			questionInDB = this.questionService.saveFromCreate(question);
+			this.questionService.flush();
+			this.unauthenticate();
+			this.authenticate("user2");
+			Answer answer;
+			answer = this.answerService.create();
+			answer.setText(answerText);
+			answer.setQuestion(questionInDB);
+			answer.setUser(this.userService.findByPrincipal());
+			this.answerService.saveFromCreate(answer);
+			this.unauthenticate();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
 		}
-		this.unauthenticate();
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
 	}
 
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 20.1
+	 * 
+	 * Display information about the users who have RSVPd a rendezvous, which, in turn,
+	 * must show their answers to the questions that the creator has registered.
+	 * 
+	 * Test 1: Positive case.
+	 * Cannot test negative case of list.
+	 */
 	@Test
-	public void testfindAnswerByQuestionIdAndUserId() {
-		this.authenticate("user1");
-		Answer answer;
-		answer = this.answerService.create();
-		User userInDB;
-		userInDB = null;
-		Question questionInDB;
-		questionInDB = null;
-		for (final User u : this.userService.findAll())
-			if (u.getUserAccount().getUsername().equals("user1")) {
-				userInDB = u;
-				for (final Rendezvous r : u.getRendezvoussesCreated())
-					if (r.getName().equals("This is rendezvous1"))
-						for (final Question q : r.getQuestions())
-							if (q.getText().equals("Question 1 of rendezvous1")) {
-								questionInDB = q;
-								break;
-							}
+	public void testListAnswer() {
+
+		final Object[][] testingData = {
+			{
+				//Create with not blank text
+				"user2", null
 			}
-		if (questionInDB != null && userInDB != null) {
-			this.answerService.delete(this.answerService.findAnswerByQuestionIdAndUserId(questionInDB.getId(), userInDB.getId()));
-			answer.setQuestion(questionInDB);
-			answer.setUser(userInDB);
-			answer.setText("Yes");
-			Answer savedAnswer;
-			savedAnswer = this.answerService.saveFromCreate(answer);
-			Answer answerInDB;
-			answerInDB = this.answerService.findOne(savedAnswer.getId());
-			Assert.notNull(answerInDB);
-			Assert.notNull(answerInDB.getText());
-			Answer answerInDB2;
-			answerInDB2 = this.answerService.findAnswerByQuestionIdAndUserId(questionInDB.getId(), userInDB.getId());
-			Assert.isTrue(answerInDB2.equals(answerInDB));
-		}
-		this.unauthenticate();
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testSaveFromCreateAnswerTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+
 	}
+
+	protected void testListAnswerTemplate(final String user, final Class<?> expectedException) {
+
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			this.authenticate("user3");
+			Question question;
+			question = this.questionService.create(this.rendezvousService.findOne(this.getEntityId("rendezvous6")));
+			question.setText("question text1");
+			Question questionInDB;
+			questionInDB = this.questionService.saveFromCreate(question);
+			this.questionService.flush();
+			this.unauthenticate();
+			this.authenticate(user);
+			Answer answer;
+			answer = this.answerService.create();
+			answer.setText("Answer");
+			answer.setQuestion(questionInDB);
+			answer.setUser(this.userService.findByPrincipal());
+			this.answerService.saveFromCreate(answer);
+			final List<Question> questions;
+			questions = new ArrayList<Question>();
+			Rendezvous rendezvousInDB;
+			rendezvousInDB = this.rendezvousService.findOne(this.getEntityId("rendezvous6"));
+			questions.addAll(rendezvousInDB.getQuestions());
+			List<Answer> answersInDB;
+			answersInDB = new ArrayList<Answer>();
+			for (final Question q : questions) {
+				QuestionAndAnswerForm qaa;
+				qaa = new QuestionAndAnswerForm();
+				qaa.setQuestionId(q.getId());
+				qaa.setQuestionText(q.getText());
+
+				Answer answer2;
+				answer2 = null;
+				if (this.userService.findByPrincipal() != null)
+					answer2 = this.answerService.findAnswerByQuestionIdAndUserId(q.getId(), this.userService.findByPrincipal().getId());
+				if (answer2 != null)
+					answersInDB.add(answer2);
+			}
+			Assert.isTrue(answersInDB.size() == 1);
+			this.unauthenticate();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
+	}
+
 }
