@@ -209,7 +209,7 @@ public class ServiceService {
 
 	// Dashboard services ------------------------------------------------------
 
-	// TODO: Acme-Rendezvous 2.0 - Requisito 6.2.1
+	// Acme-Rendezvous 2.0 - Requisito 6.2.1
 	public Collection<Service> findBestSellingServices() {
 		return this.serviceRepository.findBestSellingServices();
 	}

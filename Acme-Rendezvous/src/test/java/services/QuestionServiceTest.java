@@ -72,7 +72,6 @@ public class QuestionServiceTest extends AbstractTest {
 			question.setText("question text1");
 			this.questionService.saveFromCreate(question);
 			this.questionService.flush();
-			this.unauthenticate();
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -134,7 +133,6 @@ public class QuestionServiceTest extends AbstractTest {
 			questionInDB.setText("question text1");
 			questionInDB = this.questionService.saveFromEdit(questionInDB);
 			this.questionService.flush();
-			this.unauthenticate();
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -194,7 +192,6 @@ public class QuestionServiceTest extends AbstractTest {
 			this.authenticate(user);
 			this.questionService.delete(questionInDB);
 			this.questionService.flush();
-			this.unauthenticate();
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -248,7 +245,6 @@ public class QuestionServiceTest extends AbstractTest {
 			Rendezvous rendezvousInDB;
 			rendezvousInDB = this.rendezvousService.findOne(this.getEntityId("rendezvous6"));
 			Assert.isTrue(rendezvousInDB.getQuestions().size() == 1);
-			this.unauthenticate();
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();

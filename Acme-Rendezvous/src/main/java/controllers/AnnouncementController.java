@@ -64,7 +64,7 @@ public class AnnouncementController extends AbstractController {
 
 		result = new ModelAndView();
 		result.addObject("announcement", announcement);
-		result.addObject("cancelURI", "/"); // TODO: cancelURI
+		result.addObject("cancelURI", "/");
 
 		return result;
 	}

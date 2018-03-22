@@ -133,7 +133,7 @@ public class DashboardAdministratorController extends AbstractController {
 
 		// Acme-Rendezvous 2.0
 
-		// TODO: Requisito 6.2.1
+		// Requisito 6.2.1
 		final Collection<Service> bestSellingServices = this.serviceService.findBestSellingServices();
 		result.addObject("bestSellingServices", bestSellingServices);
 

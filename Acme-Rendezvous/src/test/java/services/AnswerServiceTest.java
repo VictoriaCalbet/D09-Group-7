@@ -26,6 +26,7 @@ import domain.form.QuestionAndAnswerForm;
 @Transactional
 public class AnswerServiceTest extends AbstractTest {
 
+	//The SUT ----------------------------------------
 	@Autowired
 	private AnswerService		answerService;
 
@@ -91,7 +92,7 @@ public class AnswerServiceTest extends AbstractTest {
 			answer.setQuestion(questionInDB);
 			answer.setUser(this.userService.findByPrincipal());
 			this.answerService.saveFromCreate(answer);
-			this.unauthenticate();
+
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 			messageError = oops.getMessage();
@@ -173,7 +174,7 @@ public class AnswerServiceTest extends AbstractTest {
 					answersInDB.add(answer2);
 			}
 			Assert.isTrue(answersInDB.size() == 1);
-			this.unauthenticate();
+
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
 			messageError = oops.getMessage();
