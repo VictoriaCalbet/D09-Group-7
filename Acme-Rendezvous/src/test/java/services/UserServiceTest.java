@@ -10,6 +10,7 @@
 
 package services;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.transaction.Transactional;
@@ -20,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 import security.UserAccount;
 import utilities.AbstractTest;
@@ -105,4 +107,50 @@ public class UserServiceTest extends AbstractTest {
 		this.checkExceptionsWithMessage(expectedException, caught, messageError);
 
 	}
+
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 4.2
+	 * 
+	 * An actor who is not authenticated must be able to:
+	 * - List the users of the system and navigate to their profiles, which include personal data and the list of rendezvouses that they've attended or are going to attend.
+	 * 
+	 * Test 1: Positive case.
+	 */
+	@Test
+	public void listUser() {
+		final Object[][] testingData = {
+			{
+				null, null
+			}, {
+				"user1", null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testListAvailableServicesTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+	}
+
+	public void testListAvailableServicesTemplate(final String actor, final Class<?> expectedException) {
+		Class<?> caught = null;
+		String messageError = null;
+
+		try {
+			this.authenticate(actor);
+
+			Collection<User> users = null;
+
+			users = this.userService.findAll();
+
+			Assert.isTrue(users.size() == 3);
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+	}
+
 }
