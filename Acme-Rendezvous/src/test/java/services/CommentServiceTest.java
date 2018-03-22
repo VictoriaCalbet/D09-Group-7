@@ -1,6 +1,8 @@
 
 package services;
 
+import java.util.Collection;
+
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 
@@ -9,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
 import domain.Comment;
@@ -33,6 +36,65 @@ public class CommentServiceTest extends AbstractTest {
 	private RendezvousService	rendezvousService;
 
 
+	
+
+	//Begin tests
+
+	/**
+	 * 
+	 * Acme-Rendezvous 1.0: Requirement 3
+	 * 
+	 * The system must handle comments about the rendezvouses.
+	 * 
+	 * Every actor must be able to list the comments of a rendezvous, but only those who RSVP it can comment it.
+	 * 
+	 * Test 1: Positive case.
+	 */
+	
+	@Test
+	public void testListComments() {
+		// Comments: rendezvous, expectedException
+		final Rendezvous rendezvous = this.rendezvousService.findOne(this.getEntityId("rendezvous1"));
+
+		final Object[][] testingData = {
+
+			{
+				rendezvous, null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testListCommentsTemplate((Rendezvous) testingData[i][0], (Class<?>) testingData[i][1]);
+
+	}
+
+	protected void testListCommentsTemplate(final Rendezvous rendezvous, final Class<?> expectedException) {
+
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			
+			final Collection<Comment> comments = rendezvous.getComments();
+
+			Assert.isTrue(comments.size()==2);
+			
+			this.commentService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
+	}
+
+	
 	/**
 	 * 
 	 * Acme-Rendezvous 1.0: Requirement 4.6
@@ -46,9 +108,7 @@ public class CommentServiceTest extends AbstractTest {
 	 * Test 4: Negative case. The URL pattern is invalid.
 	 * Test 5: Negative case. The rendezvous is null
 	 */
-
-	//Begin tests
-
+	
 	@Test
 	public void testSaveFromCreateComment() {
 		// Comment: text, optional URL picture,rendezvous, user, originalComment, expectedException
@@ -96,7 +156,7 @@ public class CommentServiceTest extends AbstractTest {
 
 			this.commentService.saveFromCreate(comment, rendezvous);
 
-			this.unauthenticate();
+			
 			this.commentService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -171,7 +231,6 @@ public class CommentServiceTest extends AbstractTest {
 
 			this.commentService.saveReply(originalComment, comment);
 
-			this.unauthenticate();
 			this.commentService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
