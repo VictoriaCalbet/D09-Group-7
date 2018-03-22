@@ -128,6 +128,7 @@ public class RSVPUserController extends AbstractController {
 		return result;
 
 	}
+	@SuppressWarnings("unused")
 	@RequestMapping(value = "/RSVP", method = RequestMethod.GET)
 	public ModelAndView enrol(@RequestParam final int rendezvousId) {
 		ModelAndView result;

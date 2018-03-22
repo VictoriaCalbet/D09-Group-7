@@ -36,7 +36,7 @@ public class RSVPServiceTest extends AbstractTest {
 
 	// Tests ------------------------------------------------------------------
 	/**
-	 * Requirement 5.4 Acme-Rendezvous
+	 * Acme-Rendezvous 1.0: Requirement 5.4
 	 * 
 	 * RSVP a rendezvous.
 	 * 
