@@ -3,6 +3,7 @@ package services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
@@ -12,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
 import domain.Service;
@@ -35,6 +37,14 @@ public class ServiceServiceTest extends AbstractTest {
 	// Tests ------------------------------------------------------------------
 
 	/**
+	 * 
+	 * Acme-Rendezvous 2.0: Requirement 5.2
+	 * 
+	 * An actor who is registered as a manager must be able to:
+	 * - Manage his or her services, which includes listing them, creating them,
+	 * updating them, and deleting them as long as they are not required by
+	 * any rendezvouses.
+	 * 
 	 * Create a new service:
 	 * Positive test 1: creating a service without categories
 	 * Positive test 2: creating a service with one category
@@ -233,4 +243,116 @@ public class ServiceServiceTest extends AbstractTest {
 		this.checkExceptions(expectedException, caught);
 	}
 
+	/*
+	 * Acme-Rendezvous 2.0: Requirement 6.1
+	 * 
+	 * An actor who is authenticated as an administrator must be able to:
+	 * - Cancel a service that he or she finds inappropriate. Such services cannot
+	 * be re-quested for any rendezvous. They must be flagged appropriately when
+	 * listed.
+	 * 
+	 * Mark/Unmark a service:
+	 * Positive test 1: mark a service as innappropriate with admin
+	 * Positive test 2: mark a service as appropriate with admin
+	 * Negative test 3: mark a service with user
+	 * Negative test 4: mark a service with manager
+	 * Negative test 5: mark a service as appropriate that is already appropriate
+	 * Negative test 6: mark a service as innappropriate that is already innappropriate
+	 */
+	@Test
+	public void testMarkAndUnmarkAServiceDriver() {
+		// principal(actor), serviceBean, changeToMarkUnmark, expected exception
+		final Object[][] testingData = {
+			{
+				"admin", "service1", true, null
+			}, {
+				"admin", "service5", false, null
+			}, {
+				"user1", "service1", true, IllegalArgumentException.class
+			}, {
+				"manager1", "service1", true, IllegalArgumentException.class
+			}, {
+				"admin", "service4", false, IllegalArgumentException.class
+			}, {
+				"admin", "service1", true, IllegalArgumentException.class
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testMarkAndUnmarkAServiceTemplate((String) testingData[i][0], (String) testingData[i][1], (boolean) testingData[i][2], (Class<?>) testingData[i][3]);
+	}
+	public void testMarkAndUnmarkAServiceTemplate(final String actor, final String serviceBean, final boolean changeTo, final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(actor);
+
+			Service service = null;
+
+			service = this.serviceService.findOne(this.getEntityId(serviceBean));
+
+			this.serviceService.markingServiceAsAppropriateOrNot(service, changeTo);
+			this.serviceService.flush();
+
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptions(expectedException, caught);
+	}
+
+	/**
+	 * 
+	 * Acme-Rendezvous 2.0: Requirement 4.2
+	 * 
+	 * An actor who is authenticated as a user must be able to:
+	 * - List the services that are available in the system
+	 * 
+	 * 
+	 * Acme-Rendezvous 2.0: Requirement 5.1
+	 * 
+	 * An actor who is registered as a manager must be able to:
+	 * - List the services that are available in the system.
+	 * 
+	 * Positive test 1: An actor logged as user get available services
+	 * Positive test 2: An actor logged as manager get available services
+	 */
+	@Test
+	public void testListAvailableServicesDriver() {
+		// principal(actor), serviceBean, changeToMarkUnmark, expected exception
+		final Object[][] testingData = {
+			{
+				"user1", null
+			}, {
+				"manager1", null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testListAvailableServicesTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+	}
+
+	public void testListAvailableServicesTemplate(final String actor, final Class<?> expectedException) {
+		Class<?> caught = null;
+
+		try {
+			this.authenticate(actor);
+
+			Collection<Service> services = null;
+
+			services = this.serviceService.findAvailableServices();
+
+			Assert.notNull(services);
+
+			//Assert.isTrue(services.size() == 6);
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptions(expectedException, caught);
+	}
 }
