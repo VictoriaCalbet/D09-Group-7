@@ -1,6 +1,8 @@
 
 package domain.form;
 
+import javax.validation.Valid;
+
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.hibernate.validator.constraints.SafeHtml.WhiteListType;
@@ -43,6 +45,7 @@ public class CategoryForm {
 		this.description = description;
 	}
 	
+	@Valid
 	public Category getParent() {
 		return this.parent;
 	}
