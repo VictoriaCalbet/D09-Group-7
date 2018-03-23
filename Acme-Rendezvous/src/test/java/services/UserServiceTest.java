@@ -56,19 +56,20 @@ public class UserServiceTest extends AbstractTest {
 		// Manager: Name, surname, email, address, phone, birthDate, username, password, expectedException
 		final Object[][] testingData = {
 			{
-				"testUserName1", "testUserSurname1", "testUser1@testUser1.com", "testUserAddress1", "619619619", new DateTime().plusYears(-20).toDate(), "testUser1", "testUser1", null
+				"testUserName1", "testUserSurname1", "testUser1@testUser1.com", "testUserAddress1", "619619619", new DateTime().plusYears(-20).toDate(), "testUser1", "testUser1", null, "Positive test 1"
 			}, {
-				"testUserName2", "testUserSurname2", "testUser2@testUser2.com", "testUserAddress2", "619619619", new DateTime().plusYears(20).toDate(), "testUser2", "testUser2", IllegalArgumentException.class
+				"testUserName2", "testUserSurname2", "testUser2@testUser2.com", "testUserAddress2", "619619619", new DateTime().plusYears(20).toDate(), "testUser2", "testUser2", IllegalArgumentException.class, "Negative test 2"
 			}
 		};
 
 		for (int i = 0; i < testingData.length; i++)
 			this.testSaveFromCreateUserTemplate((String) testingData[i][0], (String) testingData[i][1], (String) testingData[i][2], (String) testingData[i][3], (String) testingData[i][4], (Date) testingData[i][5], (String) testingData[i][6],
-				(String) testingData[i][7], (Class<?>) testingData[i][8]);
+				(String) testingData[i][7], (Class<?>) testingData[i][8], (String) testingData[i][9]);
 
 	}
 
-	protected void testSaveFromCreateUserTemplate(final String name, final String surname, final String email, final String address, final String phone, final Date birthDate, final String username, final String password, final Class<?> expectedException) {
+	protected void testSaveFromCreateUserTemplate(final String name, final String surname, final String email, final String address, final String phone, final Date birthDate, final String username, final String password, final Class<?> expectedException,
+		final String identifier) {
 
 		Class<?> caught;
 		String messageError;
@@ -104,7 +105,7 @@ public class UserServiceTest extends AbstractTest {
 			this.unauthenticate();
 		}
 
-		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+		this.checkExceptionsWithMessage(expectedException, caught, identifier, messageError);
 
 	}
 
