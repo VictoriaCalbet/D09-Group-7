@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -59,18 +58,15 @@ public class RendezvousControllerTest extends AbstractTest {
 
 		this.authenticate("user1");
 
-		final User principal = this.userService.findByPrincipal();
-		final Collection<Rendezvous> rendezvouses = this.rendezvousService.findAllPrincipalRsvps(principal.getId());
+		User principal = null;
+		Collection<Rendezvous> rendezvouses = null;
+
+		principal = this.userService.findByPrincipal();
+		rendezvouses = this.rendezvousService.findAllPrincipalRsvps(principal.getId());
 
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/rendezvous/list")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("rendezvous/list"))
 			.andExpect(MockMvcResultMatchers.model().attribute("requestURI", "rendezvous/list.do")).andExpect(MockMvcResultMatchers.model().attribute("principalRendezvouses", Matchers.hasSize(rendezvouses.size())));
+
 		this.unauthenticate();
-	}
-
-	@Test
-	public void testListCategory() throws Exception {
-
-		this.mockMvc.perform(((MockMvcRequestBuilders.post("/rendezvous/listCategory").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))));
-
 	}
 }
