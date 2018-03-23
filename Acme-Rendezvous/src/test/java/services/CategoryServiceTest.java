@@ -1,6 +1,8 @@
 
 package services;
 
+import java.util.Collection;
+
 import javax.transaction.Transactional;
 
 import org.junit.Test;
@@ -8,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 import utilities.AbstractTest;
 import domain.Category;
@@ -28,13 +31,68 @@ public class CategoryServiceTest extends AbstractTest {
 	 * Acme-Rendezvous 2.0: Requirement 11.1
 	 * 
 	 * An actor who is authenticated as an administrator must be able to:
+	 * - Manage the categories of services, which includes listing, creating, updating,
+	 * deleting, and re-organising them in the category hierarchies.
+	 * 
+	 * These tests check that a category is deleted from the dabatase properly
+	 * 
+	 * Positive test 1: List the categories as an administrator.
+	 */
+
+	@Test
+	public void testListCategories() {
+		// Category, expectedException
+		final Object[][] testingData = {
+
+			{
+				"admin", null
+			}
+		};
+
+		for (int i = 0; i < testingData.length; i++)
+			this.testListCategoriesTemplate((String) testingData[i][0], (Class<?>) testingData[i][1]);
+
+	}
+
+	protected void testListCategoriesTemplate(final String admin, final Class<?> expectedException) {
+
+		Class<?> caught;
+		String messageError;
+
+		caught = null;
+		messageError = null;
+
+		try {
+			this.authenticate(admin);
+
+			final Collection<Category> categories = this.categoryService.findAll();
+
+			Assert.isTrue(categories.size() == 4);
+
+			this.categoryService.flush();
+		} catch (final Throwable oops) {
+			caught = oops.getClass();
+			messageError = oops.getMessage();
+		} finally {
+			this.unauthenticate();
+		}
+
+		this.checkExceptionsWithMessage(expectedException, caught, messageError);
+
+	}
+
+	/**
+	 * 
+	 * Acme-Rendezvous 2.0: Requirement 11.1
+	 * 
+	 * An actor who is authenticated as an administrator must be able to:
 	 * -Manage the categories of services, which includes listing, creating, updating,
 	 * deleting, and re-organising them in the category hierarchies.
 	 * 
 	 * These tests check that a category is deleted from the dabatase properly
 	 * 
-	 * Test 1: Positive case.
-	 * Test 2: Negative case. The category is null
+	 * Positive test 1: Delete a category as an administrator.
+	 * Negative test 2: Delete a category that happens to be null
 	 */
 
 	@Test
@@ -69,7 +127,6 @@ public class CategoryServiceTest extends AbstractTest {
 
 			this.categoryService.delete(category);
 
-			this.unauthenticate();
 			this.categoryService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -92,11 +149,11 @@ public class CategoryServiceTest extends AbstractTest {
 	 * 
 	 * These tests check that the creation of a category from scratch works properly.
 	 * 
-	 * Test 1: Positive case, linked to a parent.
-	 * Test 2: Negative case. The name of the category is null
-	 * Test 3: Negative case. The description of the category is null
-	 * Test 4: Positive case, not linked to a parent.
-	 * Test 5: Negative case. All required fields are blank
+	 * Positive test 1: Create a category linked to a parent.
+	 * Negative test 2: Create a category with a null name.
+	 * Negative test 3: Create a category with a null description.
+	 * Positive test 4: Create a category without a parent category.
+	 * Negative test 5: Create a category with all fields null.
 	 */
 
 	@Test
@@ -143,7 +200,6 @@ public class CategoryServiceTest extends AbstractTest {
 
 			this.categoryService.saveFromCreate(category);
 
-			this.unauthenticate();
 			this.categoryService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -166,11 +222,11 @@ public class CategoryServiceTest extends AbstractTest {
 	 * 
 	 * These test check that the edition of an existing category from scratch works properly.
 	 * 
-	 * Test 1: Positive case, linked to a parent.
-	 * Test 2: Negative case. The name of the category is null
-	 * Test 3: Negative case. The description of the category is null
-	 * Test 4: Positive case, not linked to a parent.
-	 * Test 5: Negative case. All required fields are blank
+	 * Positive test 1: Edit a category linked to a parent.
+	 * Negative test 2: Edit a category with a null name.
+	 * Negative test 3: Edit a category with a null description.
+	 * Positive test 4: Edit a category without a parent category.
+	 * Negative test 5: Edit a category with all fields null.
 	 */
 	@Test
 	public void testSaveFromEditCategory() {

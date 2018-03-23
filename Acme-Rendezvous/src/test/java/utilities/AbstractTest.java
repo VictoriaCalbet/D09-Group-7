@@ -114,6 +114,15 @@ public abstract class AbstractTest {
 			throw new RuntimeException(expected.getName() + " was expected, but " + caught.getName() + " was thrown: " + messageError);
 	}
 
+	protected void checkExceptionsWithMessage(final Class<?> expected, final Class<?> caught, final String identifier, final String messageError) {
+		if (expected != null && caught == null)
+			throw new RuntimeException("Test " + identifier + ". " + expected.getName() + " was expected: " + messageError);
+		else if (expected == null && caught != null)
+			throw new RuntimeException("Test " + identifier + ". " + caught.getName() + " was unexpected: " + messageError);
+		else if (expected != null && caught != null && !expected.equals(caught))
+			throw new RuntimeException("Test " + identifier + ". " + expected.getName() + " was expected, but " + caught.getName() + " was thrown: " + messageError);
+	}
+
 	protected void startTransaction() {
 		this.currentTransaction = this.transactionManager.getTransaction(this.transactionDefinition);
 	}

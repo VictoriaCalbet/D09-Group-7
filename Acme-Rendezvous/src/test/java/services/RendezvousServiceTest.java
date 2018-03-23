@@ -46,9 +46,9 @@ public class RendezvousServiceTest extends AbstractTest {
 	 * they aren't saved them in final mode. Once a rendezvous is saved
 	 * in final mode, it cannot be edited or deleted by the creator.
 	 * 
-	 * 1º Good test -> expected: rendezvous created
-	 * 2º Bad test -> cannot create rendezvous with past date
-	 * 3º Bad test -> an user not adult cannot create rendezvous with isAdult = true
+	 * Positive test 1: Create a rendezvous.
+	 * Negative test 2: Create a rendezvous with a past date.
+	 * Negative test 3: Create an adult rendezvous by an under 18 user.
 	 */
 	@Test
 	public void testCreateRendezvous() {
@@ -106,11 +106,11 @@ public class RendezvousServiceTest extends AbstractTest {
 	 * from the database, but the rendezvous cannot be updated.
 	 * Deleted rendezvouses are flagged as such when they are displayed.
 	 * 
-	 * 1º Good test -> expected: rendezvous edited
-	 * 2º Bad test -> cannot edit a rendezvous with past date
-	 * 3º Bad test -> cannot edit a deleted rendezvous
-	 * 4º Bad test -> an admin cannot edit a rendezvous
-	 * 5º Bad test -> an user cannot edit rendezvous if this rendezvous isn't own.
+	 * Positive test 1: Edit a rendezvous.
+	 * Negative test 2: Edit a rendezvous with a past date.
+	 * Negative test 3: Edit a deleted rendezvous.
+	 * Negative test 4: Edit a rendezvous by the admin.
+	 * Negative test 5: Edit a rendezvous that belongs to other user.
 	 */
 	@Test
 	public void testEditRendezvous() {
@@ -169,11 +169,11 @@ public class RendezvousServiceTest extends AbstractTest {
 	 * from the database, but the rendezvous cannot be updated.
 	 * Deleted rendezvouses are flagged as such when they are displayed.
 	 * 
-	 * 1º Good test -> expected: rendezvous deleted
-	 * 2º Bad test -> cannot delete a rendezvous with mode final
-	 * 3º Bad test -> cannot delete a rendezvous deleted
-	 * 4º Bad test -> an manager cannot delete a rendezvous
-	 * 5º Bad test -> an user cannot delete rendezvous if this rendezvous isn't own.
+	 * Positive test 1: Delete a rendezvous
+	 * Negative test 2: Delete a final rendezvous.
+	 * Negative test 3º Delete an already deleted rendezvous.
+	 * Negative test 4º Delete a rendezvous logged as an manager.
+	 * Negative test 5º Delete a rendezvous that belongs to another user.
 	 */
 	@Test
 	public void testDeleteRendezvous() {
@@ -224,8 +224,8 @@ public class RendezvousServiceTest extends AbstractTest {
 	 * 
 	 * Remove a rendezvous that he or she thinks is inappropriate.
 	 * 
-	 * 1º Good test -> expected: rendezvous deleted from database
-	 * 2º Bad test -> an user cannot delete a rendezvous from database
+	 * Positive test 1: Delete a rendezvous from the database by an admin.
+	 * Negative test 2: Delete a rendezvous from the database by a user.
 	 */
 	@Test
 	public void testDeleteRendezvousAdmin() {
@@ -267,8 +267,8 @@ public class RendezvousServiceTest extends AbstractTest {
 	 * Link one of the rendezvouses that he or
 	 * she's created to other similar rendezvouses.
 	 * 
-	 * 1º Good test -> expected: rendezvous linked
-	 * 2º Bad test -> cannot linked the rendezvous because it's already linked
+	 * Positive test 1: Link a rendezvous with another one.
+	 * Negative test 2: Link a rendezvous with another one already linked.
 	 */
 	@Test
 	public void testLinkRendezvous() {
@@ -315,7 +315,7 @@ public class RendezvousServiceTest extends AbstractTest {
 	 * profiles of the corresponding creators and attendants.
 	 * 
 	 * Testing cases:
-	 * 1º Good test -> expected: results shown
+	 * Positive test 1: List the rendezvouses.
 	 */
 
 	@Test
@@ -339,8 +339,7 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.authenticate(principal);
 
 			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousesLogged(this.actorService.findByPrincipal());
-
-			Assert.notNull(rendezvouses);
+			Assert.isTrue(rendezvouses.size() == 4);
 
 			this.unauthenticate();
 
@@ -361,7 +360,7 @@ public class RendezvousServiceTest extends AbstractTest {
 	 * that are similar to it.
 	 * 
 	 * Testing cases:
-	 * 1º Good test -> expected: results shown
+	 * Positive test 1: List the rendezvouses similar to one.
 	 */
 
 	@Test
@@ -387,8 +386,7 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.authenticate(principal);
 
 			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousSimilarLogged(r.getId());
-
-			Assert.notNull(rendezvouses);
+			Assert.isTrue(rendezvouses.size() == 1);
 
 			this.unauthenticate();
 
@@ -408,7 +406,7 @@ public class RendezvousServiceTest extends AbstractTest {
 	 * List the rendezvouses in the system grouped by category.
 	 * 
 	 * Testing cases:
-	 * 1º Good test -> expected: results shown
+	 * Positive test 1: List the rendezvouses that belongs to a category.
 	 */
 
 	@Test
@@ -434,8 +432,7 @@ public class RendezvousServiceTest extends AbstractTest {
 			this.authenticate(principal);
 
 			final Collection<Rendezvous> rendezvouses = this.rendezvousService.findRendezvousByCategories(c.getId());
-
-			Assert.notNull(rendezvouses);
+			Assert.isTrue(rendezvouses.size() == 2);
 
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
