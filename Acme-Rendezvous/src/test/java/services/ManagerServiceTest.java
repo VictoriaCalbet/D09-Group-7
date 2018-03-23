@@ -39,9 +39,9 @@ public class ManagerServiceTest extends AbstractTest {
 	 * An actor who is not authenticated must be able to:
 	 * - Register to the system as a manager.
 	 * 
-	 * Test 1: Positive case.
-	 * Test 2: Negative case. Wrong VAT pattern.
-	 * Test 3: Negative case. Future birth date.
+	 * Positive test 1: Create a manager.
+	 * Negative test 2: Create a manager with a wrong VAT pattern.
+	 * Negative test 3: Create a manager with a future birth date.
 	 */
 	@Test
 	public void testSaveFromCreateManager() {

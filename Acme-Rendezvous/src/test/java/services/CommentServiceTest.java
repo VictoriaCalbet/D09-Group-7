@@ -36,8 +36,6 @@ public class CommentServiceTest extends AbstractTest {
 	private RendezvousService	rendezvousService;
 
 
-	
-
 	//Begin tests
 
 	/**
@@ -48,9 +46,9 @@ public class CommentServiceTest extends AbstractTest {
 	 * 
 	 * Every actor must be able to list the comments of a rendezvous, but only those who RSVP it can comment it.
 	 * 
-	 * Test 1: Positive case.
+	 * Positive test 1: List the comments of a rendezvous.
 	 */
-	
+
 	@Test
 	public void testListComments() {
 		// Comments: rendezvous, expectedException
@@ -77,11 +75,11 @@ public class CommentServiceTest extends AbstractTest {
 		messageError = null;
 
 		try {
-			
+
 			final Collection<Comment> comments = rendezvous.getComments();
 
-			Assert.isTrue(comments.size()==2);
-			
+			Assert.isTrue(comments.size() == 2);
+
 			this.commentService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -94,7 +92,6 @@ public class CommentServiceTest extends AbstractTest {
 
 	}
 
-	
 	/**
 	 * 
 	 * Acme-Rendezvous 1.0: Requirement 4.6
@@ -102,13 +99,13 @@ public class CommentServiceTest extends AbstractTest {
 	 * An actor who is authenticated as a user must be able to:
 	 * - Comment on the rendezvouses that he or she has RSVPd.
 	 * 
-	 * Test 1: Positive case, without a picture URL.
-	 * Test 2: Positive case, with a picture URL.
-	 * Test 3: Negative case. The text of the comment is null.
-	 * Test 4: Negative case. The URL pattern is invalid.
-	 * Test 5: Negative case. The rendezvous is null
+	 * Positive test 1: Create a comment without a picture URL.
+	 * Positive test 2: Create a comment with a picture URL.
+	 * Negative test 3: Create a comment where the text is null.
+	 * Negative test 4: Create a comment where the URL pattern is invalid.
+	 * Negative test 5: Create a comment where the rendezvous is null
 	 */
-	
+
 	@Test
 	public void testSaveFromCreateComment() {
 		// Comment: text, optional URL picture,rendezvous, user, originalComment, expectedException
@@ -156,7 +153,6 @@ public class CommentServiceTest extends AbstractTest {
 
 			this.commentService.saveFromCreate(comment, rendezvous);
 
-			
 			this.commentService.flush();
 		} catch (final Throwable oops) {
 			caught = oops.getClass();
@@ -177,11 +173,11 @@ public class CommentServiceTest extends AbstractTest {
 	 * 
 	 * Therefore, an actor authenticated as a user must be able to write a reply to a comment.
 	 * 
-	 * Test 1: Positive case, without a picture URL.
-	 * Test 2: Positive case, with a picture URL.
-	 * Test 3: Negative case. The text of the comment is null.
-	 * Test 4: Negative case. The URL pattern is invalid.
-	 * Test 5: Negative case. The rendezvous is null
+	 * Positive test 1: Reply to a comment without a picture URL.
+	 * Positive test 2: Reply to a comment with a picture URL.
+	 * Negative test 3: Reply to a comment with the text as null.
+	 * Negative test 4: Reply to a comment with an invalid URL pattern.
+	 * Negative test 5: Reply to a comment with a null rendezvous.
 	 */
 
 	@Test
@@ -250,8 +246,8 @@ public class CommentServiceTest extends AbstractTest {
 	 * An actor who is authenticated as an administrator must be able to:
 	 * -Delete a comment that he or she thinks is inappropriate
 	 * 
-	 * Test 1: Positive case, without a picture URL.
-	 * Test 2: Negative case. The comment to delete is null
+	 * Positive Test 1: Delete a comment without a picture URL.
+	 * Negative Test 2: Delete a comment that happens to be null.
 	 */
 
 	@Test

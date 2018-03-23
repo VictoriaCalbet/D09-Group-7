@@ -45,8 +45,8 @@ public class AdministratorServiceTest extends AbstractTest {
 	 * 
 	 * Create and save a new administrator
 	 * 
-	 * Test 1: Positive case.
-	 * Test 2: Negative case. Future birth date.
+	 * Positive test 1: Create an administrator logged as an administrator.
+	 * Negative test 2: Create an administrator with a birth date in the future.
 	 */
 	@Test
 	public void testSaveFromCreateAdmin() {

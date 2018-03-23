@@ -48,8 +48,8 @@ public class UserServiceTest extends AbstractTest {
 	 * An actor who is not authenticated must be able to:
 	 * - Register to the system as a user.
 	 * 
-	 * Test 1: Positive case.
-	 * Test 2: Negative case. Future birth date.
+	 * Positive test 1: Create a user.
+	 * Positive test 2: Create a user with a birth date in the future.
 	 */
 	@Test
 	public void testSaveFromCreateUser() {
@@ -115,7 +115,7 @@ public class UserServiceTest extends AbstractTest {
 	 * An actor who is not authenticated must be able to:
 	 * - List the users of the system and navigate to their profiles, which include personal data and the list of rendezvouses that they've attended or are going to attend.
 	 * 
-	 * Test 1: Positive case.
+	 * Positive test 1: List all users in the system.
 	 */
 	@Test
 	public void listUser() {
