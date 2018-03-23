@@ -32,6 +32,8 @@ public class RendezvousControllerTest extends AbstractTest {
 
 	private MockMvc					mockMvc;
 
+	// The SUT (Service Under Test) -------------------------------------------
+
 	@Autowired
 	private RendezvousController	rendezvousController;
 
@@ -42,11 +44,15 @@ public class RendezvousControllerTest extends AbstractTest {
 	private RendezvousService		rendezvousService;
 
 
+	// SetUp ------------------------------------------------------------------
+
 	@Override
 	@Before
 	public void setUp() {
 		this.mockMvc = MockMvcBuilders.standaloneSetup(this.rendezvousController).build();
 	}
+
+	// Tests ------------------------------------------------------------------
 
 	@Test
 	public void testListRendezvouses() throws Exception {
